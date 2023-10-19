@@ -1,9 +1,9 @@
-## SAE - Adaptation d'un SI à de nouveaux besoins - S5
+# SAE - Adaptation d'un SI à de nouveaux besoins - S5
 
 Dans le cadre de notre troisième et dernière année de formation à l'IUT de Rodez, en BUT INFORMATIQUE,
 le projet suivant nous a été confié.
 
-# Contexte
+## Contexte
 
 Les entreprises gérant les stocks de leurs articles doivent régulièrement vérifier et mettre à jour le stock
 des articles dans leur ERP. Des erreurs de stocks peuvent survenir suite à des bugs du logiciel, des vols ou
@@ -12,7 +12,7 @@ De ce fait, les entreprises doivent avoir des moyens rapides permettant de point
 stocks. En plus de la gestion des stocks au jour le jour, une contrainte s’impose aux entreprises, le fait de
 devoir faire un inventaire annuel (pointage / saisie complète de tous les articles stockés).
 
-# Description du projet
+## Description du projet
 Nous devons réaliser un module complémentaire pour l'ERP Dolibarr qui doit permettre un suivi des saisies 
 réalisées par une application Android. Ce module pourra dans le futur être placé sur le Dolistore afin d’en 
 faire profiter la communauté.
@@ -24,7 +24,7 @@ lorsque la connexion est possible).
 Divers livrables sont aussi à réaliser : manuels, cahier de recettes, dossier d'analyse de risque cyber, PRA,
 PCA, ...
 
-# Equipe 
+## Equipe 
 
 Jean-François FROMENT
 - email : jean-francois.froment@iut-rodez.fr
@@ -41,7 +41,7 @@ Julie BONNET
 - login GitHub : @SrtaJulie
 - rôle : Développeuse
 
-  # Lien utiles
+  ## Lien utiles
 
   - GitHub Project :
   - Google Drive :
