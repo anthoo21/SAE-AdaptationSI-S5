@@ -43,5 +43,5 @@ Julie BONNET
 
   ## Lien utiles
 
-  - GitHub Project :
-  - Google Drive :
+  - GitHub Project : https://github.com/users/anthoo21/projects/1/views/1
+  - Google Drive : https://drive.google.com/drive/folders/0AFKtHlXL91uJUk9PVA
