@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  fichier définissant les dimensions utilisées dans l'application DoliStocks -->
+
+<resources>
+    <!--  tailles du logo  -->
+    <dimen name="largeur_image">205dp</dimen>
+    <dimen name="hauteur_image">212dp</dimen>
+
+    <!--   marges diverses  -->
+    <dimen name="petite_marge_haute">3dp</dimen>
+    <dimen name="marge_haute_moyenne">4dp</dimen>
+    <dimen name="marge_haute">15dp</dimen>
+    <dimen name="marge_horizontale">8dp</dimen>
+    <dimen name="marge_droite">5dp</dimen>
+
+    <!--   taille du texte ordinaire : libellé des zones de saisie  -->
+    <dimen name="taille_texte">13sp</dimen>
+
+    <!--   taille du texte de titre  -->
+    <dimen name="taille_titre">14sp</dimen>
+
+    <!--   padding pour les boutons radio et les boutons de validation -->
+    <dimen name="padding_gauche">5dp</dimen>
+    <dimen name="padding_droit">20dp</dimen>
+</resources>
