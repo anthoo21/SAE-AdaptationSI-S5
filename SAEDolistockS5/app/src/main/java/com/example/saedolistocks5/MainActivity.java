@@ -2,6 +2,7 @@ package com.example.saedolistocks5;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -19,17 +20,20 @@ public class MainActivity extends AppCompatActivity {
      * @param bouton initialisé automatiquement avec le bouton à l'origine du clic (ici le
      * bouton mode connexion).
      */
-    private void onClickModeDeco (View bouton) {
-        // TODO
+    public void onClickModeDeco(View Button){
+        Intent intention = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intention);
     }
-
+      
     /**
      * Méthode appelée automatiquement quand l'utilisateur clique sur le bouton.
      *
      * @param bouton initialisé automatiquement avec le bouton à l'origine du clic (ici le
      * bouton mode connexion).
      */
-    private void onClickModeCo (View bouton) {
-        // TODO
+    public void onClickModeCo(View Button){
+        Intent intention = new Intent(MainActivity.this, ListeActivity.class);
+        startActivity(intention);
+
     }
 }
