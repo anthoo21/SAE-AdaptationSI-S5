@@ -14,13 +14,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void clickCo(View Button){
+    /**
+     * Méthode appelée automatiquement quand l'utilisateur clique sur le bouton.
+     *
+     * @param bouton initialisé automatiquement avec le bouton à l'origine du clic (ici le
+     * bouton mode connexion).
+     */
+    public void onClickModeDeco(View Button){
         Intent intention = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intention);
     }
-
-    public void clickDeco(View Button){
+      
+    /**
+     * Méthode appelée automatiquement quand l'utilisateur clique sur le bouton.
+     *
+     * @param bouton initialisé automatiquement avec le bouton à l'origine du clic (ici le
+     * bouton mode connexion).
+     */
+    public void onClickModeCo(View Button){
         Intent intention = new Intent(MainActivity.this, ListeActivity.class);
         startActivity(intention);
+
     }
 }
