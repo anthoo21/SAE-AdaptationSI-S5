@@ -26,6 +26,9 @@
     <string name="info_login">Entrez votre login</string>
     <string name="info_mdp">Entrez votre mot de passe</string>
 
+    <!-- placeholder des champs de saisie -->
+    <string name="description_image">Logo de l\'application DoliStock</string>
+
     <!-- informations bas de page -->
     <string name="info_1_co">Si c’est votre première connection, vous devez obligatoirement vous
         connecter en mode connecté.</string>
