@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SAEDolistockS5</string>
+    <string name="messageRedirection">
+        Pour passer en mode déconnecté vous devez d\'abord vous connecter.
+        Vous avez donc été redirigé vers la page de connexion.</string>
 </resources>
