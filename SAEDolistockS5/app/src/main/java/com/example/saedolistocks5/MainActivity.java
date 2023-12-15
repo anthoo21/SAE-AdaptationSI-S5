@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return vide;
     }
-    public void clickCo(View Button){
+    public void onClickModeCo(View Button){
         if (ReadFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void clickDeco(View Button){
+    public void onClickModeDeco(View Button){
         if (ReadFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
@@ -58,5 +58,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,R.string.messageRedirection,Toast.LENGTH_LONG).show();
             startActivity(intention);
         }
+
     }
 }

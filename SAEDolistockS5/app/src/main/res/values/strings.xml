@@ -1,6 +1,42 @@
 <resources>
-    <string name="app_name">SAEDolistockS5</string>
+
+    <string name="app_name">DoliStock</string>
+
     <string name="messageRedirection">
         Pour passer en mode déconnecté vous devez d\'abord vous connecter.
         Vous avez donc été redirigé vers la page de connexion.</string>
+  
+    <!-- texte de la ligne de titre -->
+    <string name="titre_co">Connexion</string>
+    <string name="titre_liste">Toutes les listes</string>
+
+    <!-- texte de la sous-ligne de titre -->
+    <string name="sous_titre_mode">Choix du mode</string>
+    <string name="sous_titre_data">Données de l\'utilisateur</string>
+    <string name="sous_titre_listes">Encore non envoyées</string>
+
+    <!-- libellés des boutons -->
+    <string name="libelle_mode_deco">Mode déconnecté</string>
+    <string name="libelle_mode_co">Mode connecté</string>
+    <string name="libelle_co">Se connecter</string>
+
+    <!-- label des champs de saisie -->
+    <string name="label_api">URL de l\'API : </string>
+    <string name="label_login">Login : </string>
+    <string name="label_mdp">Mot de passe : </string>
+
+    <!-- placeholder des champs de saisie -->
+    <string name="info_api">Entrez votre URL</string>
+    <string name="info_login">Entrez votre login</string>
+    <string name="info_mdp">Entrez votre mot de passe</string>
+
+    <!-- placeholder des champs de saisie -->
+    <string name="description_image">Logo de l\'application DoliStock</string>
+
+    <!-- informations bas de page -->
+    <string name="info_1_co">Si c’est votre première connection, vous devez obligatoirement vous
+        connecter en mode connecté.</string>
+    <string name="info_mdp_co">En cas d’oubli de votre mot de passe ou de votre identifiant,
+        veuillez contacter l’administrateur.</string>
+  
 </resources>
