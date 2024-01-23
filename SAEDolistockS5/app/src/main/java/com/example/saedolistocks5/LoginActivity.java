@@ -14,6 +14,9 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Key;
+
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 
@@ -37,11 +40,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        userView = findViewById(R.id.nomUser);
-        passwordView = findViewById(R.id.mdpUser);
-        urlApiView = findViewById(R.id.urlApi);
-        texteErreurView = findViewById(R.id.textErreur);
+        setContentView(R.layout.login_activity);
+        userView = findViewById(R.id.champsLogin);
+        passwordView = findViewById(R.id.champsMdp);
+        urlApiView = findViewById(R.id.champsURL);
+        texteErreurView = findViewById(R.id.texteErreur);
 
         context = this;
     }
@@ -54,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         if(user.equals("") || password.equals("") || urlApi.equals("")) {
             texteErreurView.setText("Erreur : tous les champs de sont pas renseignés");
         } else {
-            String urlApiEntiere = String.format("%slogin?login=%s&password=%s", urlApi, user, password);
+            String urlApiEntiere = String.format("http://%s/htdocs/api/index.php/login?login=%s&password=%s", urlApi, user, password);
             OutilAPI.getApiRetour(getApplicationContext(),urlApiEntiere, new OutilAPI.ApiCallback() {
                 //@RequiresApi(api = Build.VERSION_CODES.O)
                 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -65,11 +68,14 @@ public class LoginActivity extends AppCompatActivity {
                         success = result.getJSONObject("success");
                         String token = success.getString("token");
 
-                        // Clé secrète permettant d'encrypter et de décrypter un message
-                        SecretKey secretKey = EncryptAndDecrypteToken.generateSecretKey();
-                        String tokenEncrypt = EncryptAndDecrypteToken.encrypt(token, secretKey);
+                        KeyGenerator keyGen = KeyGenerator.getInstance("DES");
+                        keyGen.init(56); // 56 bits pour DES
+                        Key key = keyGen.generateKey();
 
-                        texteErreurView.setText(token);
+                        // Clé secrète permettant d'encrypter et de décrypter un message
+                        byte[] tokenEncrypt = EncryptAndDecrypteToken.encrypt(token, key);
+                        String tokenDecrypt = EncryptAndDecrypteToken.decrypt(tokenEncrypt, key);
+                        texteErreurView.setText(tokenDecrypt);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     } catch (Exception e) {
@@ -79,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(VolleyError error) {
-                    texteErreurView.setText(error.toString());
+                    texteErreurView.setText(error.getMessage());
                 }
             });
         }
