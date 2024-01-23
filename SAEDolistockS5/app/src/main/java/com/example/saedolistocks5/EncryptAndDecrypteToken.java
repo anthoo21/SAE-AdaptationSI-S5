@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.security.*;
 import javax.crypto.*;
 
+
 import androidx.annotation.RequiresApi;
 
 public class EncryptAndDecrypteToken {
@@ -26,5 +27,6 @@ public class EncryptAndDecrypteToken {
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] newPlainText = cipher.doFinal(cipherText);
         return new String(newPlainText, "UTF8");
+
     }
 }

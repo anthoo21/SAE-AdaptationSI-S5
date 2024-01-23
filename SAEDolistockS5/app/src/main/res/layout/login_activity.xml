@@ -60,6 +60,7 @@
                 android:elevation="@dimen/effet"
                 android:src="@drawable/logo"/>
 
+
         </LinearLayout>
 
     </RelativeLayout>
@@ -128,13 +129,12 @@
         android:gravity="center"
         android:textColor="@color/black"
         android:layout_marginBottom="@dimen/marge_5"/>
-
+  
     <LinearLayout android:id="@+id/LinearLayout2"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom">
-
 
         <TextView
             android:layout_width="wrap_content"
@@ -147,3 +147,4 @@
     </LinearLayout>
 
 </LinearLayout>
+
