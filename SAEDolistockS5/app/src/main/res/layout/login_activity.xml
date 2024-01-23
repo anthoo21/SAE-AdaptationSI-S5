@@ -40,25 +40,26 @@
             android:layout_marginTop="@dimen/marge_8"
             android:gravity="right">
 
-        <ImageButton
-            android:id="@+id/btnRetour"
-            android:layout_height="30dp"
-            android:layout_width="30dp"
-            android:layout_marginTop="@dimen/marge_10"
-            android:layout_marginLeft="@dimen/marge_15"
-            android:background="@drawable/retour"
-            android:onClick="onClickRetour"/>
+            <ImageButton
+                android:id="@+id/btnRetour"
+                android:layout_height="30dp"
+                android:layout_width="30dp"
+                android:layout_marginTop="@dimen/marge_10"
+                android:layout_marginLeft="@dimen/marge_15"
+                android:background="@drawable/retour"
+                android:onClick="onClickRetour"/>
 
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="50dp"
-            android:layout_height="@dimen/hauteur_image_mini"
-            android:layout_marginLeft="@dimen/marge_5"
-            android:layout_toRightOf="@id/btnRetour"
-            android:layout_marginRight="@dimen/marge_5"
-            android:contentDescription="@string/description_image"
-            android:elevation="@dimen/effet"
-            android:src="@drawable/logo"/>
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="50dp"
+                android:layout_height="@dimen/hauteur_image_mini"
+                android:layout_marginLeft="@dimen/marge_5"
+                android:layout_toRightOf="@id/btnRetour"
+                android:layout_marginRight="@dimen/marge_5"
+                android:contentDescription="@string/description_image"
+                android:elevation="@dimen/effet"
+                android:src="@drawable/logo"/>
+
 
         </LinearLayout>
 
@@ -119,8 +120,16 @@
         android:layout_marginTop="60dp"
         android:id="@+id/btnModeDeco"
         android:text="@string/libelle_co"
-        android:onClick="onClickConnexion"/>
+        android:onClick="seConnecter"/>
 
+    <TextView
+        android:id="@+id/texteErreur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:layout_marginBottom="@dimen/marge_5"/>
+  
     <LinearLayout android:id="@+id/LinearLayout2"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -138,3 +147,4 @@
     </LinearLayout>
 
 </LinearLayout>
+
