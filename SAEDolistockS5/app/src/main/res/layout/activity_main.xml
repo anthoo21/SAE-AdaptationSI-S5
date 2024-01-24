@@ -13,12 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:layout_marginLeft="@dimen/marge_5"
         android:text="@string/titre_co"/>
 
     <TextView
         android:textAppearance="@style/page_sub_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marge_5"
         android:text="@string/sous_titre_mode"/>
 
     <ImageView

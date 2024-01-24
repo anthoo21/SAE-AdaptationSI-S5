@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import android.content.res.Resources;
 import android.icu.util.Output;
 import android.os.Build;
@@ -77,9 +78,11 @@ public class LoginActivity extends AppCompatActivity {
         if(user.equals("") || password.equals("") || urlApi.equals("")) {
             texteErreurView.setText("Erreur : tous les champs de sont pas renseignés");
         } else {
+
             String urlApiEntiere = String.format("http://%s/htdocs/api/index.php/login?login=%s&password=%s",
                     urlApi, user, password);
             OutilAPI.getApiRetour(LoginActivity.this ,urlApiEntiere, new OutilAPI.ApiCallback() {
+
                 //@RequiresApi(api = Build.VERSION_CODES.O)
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
@@ -114,8 +117,9 @@ public class LoginActivity extends AppCompatActivity {
                     texteErreurView.setText(error + "");
                 }
             });
-        }
+        }       
     }
+
 
     public void EcrireInfosFichier(byte[] tokenEncrypt) {
         try {
