@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,24 +25,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
     public boolean ReadFichier() {
-        boolean vide;
-        Resources resources = getApplicationContext().getResources();
+        boolean ok;
+        int compteur = 0;
         try {
-            InputStream inputStream = resources.openRawResource(R.raw.infouser);
-            long fileSize = inputStream.available();
-            if (fileSize > 0.0) {
-                vide = true;
-            } else {
-                vide = false;
+            InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
+            BufferedReader fichiertexte = new BufferedReader(fichier);
+            while(fichiertexte.readLine() != null) {
+                compteur += 1;
             }
-            inputStream.close();
+            if (compteur == 3) {
+                ok = true;
+            } else {
+                ok = false;
+            }
+            fichier.close();
+        } catch (FileNotFoundException e) {
+            ok = false;
         } catch (IOException e) {
-            vide = false;
             throw new RuntimeException(e);
         }
-        return vide;
+        return ok;
     }
     public void onClickModeCo(View Button){
+
         if (ReadFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
