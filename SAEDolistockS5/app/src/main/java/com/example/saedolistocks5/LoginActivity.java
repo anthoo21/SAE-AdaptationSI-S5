@@ -3,7 +3,12 @@ package com.example.saedolistocks5;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+
+
 import android.content.res.Resources;
 import android.icu.util.Output;
 import android.os.Build;
@@ -11,6 +16,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+
+import com.android.volley.NoConnectionError;
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
@@ -43,8 +50,11 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private String urlApi;
 
-
     private Context context;
+
+    SharedPreferences mesPreferences;
+
+    SharedPreferences.Editor editeur;
 
 
     @Override
@@ -55,6 +65,10 @@ public class LoginActivity extends AppCompatActivity {
         passwordView = findViewById(R.id.champsMdp);
         urlApiView = findViewById(R.id.champsURL);
         texteErreurView = findViewById(R.id.texteErreur);
+
+        mesPreferences = getSharedPreferences("monFichierPref.xml", Activity.MODE_PRIVATE);
+        editeur = mesPreferences.edit();
+
 
         context = this;
     }
@@ -67,9 +81,11 @@ public class LoginActivity extends AppCompatActivity {
         if(user.equals("") || password.equals("") || urlApi.equals("")) {
             texteErreurView.setText("Erreur : tous les champs de sont pas renseignés");
         } else {
-            String urlApiEntiere = String.format("http://%s/htdocs/api/index.php/login?login=%s&password=%s", urlApi, user, password);
 
-            OutilAPI.getApiRetour(getApplicationContext(),urlApiEntiere, new OutilAPI.ApiCallback() {
+            String urlApiEntiere = String.format("http://%s/htdocs/api/index.php/login?login=%s&password=%s",
+                    urlApi, user, password);
+            OutilAPI.getApiRetour(LoginActivity.this ,urlApiEntiere, new OutilAPI.ApiCallback() {
+
                 //@RequiresApi(api = Build.VERSION_CODES.O)
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
@@ -82,14 +98,19 @@ public class LoginActivity extends AppCompatActivity {
                         KeyGenerator keyGen = KeyGenerator.getInstance("DES");
                         keyGen.init(56); // 56 bits pour DES
                         Key key = keyGen.generateKey();
-
                         // Clé secrète permettant d'encrypter et de décrypter un message
                         byte[] tokenEncrypt = EncryptAndDecrypteToken.encrypt(token, key);
-                        String tokenDecrypt = EncryptAndDecrypteToken.decrypt(tokenEncrypt, key);
-                        texteErreurView.setText(tokenDecrypt);
+
+                        EcrireInfosFichier(tokenEncrypt);
+
+                        Intent intention = new Intent(LoginActivity.this,
+                                ListeActivity.class);
+                        startActivity(intention);
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
+                    } catch (NoConnectionError e) {
+                        texteErreurView.setText("Erreur : URL incorrect");
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -97,10 +118,25 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(VolleyError error) {
-                    texteErreurView.setText(error.getMessage());
+                    texteErreurView.setText(error + "");
                 }
             });
         }       
+    }
+
+
+    public void EcrireInfosFichier(byte[] tokenEncrypt) {
+        try {
+            FileOutputStream fichier = openFileOutput("infouser.txt", Context.MODE_PRIVATE);
+            fichier.write(tokenEncrypt);
+            fichier.write("\n".getBytes());
+            fichier.write(user.getBytes());
+            fichier.write("\n".getBytes());
+            fichier.write(urlApi.getBytes());
+        } catch(IOException ex) {
+            texteErreurView.setText(ex.toString());
+        }
+
     }
 
     /**
@@ -118,22 +154,5 @@ public class LoginActivity extends AppCompatActivity {
         finish(); // destruction de l'activité courante
     }
 
-    @Override
-    /**
-     * Méthode invoquée automatiquement lors d'un clic sur le bouton
-     * de retour du téléphone
-     * @param view  source du clic
-     * @deprecated
-     */
-    public void onBackPressed() {
-
-        // création d'une intention pour informer l'activté parente
-        Intent intentionRetour = new Intent();
-
-        // retour à l'activité parente et destruction de l'activité fille
-        setResult(Activity.RESULT_OK, intentionRetour);
-        finish(); // destruction de l'activité courante
-
-    }
 }
 

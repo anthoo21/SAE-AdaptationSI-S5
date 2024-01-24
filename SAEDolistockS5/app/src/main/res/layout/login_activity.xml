@@ -117,7 +117,7 @@
 
     <Button
         style="@style/StyleBouton"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:id="@+id/btnModeDeco"
         android:text="@string/libelle_co"
         android:onClick="seConnecter"/>
@@ -127,7 +127,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="@color/red"
         android:layout_marginBottom="@dimen/marge_5"/>
   
     <LinearLayout android:id="@+id/LinearLayout2"

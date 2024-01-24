@@ -2,6 +2,7 @@ package com.example.saedolistocks5;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -41,6 +42,8 @@ public class OutilAPI {
         return fileRequete;
     }
 
+    public static int TIMEOUT_MS = 200000;
+
     public static JSONObject getApiRetour(Context context, String url, final ApiCallback callback) {
         // Créer une nouvelle file de requêtes Volley
         JsonObjectRequest requete = new JsonObjectRequest(
@@ -60,6 +63,11 @@ public class OutilAPI {
                     }
                 }
         );
+        requete.setRetryPolicy(new DefaultRetryPolicy(
+                TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
         getFileRequete(context).add(requete);
         return null;
     }
