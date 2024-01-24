@@ -8,12 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+
 import android.content.res.Resources;
 import android.icu.util.Output;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.VolleyError;
@@ -67,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         mesPreferences = getSharedPreferences("monFichierPref.xml", Activity.MODE_PRIVATE);
         editeur = mesPreferences.edit();
 
+
         context = this;
     }
 
@@ -103,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intention = new Intent(LoginActivity.this,
                                 ListeActivity.class);
                         startActivity(intention);
+
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     } catch (NoConnectionError e) {
@@ -132,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
         } catch(IOException ex) {
             texteErreurView.setText(ex.toString());
         }
+
     }
 
     /**
@@ -148,5 +153,6 @@ public class LoginActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, intentionRetour);
         finish(); // destruction de l'activité courante
     }
+
 }
 
