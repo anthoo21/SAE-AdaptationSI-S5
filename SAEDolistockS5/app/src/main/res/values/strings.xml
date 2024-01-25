@@ -6,6 +6,9 @@
         Pour passer en mode déconnecté vous devez d\'abord vous connecter.
         Vous avez donc été redirigé vers la page de connexion.</string>
 
+    <string name="messageModeConnecte">
+        Vous devez être connecté à internet pour utiliser le mode connecté.</string>
+
     <!-- texte de la ligne de titre -->
     <string name="titre_co">Connexion</string>
     <string name="titre_liste">Toutes les listes</string>

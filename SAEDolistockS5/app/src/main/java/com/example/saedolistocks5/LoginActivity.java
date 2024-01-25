@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 
 import android.content.res.Resources;
 import android.icu.util.Output;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -120,8 +122,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(VolleyError error) {
+                    ConnectivityManager connManager =
+                            (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+                    NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
+
                     if(error.getClass() == NoConnectionError.class) {
-                        texteErreurView.setText("Erreur : l'URL " + urlApi + " est incorrect.");
+                        if(mWifi == null) {
+                            texteErreurView.setText("Erreur : vous n'avez pas de connexion à Internet.");
+                        } else {
+                            texteErreurView.setText("Erreur : l'URL " + urlApi + " est incorrect.");
+                        }
                     } else if (error.networkResponse != null) {
                         if(error.networkResponse.statusCode == 403) {
                             texteErreurView.setText("Erreur : login ou mot de passe incorrect.");
