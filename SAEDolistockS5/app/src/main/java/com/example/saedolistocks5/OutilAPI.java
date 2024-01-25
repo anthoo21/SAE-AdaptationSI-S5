@@ -42,7 +42,7 @@ public class OutilAPI {
         return fileRequete;
     }
 
-    public static int TIMEOUT_MS = 200000;
+    public static int TIMEOUT_MS = 5000;
 
     public static JSONObject getApiRetour(Context context, String url, final ApiCallback callback) {
         // Créer une nouvelle file de requêtes Volley
