@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -48,10 +50,18 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onClickModeCo(View Button){
 
-        if (ReadFichier()) {
+        ConnectivityManager connManager =
+                (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
+
+        if(mWifi != null && ReadFichier() && mWifi.isAvailable()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
-        } else {
+            return;
+        } else if(mWifi == null && ReadFichier()) {
+            Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
+        }
+        if(!ReadFichier()) {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intention);
         }
