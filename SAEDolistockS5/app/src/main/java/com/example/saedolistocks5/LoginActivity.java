@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-
 import android.content.res.Resources;
 import android.icu.util.Output;
 import android.os.Build;
@@ -17,8 +16,11 @@ import android.view.View;
 import android.widget.TextView;
 
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NoConnectionError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +33,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.UnknownHostException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -69,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         mesPreferences = getSharedPreferences("monFichierPref.xml", Activity.MODE_PRIVATE);
         editeur = mesPreferences.edit();
 
-
         context = this;
     }
 
@@ -106,19 +109,28 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intention = new Intent(LoginActivity.this,
                                 ListeActivity.class);
                         startActivity(intention);
-
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     } catch (NoConnectionError e) {
                         texteErreurView.setText("Erreur : URL incorrect");
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        texteErreurView.setText("Erreur : " + e.getMessage());
                     }
                 }
 
                 @Override
                 public void onError(VolleyError error) {
-                    texteErreurView.setText(error + "");
+                    if(error.getClass() == NoConnectionError.class) {
+                        texteErreurView.setText("Erreur : l'URL " + urlApi + " est incorrect.");
+                    } else if (error.networkResponse != null) {
+                        if(error.networkResponse.statusCode == 403) {
+                            texteErreurView.setText("Erreur : login ou mot de passe incorrect.");
+                        } else {
+                            texteErreurView.setText("");
+                        }
+                    } else if (error.getClass() == TimeoutError.class) {
+                        texteErreurView.setText("Erreur : accès impossible à Dolibarr");
+                    }
                 }
             });
         }       
@@ -136,7 +148,6 @@ public class LoginActivity extends AppCompatActivity {
         } catch(IOException ex) {
             texteErreurView.setText(ex.toString());
         }
-
     }
 
     /**
