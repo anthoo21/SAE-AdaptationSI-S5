@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.TimeoutError;
@@ -110,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intention);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
-                    } catch (UnknownHostException e) {
+                    } catch (NoConnectionError e) {
                         texteErreurView.setText("Erreur : URL incorrect");
                     } catch (Exception e) {
                         texteErreurView.setText("Erreur : " + e.getMessage());
@@ -163,5 +164,6 @@ public class LoginActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, intentionRetour);
         finish(); // destruction de l'activité courante
     }
+
 }
 
