@@ -1,22 +1,21 @@
-package com.example.saedolistocks5;
+package com.example.saedolistocks5.pagemain;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.saedolistocks5.pageliste.ListeActivity;
+import com.example.saedolistocks5.pageconnexion.LoginActivity;
+import com.example.saedolistocks5.R;
+
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {

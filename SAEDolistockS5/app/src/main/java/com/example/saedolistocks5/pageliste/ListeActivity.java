@@ -1,6 +1,8 @@
-package com.example.saedolistocks5;
+package com.example.saedolistocks5.pageliste;
 
 import android.os.Bundle;
+
+import com.example.saedolistocks5.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 

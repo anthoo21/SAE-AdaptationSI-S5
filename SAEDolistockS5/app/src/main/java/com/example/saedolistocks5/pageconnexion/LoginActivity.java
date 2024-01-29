@@ -1,4 +1,4 @@
-package com.example.saedolistocks5;
+package com.example.saedolistocks5.pageconnexion;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,10 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 
-import android.content.res.Resources;
-import android.icu.util.Output;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -18,29 +15,22 @@ import android.view.View;
 import android.widget.TextView;
 
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
+import com.example.saedolistocks5.pageliste.ListeActivity;
+import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
+import com.example.saedolistocks5.outilapi.OutilAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.UnknownHostException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 
 public class LoginActivity extends AppCompatActivity {
