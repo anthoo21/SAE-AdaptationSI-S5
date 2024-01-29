@@ -1,7 +1,7 @@
 *.iml
 .gradle
 /local.properties
-SAEDolistockS5/.idea/
+SAEDolistockS5/.idea/*
 /.idea/*
 .DS_Store
 /build
@@ -9,3 +9,10 @@ SAEDolistockS5/.idea/
 .externalNativeBuild
 .cxx
 local.properties
+
+# Ignorer les fichiers .xml dans le répertoire .idea de SAEDolistockS5
+SAEDolistockS5/.idea/*.xml
+
+# Ignorer les fichiers index.pb dans les répertoires .idea/sonarlint
+SAEDolistockS5/.idea/sonarlint/issuestore/*.pb
+SAEDolistockS5/.idea/sonarlint/securityhotspotstore/*.pb
