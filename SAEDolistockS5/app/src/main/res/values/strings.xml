@@ -42,4 +42,8 @@
     <string name="info_mdp_co">En cas d’oubli de votre mot de passe ou de votre identifiant,
         veuillez contacter l’administrateur.</string>
 
+    <string name="Liste_numero"> Liste N°</string>
+    <string name="date_création"> Créée le date à heure</string>
+    <string name="entrepotNum">Entrepôt</string>
+
 </resources>

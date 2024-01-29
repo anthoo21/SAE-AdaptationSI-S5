@@ -54,10 +54,12 @@ public class MainActivity extends AppCompatActivity {
                 (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
 
-        if(mWifi != null && ReadFichier() && mWifi.isAvailable()) {
+        if(mWifi != null && ReadFichier() && mWifi.isConnectedOrConnecting()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
             return;
+        } else if(mWifi != null && ReadFichier() && !mWifi.isConnectedOrConnecting()) {
+            Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
         } else if(mWifi == null && ReadFichier()) {
             Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
         }
