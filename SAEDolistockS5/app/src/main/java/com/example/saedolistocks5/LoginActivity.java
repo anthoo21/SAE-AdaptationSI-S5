@@ -137,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                  */
                 @Override
                 public void onError(VolleyError error) {
+                  
                     // On récupère l'état de la Wifi de l'appareil courant
                     ConnectivityManager connManager =
                             (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
