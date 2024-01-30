@@ -26,4 +26,6 @@
     <!--   padding pour les boutons radio et les boutons de validation -->
     <dimen name="padding_gauche">5dp</dimen>
     <dimen name="padding_droit">20dp</dimen>
+
+    <dimen name="grande_taille">15sp</dimen>
 </resources>
