@@ -24,22 +24,26 @@
     <string name="libelle_co">Se connecter</string>
 
     <!-- label des champs de saisie -->
-    <string name="label_api">URL de l\'API : </string>
-    <string name="label_login">Login : </string>
+    <string name="label_api">URL de connexion : </string>
+    <string name="label_login">Identifiant : </string>
     <string name="label_mdp">Mot de passe : </string>
 
     <!-- placeholder des champs de saisie -->
-    <string name="info_api">Entrez votre URL</string>
-    <string name="info_login">Entrez votre login</string>
+    <string name="info_api">Exemple d\'URL : https://dolistock.go.yo.fr/</string>
+    <string name="info_login">Entrez votre identifiant</string>
     <string name="info_mdp">Entrez votre mot de passe</string>
 
     <!-- placeholder des champs de saisie -->
     <string name="description_image">Logo de l\'application DoliStock</string>
 
     <!-- informations bas de page -->
-    <string name="info_1_co">Si c’est votre première connection, vous devez obligatoirement vous
+    <string name="info_1_co">Si c’est votre première connexion, vous devez obligatoirement vous
         connecter en mode connecté.</string>
     <string name="info_mdp_co">En cas d’oubli de votre mot de passe ou de votre identifiant,
         veuillez contacter l’administrateur.</string>
+
+    <!--  placeholder des champs de saisie  -->
+    <string name="libelle_visualisation">Visualiser</string>
+    <string name="libelle_modification">Modifier</string>
 
 </resources>
