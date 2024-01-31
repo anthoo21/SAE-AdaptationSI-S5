@@ -7,33 +7,40 @@
     android:id="@+id/vue_visualisation"
     app:cardCornerRadius="5dp"
     >
-<TableLayout
-    android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:orientation="vertical">
-        <TextView
-            android:id="@+id/libelleArticle"
-            android:textAppearance="@style/page_sub_title"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"/>
-    <TableRow>
-        <TextView
-            android:id="@+id/libelleMode"
-            android:layout_column="0"
-            android:layout_marginLeft="20dp"
-            />
-        <TextView
-            android:id="@+id/valeurQuantite"
-            android:layout_width="53dp"
-            android:layout_marginLeft="275dp"
-            android:background="@drawable/rounded_corner"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="15dp"
-            android:layout_column="1"
-            />
-    </TableRow>
-    </TableLayout>
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="70dp"
+          >
+
+          <TextView
+              android:id="@+id/libelleArticle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:layout_marginTop="10dp"
+              android:textAppearance="@style/page_sub_title"
+              android:textColor="@color/black"
+              android:textStyle="bold" />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/libelleMode"
+              android:layout_marginLeft="20dp"
+              android:layout_marginTop="30dp"
+              />
+
+          <TextView
+              android:id="@+id/valeurQuantite"
+              android:layout_width="53dp"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="300dp"
+              android:background="@drawable/rounded_corner"
+              android:gravity="center"
+              android:textColor="@color/white"
+              android:textSize="15dp"
+              android:layout_marginTop="20dp"/>
+
+      </RelativeLayout>
+
 </androidx.cardview.widget.CardView>
