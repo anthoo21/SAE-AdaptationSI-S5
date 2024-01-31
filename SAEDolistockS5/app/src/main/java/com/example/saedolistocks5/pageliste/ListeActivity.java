@@ -1,6 +1,8 @@
 package com.example.saedolistocks5.pageliste;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -104,5 +106,40 @@ public class ListeActivity extends AppCompatActivity {
 
         }
         return (super.onContextItemSelected(item));
+    }
+
+    /**
+     * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
+     * de retour vers l'activité principale
+     * @param view  source du clic
+     */
+    public void onClickRetour(View view) {
+
+        // création d'une intention pour informer l'activté parente
+        Intent intentionRetour = new Intent();
+
+        // retour à l'activité parente et destruction de l'activité fille
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish(); // destruction de l'activité courante
+    }
+
+    /**
+     * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
+     * d'ajout
+     * @param view  source du clic
+     */
+    public void onClickAjouter(View view) {
+
+
+    }
+
+    /**
+     * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
+     * de deconnexion
+     * @param view  source du clic
+     */
+    public void onClickDeco(View view) {
+
+
     }
 }

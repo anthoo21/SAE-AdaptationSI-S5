@@ -18,6 +18,7 @@
 
     <!--   taille du texte -->
     <dimen name="taille_titre">26sp</dimen>
+    <dimen name="taille_list_titre">18sp</dimen>
     <dimen name="taille_sous_titre">16sp</dimen>
     <dimen name="taille_txt_btn">14sp</dimen>
     <!--   taille du texte ordinaire : libellé des zones de saisie  -->
