@@ -28,5 +28,8 @@
         <activity
             android:name=".pageliste.ListeActivity">
         </activity>
+        <activity
+            android:name=".pageajoutliste.AjoutLiseActivity"
+        </activity>
     </application>
 </manifest>

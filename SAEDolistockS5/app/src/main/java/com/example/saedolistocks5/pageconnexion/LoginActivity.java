@@ -3,6 +3,7 @@ package com.example.saedolistocks5.pageconnexion;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -23,6 +25,7 @@ import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.OutilAPI;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param view
      * @throws JSONException
      */
-    public void seConnecter(View view) throws JSONException {
+    public void seConnecter(View view) {
         user = userView.getText().toString();
         password = passwordView.getText().toString();
         urlApi = urlApiView.getText().toString();
@@ -119,6 +122,11 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         texteErreurView.setText("Erreur : " + e.getMessage());
                     }
+                }
+
+                @Override
+                public void onSuccess(JSONArray result) {
+                    // Null ici
                 }
 
                 /**
