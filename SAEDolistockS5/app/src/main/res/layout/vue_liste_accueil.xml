@@ -53,11 +53,10 @@
                 android:angle="90"/>
 
             <ImageView
-                android:id="@+id/logo"
+                android:layout_toRightOf="@id/btnRetour"
                 android:layout_width="40dp"
                 android:layout_height="@dimen/hauteur_image_mini"
                 android:layout_marginLeft="@dimen/marge_5"
-                android:layout_toRightOf="@id/btnRetour"
                 android:layout_marginRight="@dimen/marge_5"
                 android:contentDescription="@string/description_image"
                 android:elevation="@dimen/effet"
