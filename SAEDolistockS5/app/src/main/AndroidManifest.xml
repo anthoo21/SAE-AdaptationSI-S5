@@ -14,7 +14,7 @@
         android:theme="@style/Theme.SAEDolistockS5"
         tools:targetApi="31">
         <activity
-            android:name=".pageajoutliste.AjoutLiseActivity"
+            android:name=".pagemain.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +27,9 @@
         </activity>
         <activity
             android:name=".pageliste.ListeActivity">
+        </activity>
+        <activity
+            android:name=".pageajoutliste.AjoutLiseActivity"
         </activity>
     </application>
 </manifest>
