@@ -82,9 +82,8 @@ public class MainActivity extends AppCompatActivity {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
             return;
-        } else if (mWifi != null && !mWifi.isConnectedOrConnecting() && ReadFichier()) {
+        } else if(mWifi != null && ReadFichier() && !mWifi.isConnectedOrConnecting()) {
             Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
-            // Lorsqu'on est en mode avion
         } else if(mWifi == null && ReadFichier()) {
             Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
         }
