@@ -42,36 +42,24 @@ public class Visualisation extends AppCompatActivity {
 
     private void intialiserItem() {
         listeArticles = new ArrayList<>();
-        String infoLu,
-                libel,
-                qty;
         try {
             // TODO Faire autre méthode pour récup info fichier via intention ?
             FileOutputStream fichierInser = openFileOutput("Visu.txt",Context.MODE_PRIVATE);
-            fichierInser.write("Ajout".getBytes());
+            String Chaine1 = "Ajout;La liste;10";
+            String Chaine2 = "Modification;Une liste;442";
+            fichierInser.write(Chaine1.getBytes());
             fichierInser.write("\n".getBytes());
-            fichierInser.write("Je suis une liste".getBytes());
-            fichierInser.write("\n".getBytes());
-            fichierInser.write("250".getBytes());
-            fichierInser.write("\n".getBytes());
-            fichierInser.write("Modification".getBytes());
-            fichierInser.write("\n".getBytes());
-            fichierInser.write("Je suis un truc".getBytes());
-            fichierInser.write("\n".getBytes());
-            fichierInser.write("120".getBytes());
-            fichierInser.write("\n".getBytes());
-            fichierInser.close();
+            fichierInser.write(Chaine2.getBytes());
+
 
             InputStreamReader fichier = new InputStreamReader(openFileInput("Visu.txt"));
             BufferedReader fichiertxt = new BufferedReader(fichier);
             // TODO for i nombre d'articles à recup de la liste via intention ?
-            for (int i = 0; i <= 1; i++) {
-                infoLu = fichiertxt.readLine();
-                libel = fichiertxt.readLine();
-                qty = fichiertxt.readLine();
-                fichiertxt.mark(0);
-                fichiertxt.reset();
-                listeArticles.add(new ItemVisualisation(infoLu,libel,qty));
+            for (int i = 0; i<2; i++) {
+                String txt = fichiertxt.readLine();
+                String[] ligne = txt.split(";");
+                // Si integrétion du user + 1 à tous les index de ligne
+                listeArticles.add(new ItemVisualisation(ligne[0], ligne[1],ligne[2]));
             }
         } catch (FileNotFoundException e) {
            // throw new RuntimeException(e); peu importe
@@ -81,7 +69,7 @@ public class Visualisation extends AppCompatActivity {
 
         /* bouchon
         listeArticles.add(new ItemVisualisation("Ajout","Peluche 33 pouces en forme d'ours polaire","50"));
-        listeArticles.add(new ItemVisualisation("test2","test2","25000"));
+        listeArticles.add(new ItemVisualisation("Ajout","test2","25000"));
          */
     }
 
