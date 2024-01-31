@@ -9,12 +9,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.saedolistocks5.AjoutListeActivity;
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.pagemain.MainActivity;
 
 import java.util.ArrayList;
 
@@ -26,10 +29,12 @@ public class ListeActivity extends AppCompatActivity {
      * et son libellé)
      */
     private ArrayList<ListeAccueil> listeAccueil;
+
     /**
      * Element permettant d'afficher la liste des photos
      */
     private RecyclerView listeAccueilRecyclerView;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,9 @@ public class ListeActivity extends AppCompatActivity {
          */
         ListeAccueilAdapter adaptateur = new ListeAccueilAdapter(listeAccueil);
         listeAccueilRecyclerView.setAdapter(adaptateur);
+
+        // on précise qu'un menu contextuel est associé à la liste
+        registerForContextMenu(listeAccueilRecyclerView);
     }
     /**
      * Méthode pour initialiser la liste des photos et des textes
@@ -129,8 +137,8 @@ public class ListeActivity extends AppCompatActivity {
      * @param view  source du clic
      */
     public void onClickAjouter(View view) {
-
-
+        Intent intention = new Intent(ListeActivity.this, AjoutListeActivity.class);
+        startActivity(intention);
     }
 
     /**
