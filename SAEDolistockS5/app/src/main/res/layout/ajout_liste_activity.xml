@@ -1,0 +1,120 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Premier Edit Text -->
+    <EditText
+        android:id="@+id/saisieNomListe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Premier Edit Text"/>
+
+    <!-- Deuxième Edit Text -->
+    <EditText
+        android:id="@+id/saisieNomEntrepot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Deuxième Edit Text"/>
+
+    <TextView
+        android:id="@+id/erreurSaisieEntrepot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"/>
+
+    <!-- Liste déroulante -->
+    <Spinner
+        android:id="@+id/ddlModeMaj"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Barre horizontale -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#000"/>
+
+    <!-- Edit Text avec ImageButton et texte -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <AutoCompleteTextView
+            android:id="@+id/saisieCodeArticle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Edit Text"/>
+
+        <TextView
+            android:id="@+id/libelleStock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+    <!-- Edit Text avec bouton "Ajouter" -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/saisieQuantite"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Edit Text"/>
+
+        <Button
+            android:id="@+id/btnAjouter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ajouter"
+            android:onClick="clickAjouter"/>
+
+    </LinearLayout>
+
+    <!-- Barre horizontale -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#000"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ajout_article_recycler"
+        android:scrollbars="vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/titreCo"
+        android:layout_marginTop="@dimen/marge_8"
+        android:gravity="center"/>
+
+    <!-- Boutons "Annuler" et "Valider" -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp">
+
+        <Button
+            android:id="@+id/btnRaz"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Annuler"/>
+
+        <Button
+            android:id="@+id/btnValider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Valider"/>
+
+    </LinearLayout>
+
+</LinearLayout>

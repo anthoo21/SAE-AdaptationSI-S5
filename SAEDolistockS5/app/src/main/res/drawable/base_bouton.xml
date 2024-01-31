@@ -5,4 +5,5 @@
         android:startColor="@color/primary_blue"
         android:endColor="@color/secondary_blue"
         android:angle="90"/>
+    <corners android:radius="50dp"/>
 </shape>
