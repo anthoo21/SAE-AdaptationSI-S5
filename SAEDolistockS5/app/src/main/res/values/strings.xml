@@ -29,7 +29,7 @@
     <string name="label_mdp">Mot de passe : </string>
 
     <!-- placeholder des champs de saisie -->
-    <string name="info_api">Exemple d\'URL : https://dolistock.go.yo.fr/</string>
+    <string name="info_api">Exemple d\'URL : dolistock.go.yo.fr</string>
     <string name="info_login">Entrez votre identifiant</string>
     <string name="info_mdp">Entrez votre mot de passe</string>
 

@@ -47,8 +47,8 @@
                 android:layout_width="30dp"
                 android:layout_marginTop="@dimen/marge_10"
                 android:layout_marginLeft="@dimen/marge_15"
-                android:background="@drawable/retour"
-                android:onClick="onClickRetour"/>
+                android:background="@drawable/logodeco"
+                android:onClick="onClickDeco"/>
 
             <ImageView
                 android:id="@+id/logo"
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/titreCo"
         android:layout_marginTop="@dimen/marge_8"
-        android:background="@color/grey"
+        android:background="@color/medium_grey"
         android:gravity="center" />
 
     <LinearLayout android:id="@+id/LinearLayout2"
@@ -105,8 +105,8 @@
                 android:layout_height="30dp"
                 android:layout_width="30dp"
                 android:layout_marginLeft="@dimen/marge_15"
-                android:background="@drawable/retour"
-                android:onClick="onClickRetour"/>
+                android:background="@drawable/logoajout"
+                android:onClick="onClickAjouter"/>
 
         </LinearLayout>
 
