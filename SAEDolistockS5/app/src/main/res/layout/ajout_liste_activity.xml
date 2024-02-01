@@ -214,10 +214,10 @@
 
         <Button
             android:id="@+id/btnAjouter"
-            android:style="@style/StyleMiniBouton"
+            style="@style/StyleMiniBouton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ajouter"
+            android:text="@string/libelle_ajouter"
             android:onClick="clickAjouter"/>
 
     </LinearLayout>
@@ -260,19 +260,21 @@
 
         <Button
             android:id="@+id/btnRaz"
-            android:style="@style/StyleMiniBouton"
+            style="@style/StyleMiniBouton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/libelle_Raz"/>
+            android:text="@string/libelle_Raz"
+            android:onClick="clickRaz"/>
 
         <Button
             android:id="@+id/btnValider"
-            android:style="@style/StyleMiniBouton"
+            style="@style/StyleMiniBouton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/libelle_valider"/>
+            android:text="@string/libelle_valider"
+            android:onClick="clickValider"/>
 
     </LinearLayout>
 

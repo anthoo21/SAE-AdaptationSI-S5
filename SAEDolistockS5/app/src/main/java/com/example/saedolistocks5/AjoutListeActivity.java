@@ -29,4 +29,32 @@ public class AjoutListeActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, intentionRetour);
         finish(); // destruction de l'activité courante
     }
+
+    /**
+     * Méthode invoquée automatiquement lors d'un clic sur
+     * @param view  source du clic
+     */
+    public void clickAjouter(View view) {
+
+    }
+
+    /**
+     * Méthode invoquée automatiquement lors d'un clic sur
+     * @param view  source du clic
+     */
+    public void clickRaz(View view) {
+
+    }
+
+    /**
+     * Méthode invoquée automatiquement lors d'un clic sur
+     * @param view  source du clic
+     */
+    public void clickValider(View view) {
+
+    }
+
+
+
+
 }
