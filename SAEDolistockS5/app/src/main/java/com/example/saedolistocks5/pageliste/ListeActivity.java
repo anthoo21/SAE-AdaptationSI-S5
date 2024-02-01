@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 
 import java.util.ArrayList;
@@ -76,6 +77,11 @@ public class ListeActivity extends AppCompatActivity {
      * ===============================================================================
      */
 
+    public void onClickMenu(View view) {
+        // Affiche le menu contextuel
+        view.showContextMenu();
+    }
+
     /**
      * Méthode invoquée automatiquement lorsque l'utiisateur active le menu contextuel
      */
@@ -108,7 +114,8 @@ public class ListeActivity extends AppCompatActivity {
 
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         if (item.getItemId() == R.id.optionVisualisation) { // visualisation d'une liste
-
+            Intent intention = new Intent(ListeActivity.this, Visualisation.class);
+            startActivity(intention);
         } else { // modification d'une liste
 
         }
