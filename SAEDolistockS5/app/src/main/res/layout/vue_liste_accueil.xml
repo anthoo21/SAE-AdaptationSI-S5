@@ -6,22 +6,21 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardBackgroundColor="@android:color/white"
-    app:cardCornerRadius="2dp"
-    app:cardElevation="2dp"
-    android:background="@drawable/custom_item_list">
+    app:cardCornerRadius="5dp"
+    app:cardElevation="2dp">
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="70dp">
 
         <TextView
             android:id="@+id/titreListe"
             android:textAppearance="@style/list_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/marge_5"
-            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_marginTop="@dimen/marge_10"
+            android:layout_marginLeft="@dimen/marge_8"
             android:text="@string/label_mdp"/>
 
         <TextView
@@ -29,7 +28,7 @@
             android:textAppearance="@style/list_sub_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_marginLeft="@dimen/marge_8"
             android:layout_below ="@id/titreListe"
             android:text="@string/label_mdp"/>
 
@@ -38,14 +37,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/titreListe"
-            android:layout_marginTop="@dimen/marge_5"
+            android:layout_marginTop="@dimen/marge_10"
             android:gravity="right">
 
             <TextView
                 android:id="@+id/heureCrea"
                 android:layout_height="25dp"
                 android:layout_width="60dp"
-                android:layout_marginTop="@dimen/marge_10"
+                android:layout_marginTop="12dp"
                 android:layout_marginLeft="@dimen/marge_15"
                 android:background="@drawable/rounded_corner"
                 android:textColor="@color/white"
@@ -53,7 +52,7 @@
                 android:angle="90"/>
 
             <ImageView
-                android:layout_toRightOf="@id/btnRetour"
+                android:id="@+id/btnMenu"
                 android:layout_width="40dp"
                 android:layout_height="@dimen/hauteur_image_mini"
                 android:layout_marginLeft="@dimen/marge_5"
@@ -62,7 +61,8 @@
                 android:elevation="@dimen/effet"
                 android:src="@drawable/logomenu"
                 android:clickable="true"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:onClick="onClickMenu"/>
 
         </LinearLayout>
     </RelativeLayout>

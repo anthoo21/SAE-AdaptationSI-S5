@@ -10,7 +10,8 @@
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <!--  Entête de la page  -->
         <TextView
@@ -72,9 +73,13 @@
         android:layout_marginLeft="@dimen/marge_5"
         android:text="@string/entrepotNum"
         android:textAppearance="@style/page_sub_title" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/informationListe"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marge_8"
+        android:background="@color/medium_grey"
+        android:gravity="center" />
 </LinearLayout>
