@@ -51,6 +51,9 @@
     <string name="veuillez_saisir_nom_liste">Veuillez saisir un nom de liste</string>
     <string name="entrepot_incorrect">Entrepôt incorrect</string>
 
+    <string name="Liste_numero"> Liste N°</string>
+    <string name="date_création"> Créée le date à heure</string>
+    <string name="entrepotNum">Entrepôt</string>
     <!--  placeholder des champs de saisie  -->
     <string name="libelle_visualisation">Visualiser</string>
     <string name="libelle_modification">Modifier</string>
