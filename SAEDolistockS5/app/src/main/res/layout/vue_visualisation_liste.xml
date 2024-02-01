@@ -6,10 +6,11 @@
     android:layout_margin="5dp"
     android:id="@+id/vue_visualisation"
     app:cardCornerRadius="5dp"
-    >
+      app:cardElevation="2dp">
+
       <RelativeLayout
           android:layout_width="match_parent"
-          android:layout_height="70dp"
+          android:layout_height="60dp"
           >
 
           <TextView
@@ -32,14 +33,14 @@
 
           <TextView
               android:id="@+id/valeurQuantite"
-              android:layout_width="53dp"
-              android:layout_height="wrap_content"
+              android:layout_width="60dp"
+              android:layout_height="25dp"
               android:layout_marginLeft="300dp"
               android:background="@drawable/rounded_corner"
               android:gravity="center"
               android:textColor="@color/white"
               android:textSize="15dp"
-              android:layout_marginTop="20dp"/>
+              android:layout_marginTop="17dp"/>
 
       </RelativeLayout>
 
