@@ -12,6 +12,7 @@
     <dimen name="marge_8">8dp</dimen>
     <dimen name="marge_5">5dp</dimen>
     <dimen name="marge_droite_btn">24dp</dimen>
+    <dimen name="marge_8_btn">8dp</dimen>
 
     <!--   elevation  -->
     <dimen name="effet">4dp</dimen>

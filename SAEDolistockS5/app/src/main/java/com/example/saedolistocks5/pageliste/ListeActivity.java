@@ -11,12 +11,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saedolistocks5.AjoutListeActivity;
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.pageconnexion.LoginActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
 
 import java.util.ArrayList;
@@ -61,6 +65,7 @@ public class ListeActivity extends AppCompatActivity {
 
         // on précise qu'un menu contextuel est associé à la liste
         registerForContextMenu(listeAccueilRecyclerView);
+
     }
     /**
      * Méthode pour initialiser la liste des photos et des textes
@@ -134,9 +139,9 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
      * d'ajout
-     * @param view  source du clic
+     * @param bouton  source du clic
      */
-    public void onClickAjouter(View view) {
+    public void onClickAjouter(View bouton) {
         Intent intention = new Intent(ListeActivity.this, AjoutListeActivity.class);
         startActivity(intention);
     }

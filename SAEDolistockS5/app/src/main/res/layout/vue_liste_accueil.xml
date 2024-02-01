@@ -60,7 +60,9 @@
                 android:layout_marginRight="@dimen/marge_5"
                 android:contentDescription="@string/description_image"
                 android:elevation="@dimen/effet"
-                android:src="@drawable/logomenu"/>
+                android:src="@drawable/logomenu"
+                android:clickable="true"
+                android:focusable="false"/>
 
         </LinearLayout>
     </RelativeLayout>

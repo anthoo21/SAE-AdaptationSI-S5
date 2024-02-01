@@ -12,16 +12,21 @@
     <!-- texte de la ligne de titre -->
     <string name="titre_co">Connexion</string>
     <string name="titre_liste">Toutes les listes</string>
+    <string name="titre_ajout_liste">Création d\'une liste</string>
 
     <!-- texte de la sous-ligne de titre -->
     <string name="sous_titre_mode">Choix du mode</string>
     <string name="sous_titre_data">Données de l\'utilisateur</string>
     <string name="sous_titre_listes">Encore non envoyées</string>
+    <string name="sous_titre_mode_co">Mode connecté</string>
+    <string name="sous_titre_mode_deco">Mode déconnecté</string>
 
     <!-- libellés des boutons -->
     <string name="libelle_mode_deco">Mode déconnecté</string>
     <string name="libelle_mode_co">Mode connecté</string>
     <string name="libelle_co">Se connecter</string>
+    <string name="libelle_valider">Valider</string>
+    <string name="libelle_Raz">Réinitialiser</string>
 
     <!-- label des champs de saisie -->
     <string name="label_api">URL de connexion : </string>
@@ -51,12 +56,32 @@
     <string name="veuillez_saisir_nom_liste">Veuillez saisir un nom de liste</string>
     <string name="entrepot_incorrect">Entrepôt incorrect</string>
 
+    <!-- informations concernant les listes -->
     <string name="Liste_numero"> Liste N°</string>
     <string name="date_création"> Créée le date à heure</string>
     <string name="entrepotNum">Entrepôt</string>
+
+    <!-- informations concernant l'ajout de listes -->
+    <!-- Libellés -->
+    <string name="label_title_liste">Libellé de la liste :</string>
+    <string name="label_entrepot">Entrepôt :</string>
+    <string name="label_update">Mode de mise à jour :</string>
+    <string name="label_code_article">Code article :</string>
+    <string name="label_quantite">Quantité :</string>
+    <string name="label_appercu">Apperçu de la liste</string>
+    <string name="label_unite">unités</string>
+    <string name="label_ajout_modif">Ajout / Modification</string>
+    <!-- Infos EditText -->
+    <string name="info_title_liste">Entrez le libellé</string>
+    <string name="info_entrepot">Entrez l\'entrepot</string>
+    <string name="info_update">Entrez le mode de mise à jour</string>
+    <string name="info_code_article">Entrez le code article</string>
+    <string name="info_quantite">Entrez la quantité</string>
+
     <!--  placeholder des champs de saisie  -->
     <string name="libelle_visualisation">Visualiser</string>
     <string name="libelle_modification">Modifier</string>
+    <string name="libelle_ajouter">Ajouter</string>
 
 
 </resources>
