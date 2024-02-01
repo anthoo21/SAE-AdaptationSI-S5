@@ -62,8 +62,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordView = findViewById(R.id.champsMdp);
         urlApiView = findViewById(R.id.champsURL);
         texteErreurView = findViewById(R.id.texteErreur);
-
-
     }
 
     /**
