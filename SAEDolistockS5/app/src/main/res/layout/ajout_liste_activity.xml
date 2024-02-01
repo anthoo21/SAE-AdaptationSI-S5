@@ -4,56 +4,184 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Premier Edit Text -->
-    <EditText
-        android:id="@+id/saisieNomListe"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Premier Edit Text"/>
+        tools:context=".AjoutListeActivity"
+        android:orientation="vertical">
 
-    <!-- Deuxième Edit Text -->
-    <EditText
-        android:id="@+id/saisieNomEntrepot"
+        <!--  Entête de la page  -->
+        <TextView
+            android:id="@+id/titreCo"
+            android:textAppearance="@style/page_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marge_5"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:textStyle="bold"
+            android:text="@string/titre_ajout_liste"/>
+
+        <TextView
+            android:textAppearance="@style/page_sub_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_below ="@id/titreCo"
+            android:text="@string/sous_titre_mode_co"/>
+
+        <LinearLayout android:id="@+id/LinearLayout"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/titreCo"
+            android:layout_marginTop="@dimen/marge_8"
+            android:gravity="right">
+
+            <ImageButton
+                android:id="@+id/btnRetour"
+                android:layout_height="30dp"
+                android:layout_width="30dp"
+                android:layout_marginTop="@dimen/marge_10"
+                android:layout_marginLeft="@dimen/marge_15"
+                android:background="@drawable/retour"
+                android:onClick="onClickRetour"/>
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="50dp"
+                android:layout_height="@dimen/hauteur_image_mini"
+                android:layout_marginLeft="@dimen/marge_5"
+                android:layout_toRightOf="@id/btnRetour"
+                android:layout_marginRight="@dimen/marge_5"
+                android:contentDescription="@string/description_image"
+                android:elevation="@dimen/effet"
+                android:src="@drawable/logo"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Deuxième Edit Text"/>
+        android:layout_marginTop="@dimen/marge_15"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/erreurSaisieEntrepot"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/red"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_marginRight="@dimen/marge_8"
+            android:textStyle="bold"
+            android:text="@string/label_title_liste"
+            android:textSize="@dimen/taille_texte"/>
 
-    <!-- Liste déroulante -->
-    <Spinner
-        android:id="@+id/ddlModeMaj"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <!-- Premier Edit Text -->
+        <EditText
+            android:id="@+id/saisieNomListe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/marge_5"
+            android:hint="@string/info_title_liste"/>
 
-    <!-- Barre horizontale -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#000"/>
+    </LinearLayout>
 
-    <!-- Edit Text avec ImageButton et texte -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_marginRight="@dimen/marge_8"
+            android:text="@string/label_entrepot"
+            android:textSize="@dimen/taille_texte"/>
+
+        <!-- Deuxième Edit Text -->
+        <EditText
+            android:id="@+id/saisieNomEntrepot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/marge_5"
+            android:hint="@string/info_entrepot"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/erreurSaisieEntrepot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marge_5"
+        android:layout_marginRight="@dimen/marge_5"
+        android:textColor="@color/red"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_marginRight="@dimen/marge_8"
+            android:text="@string/label_update"
+            android:textSize="@dimen/taille_texte"/>
+
+        <!-- Liste déroulante -->
+        <Spinner
+            android:id="@+id/ddlModeMaj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/marge_5"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:hint="@string/label_ajout_modif"/>
+
+    </LinearLayout>
+
+    <!-- Widget permettant d'afficher la ligne -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dip"
+        android:layout_marginTop="@dimen/marge_15"
+        android:layout_marginBottom="@dimen/marge_5"
+        android:layout_marginLeft="@dimen/marge_5"
+        android:layout_marginRight="@dimen/marge_5"
+        android:background="@drawable/base_ligne"/>
+
+    <!-- Edit Text avec ImageButton et texte -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marge_8"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_marginRight="@dimen/marge_8"
+            android:text="@string/label_code_article"
+            android:textSize="@dimen/taille_texte"/>
+
         <AutoCompleteTextView
             android:id="@+id/saisieCodeArticle"
-            android:layout_width="0dp"
+            android:layout_width="104dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/marge_8"
             android:layout_weight="1"
-            android:hint="Edit Text"/>
+            android:hint="@string/info_code_article" />
 
         <TextView
             android:id="@+id/libelleStock"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:layout_marginRight="@dimen/marge_5"
+            android:text="@string/label_unite"
+            android:textSize="@dimen/taille_texte"/>
 
     </LinearLayout>
     <!-- Edit Text avec bouton "Ajouter" -->
@@ -62,15 +190,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
+            android:layout_marginRight="@dimen/marge_8"
+            android:text="@string/label_quantite"
+            android:textSize="@dimen/taille_texte"/>
+
         <EditText
             android:id="@+id/saisieQuantite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Edit Text"/>
+            android:hint="@string/info_quantite"/>
 
         <Button
             android:id="@+id/btnAjouter"
+            android:style="@style/StyleMiniBouton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ajouter"
@@ -78,11 +215,24 @@
 
     </LinearLayout>
 
-    <!-- Barre horizontale -->
+    <!-- Widget permettant d'afficher la ligne -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#000"/>
+        android:layout_height="5dip"
+        android:layout_marginTop="@dimen/marge_8"
+        android:layout_marginBottom="@dimen/marge_5"
+        android:layout_marginLeft="@dimen/marge_5"
+        android:layout_marginRight="@dimen/marge_5"
+        android:background="@drawable/base_ligne"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marge_5"
+        android:layout_marginRight="@dimen/marge_5"
+        android:layout_marginTop="@dimen/marge_8"
+        android:text="@string/label_appercu"
+        android:textSize="@dimen/taille_list_titre"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ajout_article_recycler"
@@ -103,18 +253,28 @@
 
         <Button
             android:id="@+id/btnRaz"
+            android:style="@style/StyleMiniBouton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Annuler"/>
+            android:text="@string/libelle_Raz"/>
 
         <Button
             android:id="@+id/btnValider"
+            android:style="@style/StyleMiniBouton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Valider"/>
+            android:text="@string/libelle_valider"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/erreurSaisie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marge_8"
+        android:gravity="center"
+        android:textColor="@color/red"/>
 
 </LinearLayout>

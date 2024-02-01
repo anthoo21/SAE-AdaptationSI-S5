@@ -20,9 +20,8 @@
             android:textAppearance="@style/page_sub_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/marge_15"
+            android:layout_marginTop="17dp"
             android:layout_marginLeft="@dimen/marge_5"
-            android:textStyle="bold"
             android:text="Article 1 (A301)"/>
 
         <LinearLayout android:id="@+id/LinearLayout"
@@ -30,22 +29,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/libelleArticle"
-            android:layout_marginTop="@dimen/marge_8"
+            android:layout_marginTop="@dimen/marge_5"
             android:gravity="right">
 
             <TextView
                 android:id="@+id/valeurQuantite"
-                android:layout_height="wrap_content"
-                android:layout_width="40dp"
-                android:layout_marginTop="@dimen/marge_15"
+                android:layout_height="25dp"
+                android:layout_width="60dp"
+                android:layout_marginTop="@dimen/marge_10"
                 android:layout_marginLeft="@dimen/marge_15"
-                android:background="@color/dark_grey"
+                android:background="@drawable/rounded_corner"
                 android:textColor="@color/white"
                 android:angle="90"/>
 
             <ImageButton
                 android:id="@+id/btnDltArticle"
-                android:layout_width="50dp"
+                android:layout_width="40dp"
                 android:layout_height="@dimen/hauteur_image_mini"
                 android:layout_marginLeft="@dimen/marge_5"
                 android:layout_toRightOf="@id/btnRetour"
@@ -53,6 +52,7 @@
                 android:contentDescription="@string/description_image"
                 android:elevation="@dimen/effet"
                 android:src="@drawable/trash"
+                android:background="@color/white"
                 android:onClick="supprimerArticle"
                 android:clickable="true"
                 android:focusable="false"/>
