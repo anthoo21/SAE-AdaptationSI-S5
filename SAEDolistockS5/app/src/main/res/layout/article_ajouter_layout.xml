@@ -39,6 +39,7 @@
                 android:layout_marginTop="@dimen/marge_10"
                 android:layout_marginLeft="@dimen/marge_15"
                 android:background="@drawable/rounded_corner"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:angle="90"/>
 
