@@ -107,6 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                         KeyGenerator keyGen = KeyGenerator.getInstance("DES");
                         keyGen.init(56); // 56 bits pour DES
                         Key key = keyGen.generateKey();
+
                         byte[] tokenEncrypt = EncryptAndDecrypteToken.encrypt(token, key);
 
                         // Une fois le token crypté, on écrit sa valeur dans un fichier
