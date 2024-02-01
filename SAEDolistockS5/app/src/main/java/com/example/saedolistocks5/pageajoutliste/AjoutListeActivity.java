@@ -1,5 +1,6 @@
 package com.example.saedolistocks5.pageajoutliste;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -424,6 +425,19 @@ public class AjoutListeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
+     * de retour vers l'activité principale
+     * @param view  source du clic
+     */
+    public void onClickRetour(View view) {
 
+        // création d'une intention pour informer l'activté parente
+        Intent intentionRetour = new Intent();
+
+        // retour à l'activité parente et destruction de l'activité fille
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish(); // destruction de l'activité courante
+    }
 
 }

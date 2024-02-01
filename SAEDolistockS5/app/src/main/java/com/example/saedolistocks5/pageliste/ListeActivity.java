@@ -9,19 +9,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.saedolistocks5.AjoutListeActivity;
 import com.example.saedolistocks5.R;
-import com.example.saedolistocks5.pageconnexion.LoginActivity;
-import com.example.saedolistocks5.pagemain.MainActivity;
+import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 
 import java.util.ArrayList;
 
