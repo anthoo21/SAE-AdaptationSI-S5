@@ -2,17 +2,24 @@ package com.example.saedolistocks5.pageajoutliste;
 
 public class AjoutListe {
 
-    private String nomEtCodeArticle;
+    private String libelleArticle;
+
+    private String codeArticle;
 
     private String quantite;
 
-    public AjoutListe(String nomEtCodeArticle, String quantite) {
-        this.nomEtCodeArticle = nomEtCodeArticle;
+    public AjoutListe(String nomEtCodeArticle, String codeArticle, String quantite) {
+        this.libelleArticle = nomEtCodeArticle;
+        this.codeArticle = codeArticle;
         this.quantite = quantite;
     }
 
-    public String getNomEtCodeArticle() {
-        return nomEtCodeArticle;
+    public String getLibelleArticle() {
+        return libelleArticle;
+    }
+
+    public String getCodeArticle() {
+        return codeArticle;
     }
 
     public String getQuantite() {
