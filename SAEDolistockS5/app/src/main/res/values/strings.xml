@@ -42,11 +42,21 @@
     <string name="info_mdp_co">En cas d’oubli de votre mot de passe ou de votre identifiant,
         veuillez contacter l’administrateur.</string>
 
+    <string name="erreur_de_saisie">Erreur de saisie : %1$s</string>
+    <string name="erreur_quantite_invalide">Quantité invalide</string>
+    <string name="code_article_incorrect">Code article incorrect</string>
+    <string name="veuillez_saisir_code_article">Veuillez saisir un code article</string>
+    <string name="veuillez_saisir_quantite">Veuillez saisir une quantité</string>
+    <string name="article_deja_present">Article déjà présent dans la liste</string>
+    <string name="veuillez_saisir_nom_liste">Veuillez saisir un nom de liste</string>
+    <string name="entrepot_incorrect">Entrepôt incorrect</string>
+
     <string name="Liste_numero"> Liste N°</string>
     <string name="date_création"> Créée le date à heure</string>
     <string name="entrepotNum">Entrepôt</string>
     <!--  placeholder des champs de saisie  -->
     <string name="libelle_visualisation">Visualiser</string>
     <string name="libelle_modification">Modifier</string>
+
 
 </resources>

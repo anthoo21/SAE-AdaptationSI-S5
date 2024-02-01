@@ -21,8 +21,7 @@
     <TextView
         android:id="@+id/erreurSaisieEntrepot"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/red"/>
+        android:layout_height="wrap_content"/>
 
     <!-- Liste déroulante -->
     <Spinner
@@ -78,6 +77,13 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/erreurSaisies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/marge_15"
+        android:textColor="@color/red"/>
+
     <!-- Barre horizontale -->
     <View
         android:layout_width="match_parent"
@@ -106,14 +112,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Annuler"/>
+            android:text="Réinitialiser"
+            android:onClick="reinitialiserChamp"/>
 
         <Button
             android:id="@+id/btnValider"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Valider"/>
+            android:text="Valider"
+            android:onClick="validerListe"/>
 
     </LinearLayout>
 
