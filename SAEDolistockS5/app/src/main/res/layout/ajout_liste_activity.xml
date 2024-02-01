@@ -180,7 +180,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginRight="@dimen/marge_5"
-            android:text="@string/label_unite"
             android:textSize="@dimen/taille_texte"/>
 
     </LinearLayout>
@@ -204,6 +203,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/info_quantite"/>
+
+        <TextView
+            android:id="@+id/libelleUnite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/marge_5"
+            android:text="@string/label_unite"
+            android:textSize="@dimen/taille_texte"/>
 
         <Button
             android:id="@+id/btnAjouter"
