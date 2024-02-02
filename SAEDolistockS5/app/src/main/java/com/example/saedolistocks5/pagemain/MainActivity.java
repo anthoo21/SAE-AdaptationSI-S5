@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             TelephonyManager gestionnaire = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
             gestionnaire.listen(ecouterConnexion, PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
         }
-        if (!connexion() || speed() > 0){
+        if (!connexion()){
             Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
             Log.i(null, String.valueOf(speed()));
         }

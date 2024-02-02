@@ -34,7 +34,7 @@
             android:name=".pageajoutliste.AjoutListeActivity">
         </activity>
         <activity
-            android:name=".Visualisation">
+            android:name=".pagevisualisation.Visualisation">
         </activity>
     </application>
 </manifest>
