@@ -27,7 +27,7 @@ public class AjoutListeViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(AjoutListe maListe) {
-        nomEtCodeArticle.setText(maListe.getNomEtCodeArticle());
+        nomEtCodeArticle.setText(maListe.getLibelleArticle() + " (" + maListe.getCodeArticle() + ")");
         quantite.setText(maListe.getQuantite());
     }
 

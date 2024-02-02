@@ -31,7 +31,7 @@
             android:name=".pageliste.ListeActivity">
         </activity>
         <activity
-            android:name=".pageajoutliste.AjoutLiseActivity">
+            android:name=".pageajoutliste.AjoutListeActivity">
         </activity>
     </application>
 </manifest>
