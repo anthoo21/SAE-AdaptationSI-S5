@@ -9,6 +9,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ListeActivity extends AppCompatActivity {
@@ -146,7 +151,15 @@ public class ListeActivity extends AppCompatActivity {
      * @param view  source du clic
      */
     public void onClickDeco(View view) {
-
+        try {
+            InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
+            BufferedReader fichiertexte = new BufferedReader(fichier);
+            Intent intention = new Intent(ListeActivity.this,MainActivity.class);
+            deleteFile("infouser.txt");
+            startActivity(intention);
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
+        }
 
     }
 }
