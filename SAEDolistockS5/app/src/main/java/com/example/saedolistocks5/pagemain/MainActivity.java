@@ -6,8 +6,14 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -72,20 +78,71 @@ public class MainActivity extends AppCompatActivity {
         }
         return ok;
     }
-    public void onClickModeCo(View Button){
-
+    public boolean connexion() {
+        boolean estConnecter = false;
         ConnectivityManager connManager =
                 (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
+        if (mWifi != null && ReadFichier() && mWifi.isConnectedOrConnecting()) {
+            estConnecter = true;
+        }
+        return estConnecter;
+    }
 
-        if(mWifi != null && ReadFichier() && mWifi.isConnectedOrConnecting()) {
+    public int speed() {
+        int kbs = 0;
+        if (connexion()) {
+            ConnectivityManager connManager =
+                    (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+            NetworkCapabilities nc = connManager.getNetworkCapabilities(connManager.getActiveNetwork());
+            kbs = nc.getLinkDownstreamBandwidthKbps();
+        }
+        return kbs;
+    }
+
+    public void onClickModeCo(View Button){
+        // co renvoie flase why ? passe pas dans le switch ?
+
+        /* v1
+                if(connexion() && ReadFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
             return;
-        } else if(mWifi != null && ReadFichier() && !mWifi.isConnectedOrConnecting()) {
+        } else {
             Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
-        } else if(mWifi == null && ReadFichier()) {
-            Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
+        }
+        if(!ReadFichier()) {
+            Intent intention = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intention);
+        }
+         */
+        if (connexion() && ReadFichier() && speed() > 0) {
+            PhoneStateListener ecouterConnexion = new PhoneStateListener() {
+                @Override
+                public void onDataConnectionStateChanged(int etat) {
+                    switch (etat) {
+                        case TelephonyManager.DATA_CONNECTED:
+                        case TelephonyManager.DATA_CONNECTING:
+                            Intent intention = new Intent(MainActivity.this, ListeActivity.class);
+                            startActivity(intention);
+                            break;
+                        case TelephonyManager.DATA_DISCONNECTED:
+                        case TelephonyManager.DATA_DISCONNECTING:
+                        case TelephonyManager.DATA_SUSPENDED:
+                            //Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
+                            Log.e(null,"Pas de connexion");
+                            break;
+                    }
+                    super.onDataConnectionStateChanged(etat);
+
+                }
+            };
+            TelephonyManager gestionnaire = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            gestionnaire.listen(ecouterConnexion, PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
+        }
+        if (!connexion() || speed() > 0){
+            Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
+            Log.i(null, String.valueOf(speed()));
         }
         if(!ReadFichier()) {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
