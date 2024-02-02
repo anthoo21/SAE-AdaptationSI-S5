@@ -1,4 +1,4 @@
-package com.example.saedolistocks5;
+package com.example.saedolistocks5.pagevisualisation;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.saedolistocks5.R;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 

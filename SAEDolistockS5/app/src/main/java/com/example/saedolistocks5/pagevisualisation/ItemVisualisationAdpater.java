@@ -1,8 +1,11 @@
-package com.example.saedolistocks5;
+package com.example.saedolistocks5.pagevisualisation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.saedolistocks5.R;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
