@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saedolistocks5.R;
-import com.example.saedolistocks5.Visualisation;
+import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
+import com.example.saedolistocks5.pagemain.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -161,7 +161,7 @@ public class ListeActivity extends AppCompatActivity {
         try {
             InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
             BufferedReader fichiertexte = new BufferedReader(fichier);
-            Intent intention = new Intent(ListeActivity.this,MainActivity.class);
+            Intent intention = new Intent(ListeActivity.this, MainActivity.class);
             deleteFile("infouser.txt");
             startActivity(intention);
         } catch (FileNotFoundException e) {

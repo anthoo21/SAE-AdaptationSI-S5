@@ -1,4 +1,4 @@
-package com.example.saedolistocks5;
+package com.example.saedolistocks5.pagevisualisation;
 
 public class ItemVisualisation {
 

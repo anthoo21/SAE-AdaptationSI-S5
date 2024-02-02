@@ -1,7 +1,9 @@
-package com.example.saedolistocks5;
+package com.example.saedolistocks5.pagevisualisation;
 
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.saedolistocks5.R;
 
 import androidx.recyclerview.widget.RecyclerView;
 
