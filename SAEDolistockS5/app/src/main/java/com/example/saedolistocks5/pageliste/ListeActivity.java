@@ -16,12 +16,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.pageconnexion.LoginActivity;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -39,6 +43,21 @@ public class ListeActivity extends AppCompatActivity {
      */
     private RecyclerView listeAccueilRecyclerView;
 
+    /**
+     * Utilisateur courant sur l'application
+     */
+    private String utilisateurCourant;
+
+    /**
+     * Position de l'item liste
+     */
+    private int positionItemListe;
+
+    /**
+     * Liste des listes de l'utilisateur courant
+     */
+    static ArrayList<String> listeFichierUser;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +65,12 @@ public class ListeActivity extends AppCompatActivity {
         setContentView(R.layout.liste_activity);
 
         listeAccueilRecyclerView = findViewById(R.id.liste_listes_accueil);
-        initialiseListeAccueil();
+        try {
+            listeFichierUser = new ArrayList<>();
+            initialiseListeAccueil();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         /*
          * On crée un gestionnaire de layout linéaire, et on l'associe à la
@@ -70,11 +94,42 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Méthode pour initialiser la liste des photos et des textes
      */
-    private void initialiseListeAccueil() {
+    private void initialiseListeAccueil() throws IOException {
+        InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
+        BufferedReader infosUserTxt = new BufferedReader(infosUser);
+        String[] valeurInfoUser = infosUserTxt.readLine().split(";;;;");
+
+        utilisateurCourant = valeurInfoUser[1];
+
         listeAccueil = new ArrayList<>();
-        listeAccueil.add(new ListeAccueil("Liste N°1", "Date de création : 01/01/01", "9:30"));
-        listeAccueil.add(new ListeAccueil("Liste N°2", "Date de création : 12/02/01", "10:30"));
-        listeAccueil.add(new ListeAccueil("Liste N°3", "Date de création : 16/05/01", "22:10"));
+
+        File filesDir = getFilesDir(); // Récupère le répertoire "files" de votre application
+        File[] files = filesDir.listFiles(); // Obtient la liste des fichiers dans le répertoire
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().startsWith(utilisateurCourant)) {
+                    try {
+                        listeFichierUser.add(file.getName());
+                        InputStreamReader liste = new InputStreamReader(openFileInput(file.getName()));
+                        BufferedReader listeText = new BufferedReader(liste);
+
+                        String[] ligneListe = listeText.readLine().split(";");
+
+                        String nomListe = ligneListe[1];
+                        String dateCreation = "Date de création : " + ligneListe[9];
+                        String heureCreation = ligneListe[10];
+
+                        listeText.close();
+
+                        listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
     }
 
     /* ===============================================================================
@@ -84,6 +139,7 @@ public class ListeActivity extends AppCompatActivity {
 
     public void onClickMenu(View view) {
         // Affiche le menu contextuel
+        positionItemListe = (int) view.getTag();
         view.showContextMenu();
     }
 
@@ -120,6 +176,7 @@ public class ListeActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         if (item.getItemId() == R.id.optionVisualisation) { // visualisation d'une liste
             Intent intention = new Intent(ListeActivity.this, Visualisation.class);
+            intention.putExtra("positionItem", positionItemListe);
             startActivity(intention);
         } else { // modification d'une liste
 
@@ -134,12 +191,8 @@ public class ListeActivity extends AppCompatActivity {
      */
     public void onClickRetour(View view) {
 
-        // création d'une intention pour informer l'activté parente
-        Intent intentionRetour = new Intent();
-
-        // retour à l'activité parente et destruction de l'activité fille
-        setResult(Activity.RESULT_OK, intentionRetour);
-        finish(); // destruction de l'activité courante
+        Intent intention = new Intent(ListeActivity.this, MainActivity.class);
+        startActivity(intention);
     }
 
     /**
@@ -161,12 +214,16 @@ public class ListeActivity extends AppCompatActivity {
         try {
             InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
             BufferedReader fichiertexte = new BufferedReader(fichier);
-            Intent intention = new Intent(ListeActivity.this, MainActivity.class);
+            Intent intention = new Intent(ListeActivity.this, LoginActivity.class);
             deleteFile("infouser.txt");
             startActivity(intention);
         } catch (FileNotFoundException e) {
             Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    public static ArrayList<String> getListeFichierUser() {
+        return listeFichierUser;
     }
 }
