@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.VolleyError;
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.OutilAPI;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
@@ -31,9 +32,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,6 +60,9 @@ public class AjoutListeActivity extends AppCompatActivity {
     private AjoutListeAdapter adaptateurAjoutListe;
     private ArrayAdapter<String> adaptateurListeChoixMode;
 
+    // Token, utilisateur et URL de dolibarr à utiliser pour contacter l'API
+    private String token, user, URLApi;
+
     // Variables de contrôle
     private boolean entrepotOk;
 
@@ -66,6 +72,13 @@ public class AjoutListeActivity extends AppCompatActivity {
         setContentView(R.layout.ajout_liste_activity);
 
         initialiserComposants();
+        try {
+            initialiserVariableAPI();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         configurerListeners();
         initialiserAdapteurs();
         chargerDonneesInitiales();
@@ -96,6 +109,34 @@ public class AjoutListeActivity extends AppCompatActivity {
         listeQuantiteSaisie = new ArrayList<>();
 
         entrepotOk = false;
+    }
+
+    private void initialiserVariableAPI() throws Exception {
+        InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
+        BufferedReader fichiertexte = new BufferedReader(fichier);
+
+        String ligneFichier = fichiertexte.readLine();
+        String[] valeurFichierInfos = ligneFichier.split(";;;;");
+        String tokenCrypte = valeurFichierInfos[0];
+
+        // Supprimez les crochets et les espaces
+        tokenCrypte = tokenCrypte.replaceAll("[\\[\\]\\s]", "");
+
+        // Séparez les valeurs en utilisant la virgule comme délimiteur
+        String[] valeurs = tokenCrypte.split(",");
+
+        // Créez un tableau de bytes et remplissez-le avec les valeurs
+        byte[] tableauDeBytes = new byte[valeurs.length];
+        for (int i = 0; i < valeurs.length; i++) {
+            tableauDeBytes[i] = Byte.parseByte(valeurs[i].trim());
+        }
+        Key key = EncryptAndDecrypteToken.getKey();
+
+        token = EncryptAndDecrypteToken.decrypt(tableauDeBytes, key);
+
+        user = valeurFichierInfos[1];
+
+        URLApi = valeurFichierInfos[2];
     }
 
     /**
@@ -131,7 +172,7 @@ public class AjoutListeActivity extends AppCompatActivity {
 
     public void getListeEntrepot() {
 
-        String urlApi = "http://dolistock.go.yo.fr/htdocs/api/index.php/warehouses?api_key=M1K576oo4nZP3DVAW2Qhva1eoN9tak4P";
+        String urlApi = String.format("http://%s/htdocs/api/index.php/warehouses?api_key=%s", URLApi, token);
 
         OutilAPI.getApiRetour(getApplicationContext(), urlApi, new OutilAPI.ApiCallback() {
 
@@ -162,7 +203,7 @@ public class AjoutListeActivity extends AppCompatActivity {
 
     public void getArticles() {
 
-        String urlApi = "http://dolistock.go.yo.fr/htdocs/api/index.php/products?api_key=M1K576oo4nZP3DVAW2Qhva1eoN9tak4P";
+        String urlApi = String.format("http://%s/htdocs/api/index.php/products?api_key=%s", URLApi, token);
 
         OutilAPI.getApiRetour(getApplicationContext(), urlApi, new OutilAPI.ApiCallback() {
 
@@ -313,10 +354,6 @@ public class AjoutListeActivity extends AppCompatActivity {
         if(!verif.first) {
             erreurSaisies.setText("Erreur saisie : " + verif.second);
         } else {
-            InputStreamReader fichierUser = new InputStreamReader(openFileInput("infouser.txt"));
-            BufferedReader fichiertexte = new BufferedReader(fichierUser);
-            fichiertexte.skip(1); // Lire et ignorer la première ligne
-            String user = fichiertexte.readLine();
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
@@ -338,7 +375,8 @@ public class AjoutListeActivity extends AppCompatActivity {
             String ligneFichier;
 
             erreurSaisies.setText("");
-            String nomFichier = user + nomListe.toLowerCase() + date + heure;
+            String nomFichier = user + nomListe.toLowerCase().replace(" ", "")
+                    + date + heure;
 
             FileOutputStream fichier = openFileOutput(nomFichier + ".txt", Context.MODE_PRIVATE);
             for(int i = 0; i < articlesAAjouter.size(); i++) {
