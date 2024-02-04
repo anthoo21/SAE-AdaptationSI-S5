@@ -1,6 +1,7 @@
 package com.example.saedolistocks5.pageliste;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +32,11 @@ public class ListeAccueilViewHolder extends RecyclerView.ViewHolder{
     private TextView heureCrea;
 
     /**
+     * Bouton pour visualiser une liste
+     */
+    ImageView btnMenu;
+
+    /**
      * Constructeur avec en argument une vue correspondant
      * à un item de la liste
      * Le constructeur permet d'initialiser les identifiants des
@@ -42,6 +48,7 @@ public class ListeAccueilViewHolder extends RecyclerView.ViewHolder{
         titreListe = (TextView) itemView.findViewById(R.id.titreListe);
         dateCrea = (TextView) itemView.findViewById(R.id.dateCrea);
         heureCrea = (TextView) itemView.findViewById(R.id.heureCrea);
+        btnMenu = itemView.findViewById(R.id.btnMenu);
     }
     /**
      * Permet de placer les informations contenues dans l'argument

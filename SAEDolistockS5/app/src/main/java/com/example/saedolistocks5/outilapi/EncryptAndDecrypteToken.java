@@ -2,6 +2,9 @@ package com.example.saedolistocks5.outilapi;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
+
+import android.util.Base64;
 
 import java.security.*;
 
@@ -31,5 +34,18 @@ public class EncryptAndDecrypteToken {
 
     public static Key getKey() {
         return keyToUse;
+    }
+
+    public static String keyToString(Key key) {
+        // Convertit la clé en tableau de bytes, puis encode ce tableau en String base64
+        return Base64.encodeToString(key.getEncoded(), Base64.DEFAULT);
+    }
+
+    public static Key stringToKey(String keyStr, String algorithm) {
+        // Décode la String base64 en tableau de bytes
+        byte[] decodedKey = Base64.decode(keyStr, Base64.DEFAULT);
+
+        // Reconstruit la clé en utilisant le tableau de bytes et l'algorithme
+        return new SecretKeySpec(decodedKey, 0, decodedKey.length, algorithm);
     }
 }

@@ -113,7 +113,8 @@
         android:hint="@string/info_mdp"
         android:paddingLeft="@dimen/marge_15"
         android:inputType="textPassword"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:drawableEnd="@drawable/ic_eye_closed" />
 
     <Button
         style="@style/StyleBouton"
