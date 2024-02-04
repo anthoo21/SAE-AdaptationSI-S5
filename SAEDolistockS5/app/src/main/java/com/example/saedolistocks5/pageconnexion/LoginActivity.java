@@ -32,6 +32,8 @@ import org.json.JSONObject;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Base64;
 
 import javax.crypto.KeyGenerator;
 
@@ -101,12 +103,10 @@ public class LoginActivity extends AppCompatActivity {
                         // Puis on récupère le paramètre "token" dans l'object success
                         String token = success.getString("token");
 
-                        // Ensuite, on génère une clé de 56 bits pour crypter le token
-                        KeyGenerator keyGen = KeyGenerator.getInstance("DES");
-                        keyGen.init(56); // 56 bits pour DES
-                        Key key = keyGen.generateKey();
+                        // On initialise la clé pour crypter le token
+                        EncryptAndDecrypteToken.InitializeKey();
 
-                        byte[] tokenEncrypt = EncryptAndDecrypteToken.encrypt(token, key);
+                        byte[] tokenEncrypt = EncryptAndDecrypteToken.encrypt(token);
 
                         // Une fois le token crypté, on écrit sa valeur dans un fichier
                         EcrireInfosFichier(tokenEncrypt);
@@ -176,15 +176,23 @@ public class LoginActivity extends AppCompatActivity {
      * @param tokenEncrypt le token crypté
      */
     public void EcrireInfosFichier(byte[] tokenEncrypt) {
+        String separator = ";;;;"; // Votre chaîne séparatrice
+        FileOutputStream fichier = null;
         try {
-            FileOutputStream fichier = openFileOutput("infouser.txt", Context.MODE_PRIVATE);
-            fichier.write(tokenEncrypt);
-            fichier.write("\n".getBytes());
-            fichier.write(user.getBytes());
-            fichier.write("\n".getBytes());
-            fichier.write(urlApi.getBytes());
-        } catch(IOException ex) {
-            texteErreurView.setText(ex.toString());
+            fichier = openFileOutput("infouser.txt", Context.MODE_PRIVATE);
+            // Concatène le token, le user et l'urlApi avec le séparateur
+            String toWrite = Arrays.toString(tokenEncrypt) + separator + user + separator + urlApi;
+            fichier.write(toWrite.getBytes());
+        } catch (Exception e) {
+            // Gestion des exceptions
+        } finally {
+            if (fichier != null) {
+                try {
+                    fichier.close();
+                } catch (IOException e) {
+                    // Gestion des exceptions
+                }
+            }
         }
     }
 
