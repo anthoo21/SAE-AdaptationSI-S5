@@ -39,7 +39,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Arrays;
+
 import android.util.Base64;
+
 
 import javax.crypto.KeyGenerator;
 
@@ -213,9 +215,11 @@ public class LoginActivity extends AppCompatActivity {
         try {
             fichier = openFileOutput("infouser.txt", Context.MODE_PRIVATE);
             // Concatène le token, le user et l'urlApi avec le séparateur
+
             Key key = EncryptAndDecrypteToken.getKey();
             String toWrite = Arrays.toString(tokenEncrypt) + separator + user
                     + separator + urlApi + separator + EncryptAndDecrypteToken.keyToString(key);
+
             fichier.write(toWrite.getBytes());
         } catch (Exception e) {
             // Gestion des exceptions

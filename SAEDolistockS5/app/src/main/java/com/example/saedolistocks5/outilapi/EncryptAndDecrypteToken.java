@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import android.util.Base64;
 
+
 import java.security.*;
 
 public class EncryptAndDecrypteToken {
@@ -47,5 +48,6 @@ public class EncryptAndDecrypteToken {
 
         // Reconstruit la clé en utilisant le tableau de bytes et l'algorithme
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, algorithm);
+
     }
 }
