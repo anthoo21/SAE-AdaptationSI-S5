@@ -10,4 +10,7 @@
     <item
         android:id="@+id/optionModification"
         android:title="@string/libelle_modification" />
+    <item
+        android:id="@+id/optionEnvoyer"
+        android:title="@string/libelle_envoyer"/>
 </menu>

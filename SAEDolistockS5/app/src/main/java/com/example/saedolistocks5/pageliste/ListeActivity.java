@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.pageconnexion.LoginActivity;
+import com.example.saedolistocks5.pagevisualisation.ItemVisualisation;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
@@ -27,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.Key;
 import java.util.ArrayList;
 
 public class ListeActivity extends AppCompatActivity {
@@ -46,7 +49,7 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Utilisateur courant sur l'application
      */
-    private String utilisateurCourant;
+    private String utilisateurCourant, token, URLApi;
 
     /**
      * Position de l'item liste
@@ -70,6 +73,8 @@ public class ListeActivity extends AppCompatActivity {
             initialiseListeAccueil();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         /*
@@ -91,13 +96,33 @@ public class ListeActivity extends AppCompatActivity {
         registerForContextMenu(listeAccueilRecyclerView);
 
     }
+
     /**
      * Méthode pour initialiser la liste des photos et des textes
      */
-    private void initialiseListeAccueil() throws IOException {
+    private void initialiseListeAccueil() throws Exception {
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
         BufferedReader infosUserTxt = new BufferedReader(infosUser);
         String[] valeurInfoUser = infosUserTxt.readLine().split(";;;;");
+
+        String tokenCrypte = valeurInfoUser[0];
+
+        // Supprimez les crochets et les espaces
+        tokenCrypte = tokenCrypte.replaceAll("[\\[\\]\\s]", "");
+
+        // Séparez les valeurs en utilisant la virgule comme délimiteur
+        String[] valeurs = tokenCrypte.split(",");
+
+        // Créez un tableau de bytes et remplissez-le avec les valeurs
+        byte[] tableauDeBytes = new byte[valeurs.length];
+        for (int i = 0; i < valeurs.length; i++) {
+            tableauDeBytes[i] = Byte.parseByte(valeurs[i].trim());
+        }
+        Key key = EncryptAndDecrypteToken.stringToKey(valeurInfoUser[3], "DES");
+
+        token = EncryptAndDecrypteToken.decrypt(tableauDeBytes, key);
+
+        URLApi = valeurInfoUser[2];
 
         utilisateurCourant = valeurInfoUser[1];
 
@@ -178,8 +203,10 @@ public class ListeActivity extends AppCompatActivity {
             Intent intention = new Intent(ListeActivity.this, Visualisation.class);
             intention.putExtra("positionItem", positionItemListe);
             startActivity(intention);
-        } else { // modification d'une liste
+        } else if (item.getItemId() == R.id.optionModification) { // modification d'une liste
 
+        } else if (item.getItemId() == R.id.optionEnvoyer) {
+            EnvoyerListe();
         }
         return (super.onContextItemSelected(item));
     }
@@ -220,6 +247,59 @@ public class ListeActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    public void EnvoyerListe() {
+        File filesDir = getFilesDir(); // Récupère le répertoire "files" de votre application
+        File[] files = filesDir.listFiles(); // Obtient la liste des fichiers dans le répertoire
+
+       for(String nomFichier : listeFichierUser) {
+            try {
+                InputStreamReader liste = new InputStreamReader(openFileInput(nomFichier));
+                BufferedReader listeText = new BufferedReader(liste);
+
+                String ligne;
+
+                String nomListe = "";
+                String codeArticle = "";
+                String libelleArticle = "";
+                String libelleEntrepot = "";
+                String quantite = "";
+                String mode = "";
+                String stockAvant = "";
+                String stockApres = "";
+                String date = "";
+                String utilisateur = utilisateurCourant;
+                String[] elementListe;
+                while ((ligne = listeText.readLine()) != null) {
+                    elementListe = ligne.split(";");
+                    nomListe = elementListe[1];
+                    codeArticle = elementListe[2];
+                    libelleArticle = elementListe[3];
+                    libelleEntrepot = elementListe[4];
+                    quantite = elementListe[5];
+                    mode = elementListe[6];
+                    stockAvant = elementListe[7];
+                    stockApres = elementListe[8];
+                    date = elementListe[9];
+                    EnvoyerListeSurDolibarr(nomListe, codeArticle, libelleArticle, libelleEntrepot,
+                            quantite, mode, stockAvant, stockApres, date, utilisateur);
+                }
+
+
+                listeText.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void EnvoyerListeSurDolibarr(String nomListe, String codeArticle, String libelleArticle,
+                             String libelleEntrepot, String quantite, String mode, String stockAvant,
+                             String stockApres, String date, String utilisateur) {
+        String urlAPI = String.format("", URLApi, token);
+        //TODO faire méthode envoyer liste et regarder mouvement de stock etc
 
     }
 
