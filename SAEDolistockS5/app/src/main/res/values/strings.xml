@@ -82,6 +82,7 @@
     <string name="libelle_visualisation">Visualiser</string>
     <string name="libelle_modification">Modifier</string>
     <string name="libelle_ajouter">Ajouter</string>
+    <string name="libelle_envoyer">Envoyer</string>
 
 
 </resources>

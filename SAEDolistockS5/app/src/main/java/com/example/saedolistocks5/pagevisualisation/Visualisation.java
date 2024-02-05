@@ -91,7 +91,7 @@ public class Visualisation extends AppCompatActivity {
                 heure = elementListe[10];
                 entrepot = elementListe[4];
                 listeArticles.add(new ItemVisualisation(elementListe[6], elementListe[3]
-                        + " (" + elementListe[2] + ")", elementListe[7]));
+                        + " (" + elementListe[2] + ")", elementListe[8]));
             }
 
             libelleListe.setText(nomListe);
