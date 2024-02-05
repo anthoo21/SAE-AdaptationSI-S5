@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             while(fichiertexte.readLine() != null) {
                 compteur += 1;
             }
-            if (compteur == 3) {
+            if (compteur == 1) {
                 ok = true;
             } else {
                 ok = false;

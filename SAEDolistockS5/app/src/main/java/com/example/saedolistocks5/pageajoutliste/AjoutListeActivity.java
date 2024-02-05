@@ -130,7 +130,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         for (int i = 0; i < valeurs.length; i++) {
             tableauDeBytes[i] = Byte.parseByte(valeurs[i].trim());
         }
-        Key key = EncryptAndDecrypteToken.getKey();
+        Key key = EncryptAndDecrypteToken.stringToKey(valeurFichierInfos[3], "DES");
 
         token = EncryptAndDecrypteToken.decrypt(tableauDeBytes, key);
 
@@ -357,12 +357,12 @@ public class AjoutListeActivity extends AppCompatActivity {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
-            simpleDateFormat.applyPattern("yyyyMMdd");
+            simpleDateFormat.applyPattern("yyyy-dd-MM");
             String nomListe = saisieNomListe.getText().toString();
             String nomEntrepot = saisieNomEntrepot.getText().toString();
             String modeMaj = choixMode.getSelectedItem().toString();
             String date = simpleDateFormat.format(Calendar.getInstance().getTime());
-            simpleDateFormat.applyPattern("HHmm");
+            simpleDateFormat.applyPattern("HH:mm");
             String heure = simpleDateFormat.format(Calendar.getInstance().getTime());
 
 

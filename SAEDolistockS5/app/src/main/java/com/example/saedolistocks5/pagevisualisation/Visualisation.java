@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.pageliste.ListeActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Visualisation extends AppCompatActivity {
@@ -24,13 +28,37 @@ public class Visualisation extends AppCompatActivity {
     private ArrayList<ItemVisualisation> listeArticles;
     private RecyclerView recyclerView;
 
+    /**
+     * Récupère la position de l'item
+     */
+    private int positionItem;
+
+    /**
+     * Liste des listes de l'utilisateur courant
+     */
+    private ArrayList<String> fichierUser;
+
+    private TextView libelleListe;
+
+    private TextView libelleDateHeure;
+
+    private TextView libelleEntrepot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.visualisation_liste_activity);
 
+        libelleListe = findViewById(R.id.libelleListe);
+        libelleDateHeure = findViewById(R.id.libelleDateCrea);
+        libelleEntrepot = findViewById(R.id.libelleEntrepot);
+
         recyclerView = findViewById(R.id.informationListe);
+
+        Intent intent = getIntent();
+        positionItem = intent.getIntExtra("positionItem", 0);
+
+        fichierUser = ListeActivity.getListeFichierUser();
         intialiserItem();
 
         LinearLayoutManager gestionnaireLineaire = new LinearLayoutManager(this);
@@ -39,39 +67,41 @@ public class Visualisation extends AppCompatActivity {
         ItemVisualisationAdpater adpater = new ItemVisualisationAdpater(listeArticles);
         recyclerView.setAdapter(adpater);
 
+
+
     }
 
     private void intialiserItem() {
         listeArticles = new ArrayList<>();
         try {
-            // TODO Faire autre méthode pour récup info fichier via intention ?
-            FileOutputStream fichierInser = openFileOutput("Visu.txt",Context.MODE_PRIVATE);
-            String Chaine1 = "Ajout;La liste;10";
-            String Chaine2 = "Modification;Une liste;442";
-            fichierInser.write(Chaine1.getBytes());
-            fichierInser.write("\n".getBytes());
-            fichierInser.write(Chaine2.getBytes());
+            String nomFichier = fichierUser.get(positionItem);
 
-
-            InputStreamReader fichier = new InputStreamReader(openFileInput("Visu.txt"));
+            InputStreamReader fichier = new InputStreamReader(openFileInput(nomFichier));
             BufferedReader fichiertxt = new BufferedReader(fichier);
-            // TODO for i nombre d'articles à recup de la liste via intention ?
-            for (int i = 0; i<2; i++) {
-                String txt = fichiertxt.readLine();
-                String[] ligne = txt.split(";");
-                // Si integrétion du user + 1 à tous les index de ligne
-                listeArticles.add(new ItemVisualisation(ligne[0], ligne[1],ligne[2]));
+            String ligne;
+            String nomListe = "";
+            String date = "";
+            String heure = "";
+            String entrepot = "";
+            String[] elementListe;
+            while ((ligne = fichiertxt.readLine()) != null) {
+                elementListe = ligne.split(";");
+                nomListe = elementListe[1];
+                date = elementListe[9];
+                heure = elementListe[10];
+                entrepot = elementListe[4];
+                listeArticles.add(new ItemVisualisation(elementListe[6], elementListe[3]
+                        + " (" + elementListe[2] + ")", elementListe[7]));
             }
+
+            libelleListe.setText(nomListe);
+            libelleDateHeure.setText(String.format("Créée le %s à %s", date, heure));
+            libelleEntrepot.setText("Entrepôt : " + entrepot);
         } catch (FileNotFoundException e) {
            // throw new RuntimeException(e); peu importe
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        /* bouchon
-        listeArticles.add(new ItemVisualisation("Ajout","Peluche 33 pouces en forme d'ours polaire","50"));
-        listeArticles.add(new ItemVisualisation("Ajout","test2","25000"));
-         */
     }
 
     /**

@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +13,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,10 +24,12 @@ import android.widget.TextView;
 import com.android.volley.NoConnectionError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.OutilAPI;
+import com.example.saedolistocks5.pagemain.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +39,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Arrays;
-import java.util.Base64;
+
+import android.util.Base64;
+
 
 import javax.crypto.KeyGenerator;
 
@@ -56,6 +64,9 @@ public class LoginActivity extends AppCompatActivity {
     // URL de l'API de l'utilisateur
     private String urlApi;
 
+    // EditText du champ mdp
+    private EditText passwordEditText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +75,29 @@ public class LoginActivity extends AppCompatActivity {
         passwordView = findViewById(R.id.champsMdp);
         urlApiView = findViewById(R.id.champsURL);
         texteErreurView = findViewById(R.id.texteErreur);
+
+        passwordEditText = findViewById(R.id.champsMdp);
+        passwordEditText.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (passwordEditText.getRight() - passwordEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        if(passwordEditText.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
+                            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye_closed, 0); // Icône œil fermé
+                        } else {
+                            passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye, 0); // Icône œil ouvert
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -181,7 +215,11 @@ public class LoginActivity extends AppCompatActivity {
         try {
             fichier = openFileOutput("infouser.txt", Context.MODE_PRIVATE);
             // Concatène le token, le user et l'urlApi avec le séparateur
-            String toWrite = Arrays.toString(tokenEncrypt) + separator + user + separator + urlApi;
+
+            Key key = EncryptAndDecrypteToken.getKey();
+            String toWrite = Arrays.toString(tokenEncrypt) + separator + user
+                    + separator + urlApi + separator + EncryptAndDecrypteToken.keyToString(key);
+
             fichier.write(toWrite.getBytes());
         } catch (Exception e) {
             // Gestion des exceptions
@@ -202,13 +240,8 @@ public class LoginActivity extends AppCompatActivity {
      * @param view  source du clic
      */
     public void onClickRetour(View view) {
-
-        // création d'une intention pour informer l'activté parente
-        Intent intentionRetour = new Intent();
-
-        // retour à l'activité parente et destruction de l'activité fille
-        setResult(Activity.RESULT_OK, intentionRetour);
-        finish(); // destruction de l'activité courante
+        Intent intention = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intention);
     }
 
 }

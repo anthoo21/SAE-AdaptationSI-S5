@@ -50,6 +50,7 @@ public class ListeAccueilAdapter extends RecyclerView.Adapter<ListeAccueilViewHo
     @Override
     public void onBindViewHolder(ListeAccueilViewHolder myViewHolder, int position) {
         ListeAccueil myObject = lesDonnees.get(position);
+        myViewHolder.btnMenu.setTag(position);
         myViewHolder.bind(myObject);
     }
 
