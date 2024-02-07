@@ -1,15 +1,16 @@
+/**
+ * Package de la SAE.
+ */
 package com.example.saedolistocks5.pagemain;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -17,22 +18,29 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.example.saedolistocks5.pageliste.ListeActivity;
 import com.example.saedolistocks5.pageconnexion.LoginActivity;
 import com.example.saedolistocks5.R;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Class de la mainActivity.
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView logo;
-
+    /**
+     * Méthode OnCreate.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.
+     *                           <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ImageView logo;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -56,11 +64,17 @@ public class MainActivity extends AppCompatActivity {
         animatorSet.start();
 
     }
-    public boolean ReadFichier() {
+
+    /**
+     * Méthode pour lire le fichier.
+     * @return un boolean pour savoir si le fichier est lisible
+     */
+    public boolean readFichier() {
         boolean ok;
         int compteur = 0;
+        InputStreamReader fichier;
         try {
-            InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
+            fichier = new InputStreamReader(openFileInput("infouser.txt"));
             BufferedReader fichiertexte = new BufferedReader(fichier);
             while(fichiertexte.readLine() != null) {
                 compteur += 1;
@@ -74,64 +88,53 @@ public class MainActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             ok = false;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
         return ok;
     }
+
+    /**
+     * Méthode de connexion
+     * @return un boolean pour savoir si je suis connecté
+     */
     public boolean connexion() {
         boolean estConnecter = false;
         ConnectivityManager connManager =
-                (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
-        if (mWifi != null && ReadFichier() && mWifi.isConnectedOrConnecting()) {
+        if (mWifi != null && readFichier() && mWifi.isConnectedOrConnecting()) {
             estConnecter = true;
         }
         return estConnecter;
     }
 
-    public int speed() {
-        int kbs = 0;
-        if (connexion()) {
-            ConnectivityManager connManager =
-                    (ConnectivityManager) getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
-            NetworkCapabilities nc = connManager.getNetworkCapabilities(connManager.getActiveNetwork());
-            kbs = nc.getLinkDownstreamBandwidthKbps();
-        }
-        return kbs;
-    }
-
-    public void onClickModeCo(View Button){
-        // co renvoie flase why ? passe pas dans le switch ?
-
-        /* v1
-                if(connexion() && ReadFichier()) {
-            Intent intention = new Intent(MainActivity.this, ListeActivity.class);
-            startActivity(intention);
-            return;
-        } else {
-            Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
-        }
-        if(!ReadFichier()) {
-            Intent intention = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intention);
-        }
-         */
-        if (connexion() && ReadFichier() && speed() > 0) {
+    /**
+     * Méthode pour cliquer et passer en mode connexion.
+     * @param button le boutton.
+     */
+    public void onClickModeCo(View button){
+        if (connexion() && readFichier()) {
             PhoneStateListener ecouterConnexion = new PhoneStateListener() {
                 @Override
+                @Deprecated
+                /**
+                 * Méthode qui agis en fonction de l'état de connexion.
+                 * @deprecated méthode déprécier.
+                 */
                 public void onDataConnectionStateChanged(int etat) {
                     switch (etat) {
                         case TelephonyManager.DATA_CONNECTED:
                         case TelephonyManager.DATA_CONNECTING:
-                            Intent intention = new Intent(MainActivity.this, ListeActivity.class);
+                            Intent intention =
+                                    new Intent(MainActivity.this, ListeActivity.class);
                             startActivity(intention);
                             break;
                         case TelephonyManager.DATA_DISCONNECTED:
                         case TelephonyManager.DATA_DISCONNECTING:
                         case TelephonyManager.DATA_SUSPENDED:
-                            //Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
                             Log.e(null,"Pas de connexion");
                             break;
+                        default:
                     }
                     super.onDataConnectionStateChanged(etat);
 
@@ -142,21 +145,24 @@ public class MainActivity extends AppCompatActivity {
         }
         if (!connexion()){
             Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
-            Log.i(null, String.valueOf(speed()));
         }
-        if(!ReadFichier()) {
+        if(!readFichier()) {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intention);
         }
     }
 
-    public void onClickModeDeco(View Button){
-        if (ReadFichier()) {
+    /**
+     * Méthode pour passer en mode deconnecte.
+     * @param button le bouton.
+     */
+    public void onClickModeDeco(View button){
+        if (readFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             startActivity(intention);
         } else {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
-            // Toat d'information, pas de mode déconnecté si ReadFichier() renvoie faux
+            // Toast d'information, pas de mode déconnecté si ReadFichier() renvoie faux
             Toast.makeText(this,R.string.messageRedirection,Toast.LENGTH_LONG).show();
             startActivity(intention);
         }

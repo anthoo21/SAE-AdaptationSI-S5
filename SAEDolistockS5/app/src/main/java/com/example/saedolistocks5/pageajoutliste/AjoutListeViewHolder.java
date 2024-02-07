@@ -1,24 +1,38 @@
+/**
+ * Package de la SAE.
+ */
 package com.example.saedolistocks5.pageajoutliste;
 
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.example.saedolistocks5.R;
-
-import org.w3c.dom.Text;
-
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * Classe AjoutListeViewHolder.
+ */
 public class AjoutListeViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView nomEtCodeArticle;
+    /**
+     * Textview pour le nom et le code de l'article.
+     */
+    private final TextView nomEtCodeArticle;
 
-    private TextView quantite;
+    /**
+     * Textview de la quantite.
+     */
+    private final TextView quantite;
 
+    /**
+     * boutton pour l'image.
+     */
     ImageButton btnDltArticle;
 
+    /**
+     * Constructeur
+     * @param itemView la vue
+     */
     public AjoutListeViewHolder(View itemView) {
         super(itemView);
         nomEtCodeArticle = itemView.findViewById(R.id.libelleArticle);
@@ -26,10 +40,14 @@ public class AjoutListeViewHolder extends RecyclerView.ViewHolder {
         btnDltArticle = itemView.findViewById(R.id.btnDltArticle);
     }
 
+    /**
+     * Place les informations contenus.
+     * @param maListe la liste.
+     */
     public void bind(AjoutListe maListe) {
-        nomEtCodeArticle.setText(maListe.getLibelleArticle() + " (" + maListe.getCodeArticle() + ")");
+        nomEtCodeArticle.setText(maListe.getLibelleArticle()
+                + " (" + maListe.getCodeArticle() + ")");
         quantite.setText(maListe.getQuantite());
     }
-
 
 }
