@@ -27,7 +27,7 @@ public class RequetesApi {
 
         String urlApi = String.format("http://%s/htdocs/api/index.php/warehouses?api_key=%s", URLApi, token);
 
-        OutilAPI.getApiRetour(context, urlApi, null, new OutilAPI.ApiCallback() {
+        OutilAPI.getApiRetour(context, urlApi,  new OutilAPI.ApiCallback() {
 
             @Override
             public void onSuccess(JSONObject result) {
@@ -64,7 +64,7 @@ public class RequetesApi {
 
         String urlApi = String.format("http://%s/htdocs/api/index.php/products?api_key=%s", URLApi, token);
 
-        OutilAPI.getApiRetour(context, urlApi, null, new OutilAPI.ApiCallback() {
+        OutilAPI.getApiRetour(context, urlApi,  new OutilAPI.ApiCallback() {
 
             @Override
             public void onSuccess(JSONObject result) {

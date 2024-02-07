@@ -1,30 +1,30 @@
+/**
+ * Package de la SAE.
+ */
 package com.example.saedolistocks5.pagevisualisation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.saedolistocks5.R;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class ItemVisualisationAdpater extends RecyclerView.Adapter<ItemVisualisationHolder> {
 
-    /**  Source de données à afficher */
+    /**  Source de données à afficher. */
     private List<ItemVisualisation> donnes;
 
     /**
-     * Constructeur
-     * @param donnes Listes contenant des items que l'adapter
+     * Constructeur.
+     * @param donnes Listes contenant des items que l'adapter.
      */
     public ItemVisualisationAdpater(List<ItemVisualisation> donnes) {
         this.donnes = donnes;
     }
 
     /**
-     *
+     * Constructeur.
      * @param parent The ViewGroup into which the new View will be added after it is bound to
      *               an adapter position.
      * @param viewType The view type of the new View.
@@ -51,7 +51,7 @@ public class ItemVisualisationAdpater extends RecyclerView.Adapter<ItemVisualisa
     }
 
     /**
-     *
+     * Getter de la taille de la liste.
      * @return la taile de liste
      */
     @Override

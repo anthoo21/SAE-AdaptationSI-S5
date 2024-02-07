@@ -1,16 +1,16 @@
+/**
+ * Package de la SAE.
+ */
 package com.example.saedolistocks5.pageliste;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +23,6 @@ import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.OutilAPI;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.pageconnexion.LoginActivity;
-import com.example.saedolistocks5.pagevisualisation.ItemVisualisation;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
@@ -34,14 +33,20 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 
 public class ListeActivity extends AppCompatActivity {
 
@@ -79,23 +84,29 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Liste des listes de l'utilisateur courant
      */
-    static ArrayList<String> listeFichierUser;
+    static ArrayList<String> listeFichierUser = new ArrayList<>();
 
-    @SuppressLint("MissingInflatedId")
+    /**
+     * Méthode onCreate.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.
+     *                           <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        RecyclerView listeAccueilRecyclerView;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_activity);
         listeAccueilRecyclerView = findViewById(R.id.liste_listes_accueil);
 
 
         try {
-            listeFichierUser = new ArrayList<>();
             initialiseListeAccueil();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
 
         listeCodeArticleVerif = new ArrayList<>();
@@ -126,12 +137,16 @@ public class ListeActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour initialiser la liste des photos et des textes
+     * Méthode pour initialiser la liste des photos et des textes.
+     * @throws IOException exception.
      */
-    private void initialiseListeAccueil() throws Exception {
+    private void initialiseListeAccueil() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String utilisateurCourant;
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
+        String[] valeurInfoUser;
         BufferedReader infosUserTxt = new BufferedReader(infosUser);
-        String[] valeurInfoUser = infosUserTxt.readLine().split(";;;;");
+        valeurInfoUser = infosUserTxt.readLine().split(";;;;");
+
 
         String tokenCrypte = valeurInfoUser[0];
 
@@ -162,19 +177,14 @@ public class ListeActivity extends AppCompatActivity {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile() && file.getName().startsWith(utilisateurCourant)) {
-                    try {
+                    InputStreamReader liste = new InputStreamReader(openFileInput(file.getName()));
+                    try (BufferedReader listeText = new BufferedReader(liste)) {
                         listeFichierUser.add(file.getName());
-                        InputStreamReader liste = new InputStreamReader(openFileInput(file.getName()));
-                        BufferedReader listeText = new BufferedReader(liste);
-
                         String[] ligneListe = listeText.readLine().split(";");
 
                         String nomListe = ligneListe[1];
                         String dateCreation = "Date de création : " + ligneListe[9];
                         String heureCreation = ligneListe[10];
-
-                        listeText.close();
-
                         listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -184,12 +194,10 @@ public class ListeActivity extends AppCompatActivity {
         }
 
     }
-
-    /* ===============================================================================
-     *                       méthodes pour gérer le menu CONTEXTUEL
-     * ===============================================================================
+    /**
+     * Méthod de click sur le menu.
+     * @param view la vue.
      */
-
     public void onClickMenu(View view) {
         // Affiche le menu contextuel
         positionItemListe = (int) view.getTag();
@@ -197,7 +205,12 @@ public class ListeActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode invoquée automatiquement lorsque l'utiisateur active le menu contextuel
+     * Constructeur.
+     * @param menu     The context menu that is being built.
+     * @param v        The view for which the context menu is being built.
+     * @param menuInfo Extra information about the item for which the
+     *                 context menu should be shown. This information will vary
+     *                 depending on the class of v.
      */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
@@ -210,22 +223,14 @@ public class ListeActivity extends AppCompatActivity {
         new MenuInflater(this).inflate(R.menu.menu_liste_accueil, menu);
     }
 
+
     /**
-     * Méthode invoquée automatiquement lorsque l'utilisateur choisit une option
-     * dans un menu contextuel
+     * Méthode pour l'item choisie.
+     * @param item The context menu item that was selected.
+     * @return l'item.
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-
-        /*
-         *  on accède à des informations supplémentaires sur la vue associée
-         *  au menu activé. L'information qui nous intéresse est la position
-         *  de l'élément de la liste sur lequel l'utilisateur a cliqué pour
-         *  activer le menu.
-         */
-        AdapterView.AdapterContextMenuInfo information =
-                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         if (item.getItemId() == R.id.optionVisualisation) { // visualisation d'une liste
             Intent intention = new Intent(ListeActivity.this, Visualisation.class);
@@ -235,25 +240,25 @@ public class ListeActivity extends AppCompatActivity {
 
         } else if (item.getItemId() == R.id.optionEnvoyer) {
             EnvoyerListe();
+        } else {
+            // modification d'une liste
         }
         return (super.onContextItemSelected(item));
     }
 
     /**
-     * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
-     * de retour vers l'activité principale
-     * @param view  source du clic
+     * Méthode invoquée automatiquement lors d'un clic retour.
+     * de retour vers l'activité principale.
+     * @param view  source du clic.
      */
     public void onClickRetour(View view) {
-
         Intent intention = new Intent(ListeActivity.this, MainActivity.class);
         startActivity(intention);
     }
 
     /**
-     * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
-     * d'ajout
-     * @param bouton  source du clic
+     * Méthode invoquée automatiquement lors d'un clic sur ajouter.
+     * @param bouton  source du clic.
      */
     public void onClickAjouter(View bouton) {
         Intent intention = new Intent(ListeActivity.this, AjoutListeActivity.class);
@@ -263,18 +268,12 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
      * de deconnexion
-     * @param view  source du clic
+     * @param view  source du clic.
      */
     public void onClickDeco(View view) {
-        try {
-            InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
-            BufferedReader fichiertexte = new BufferedReader(fichier);
             Intent intention = new Intent(ListeActivity.this, LoginActivity.class);
             deleteFile("infouser.txt");
             startActivity(intention);
-        } catch (FileNotFoundException e) {
-            Toast.makeText(this,R.string.messageModeConnecte,Toast.LENGTH_LONG).show();
-        }
 
     }
 
@@ -393,7 +392,11 @@ public class ListeActivity extends AppCompatActivity {
         adaptateur.notifyItemRemoved(positionItemListe);
     }
 
-    public static ArrayList<String> getListeFichierUser() {
+    /**
+     * getter de la liste des fichier users.
+     * @return la liste des fichiers Users.
+     */
+    public static List<String> getListeFichierUser() {
         return listeFichierUser;
     }
 }

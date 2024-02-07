@@ -18,12 +18,11 @@
     <string name="sous_titre_mode">Choix du mode</string>
     <string name="sous_titre_data">Données de l\'utilisateur</string>
     <string name="sous_titre_listes">Encore non envoyées</string>
-    <string name="sous_titre_mode_co">Mode connecté</string>
-    <string name="sous_titre_mode_deco">Mode déconnecté</string>
+
+    <string name="mode_co">Mode connecté</string>
+    <string name="mode_deco">Mode déconnecté</string>
 
     <!-- libellés des boutons -->
-    <string name="libelle_mode_deco">Mode déconnecté</string>
-    <string name="libelle_mode_co">Mode connecté</string>
     <string name="libelle_co">Se connecter</string>
     <string name="libelle_valider">Valider</string>
     <string name="libelle_Raz">Réinitialiser</string>
@@ -68,7 +67,7 @@
     <string name="label_update">Mode de mise à jour :</string>
     <string name="label_code_article">Code article :</string>
     <string name="label_quantite">Quantité :</string>
-    <string name="label_appercu">Apperçu de la liste</string>
+    <string name="label_appercu">Aperçu de la liste</string>
     <string name="label_unite">unités</string>
     <string name="label_ajout_modif">Ajout / Modification</string>
     <!-- Infos EditText -->
@@ -84,5 +83,22 @@
     <string name="libelle_ajouter">Ajouter</string>
     <string name="libelle_envoyer">Envoyer</string>
 
+    <!--  type de mode  -->
+    <string name="Ajout">Ajout</string>
+    <string name="Modification">Modification</string>
+
+    <!--  Entrepôt  -->
+    <string name="Entrepot">Entrepôt : </string>
+    <string name="EntrepotOk">Entrepôt Ok</string>
+    <string name="EntrepotIncorrect">Entrepôt incorrect !</string>
+
+    <!--  Erreurs  -->
+    <string name="ErreurSaisie">Erreur de saisie</string>
+    <string name="ErreurTousLesChamps">Erreur : tous les champs de sont pas renseignés</string>
+    <string name="ErreurJSON">Erreur : récupération du JSON incorrect</string>
+    <string name="Erreur">Erreur</string>
+    <string name="ErreurConnexionInternet">Erreur : vous n\'avez pas de connexion à Internet.</string>
+    <string name="ErreurLoginMdp">Erreur : login ou mot de passe incorrect.</string>
+    <string name="ErreurDolibarr">Erreur : accès impossible à Dolibarr</string>
 
 </resources>

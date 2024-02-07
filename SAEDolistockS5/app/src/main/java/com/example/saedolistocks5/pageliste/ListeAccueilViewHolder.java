@@ -1,7 +1,9 @@
+/**
+ * Package de la SAE.
+ */
 package com.example.saedolistocks5.pageliste;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -10,26 +12,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.saedolistocks5.R;
 
 /**
- * Description du contenant des items de la liste de type RecyclerView
- * permettant d'afficher des photos de Paris.
- * @author GP1
- * @version 1.0
+ * Class ListeAccueilViewHolder
  */
 public class ListeAccueilViewHolder extends RecyclerView.ViewHolder{
     /**
      * TextView qui contient le libellé de la liste
      */
-    private TextView titreListe;
+    private final TextView titreListe;
 
     /**
      * TextView qui contient la date de créa de la liste
      */
-    private TextView dateCrea;
+    private final TextView dateCrea;
 
     /**
      * TextView qui contient l'heure de créa de la liste
      */
-    private TextView heureCrea;
+    private final TextView heureCrea;
 
     /**
      * Bouton pour visualiser une liste
@@ -45,9 +44,9 @@ public class ListeAccueilViewHolder extends RecyclerView.ViewHolder{
      */
     public ListeAccueilViewHolder (View itemView) {
         super(itemView);
-        titreListe = (TextView) itemView.findViewById(R.id.titreListe);
-        dateCrea = (TextView) itemView.findViewById(R.id.dateCrea);
-        heureCrea = (TextView) itemView.findViewById(R.id.heureCrea);
+        titreListe = itemView.findViewById(R.id.titreListe);
+        dateCrea = itemView.findViewById(R.id.dateCrea);
+        heureCrea = itemView.findViewById(R.id.heureCrea);
         btnMenu = itemView.findViewById(R.id.btnMenu);
     }
     /**
