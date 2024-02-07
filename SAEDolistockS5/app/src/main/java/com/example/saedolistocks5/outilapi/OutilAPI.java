@@ -17,14 +17,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 public class OutilAPI {
 
     public interface ApiCallback {
         void onSuccess(JSONObject result);
-        void onSuccess(JSONArray result);
-        void onError(VolleyError error);
+        void onSuccess(JSONArray result) throws IOException;
+        void onError(VolleyError error) throws IOException;
     }
 
     private static RequestQueue fileRequete;
@@ -46,7 +48,8 @@ public class OutilAPI {
 
     public static int TIMEOUT_MS = 5000;
 
-    public static void getApiRetour(Context context, String url, final ApiCallback callback) {
+    public static void getApiRetour(Context context, String url,
+                                    JSONArray jsonBody, final ApiCallback callback) {
         // Créer une nouvelle file de requêtes Volley
         JsonObjectRequest requete = new JsonObjectRequest(
                 Request.Method.GET,
@@ -61,7 +64,11 @@ public class OutilAPI {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        callback.onError(error);
+                        try {
+                            callback.onError(error);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
         );
@@ -72,13 +79,21 @@ public class OutilAPI {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        callback.onError(error);
+                        try {
+                            callback.onError(error);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
         );
@@ -89,6 +104,62 @@ public class OutilAPI {
         ));
         getFileRequete(context).add(requete);
         getFileRequete(context).add(arrayRequete);
+
+    }
+
+    public static void GetApiJsonObject(Context context, String url,
+                                        final ApiCallback callback) {
+        // Créer une nouvelle file de requêtes Volley
+        JsonObjectRequest requete = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        callback.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try {
+                            callback.onError(error);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+        );
+        getFileRequete(context).add(requete);
+    }
+
+    public static void PostApiJson(Context context, String url,
+                            JSONObject jsonBody, final ApiCallback callback) {
+        JsonObjectRequest postRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        callback.onSuccess(response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Gérez les erreurs ici
+                        try {
+                            callback.onError(error);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+        );
+        getFileRequete(context).add(postRequest);
     }
 }
 
