@@ -1,9 +1,14 @@
+/**
+ * Package de la SAE
+ */
 package com.example.saedolistocks5.pageajoutliste;
+
+import static com.example.saedolistocks5.outilapi.RequetesApi.getArticles;
+import static com.example.saedolistocks5.outilapi.RequetesApi.getListeEntrepot;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,25 +19,19 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.VolleyError;
 import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.OutilAPI;
+import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.pageliste.ListeActivity;
-import com.example.saedolistocks5.pagemain.MainActivity;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,30 +41,125 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import com.example.saedolistocks5.outilsdivers.Quartet;
+
+/**
+ * Classe AjoutListeActivity
+ */
 public class AjoutListeActivity extends AppCompatActivity {
 
-    // Déclaration des composants de l'interface utilisateur
-    private EditText saisieNomListe, saisieNomEntrepot, saisieQuantite;
+    /**
+     * Editext pour la saisie du Nom de la liste.
+     */
+    private EditText saisieNomListe;
+    /**
+     * Editext pour la saisie du nom de l'entrepot.
+     */
+    private EditText saisieNomEntrepot;
+    /**
+     * Editext pour saisir la quantite.
+     */
+    private EditText saisieQuantite;
+    /**
+     * AutoCompleteTextView pour la saisie du code article
+     */
     private AutoCompleteTextView saisieCodeArticle;
-    private TextView libelleStock, texteErreur, erreurSaisies;
+    /**
+     * Textview du libelle du stock.
+     */
+    private TextView libelleStock;
+    /**
+     * Textview du texte d'erreur
+     */
+    private TextView texteErreur;
+    /**
+     * textView des erreurs de saisies.
+     */
+    private TextView erreurSaisies;
+    /**
+     * Spinner du choix du mode.
+     */
     private Spinner choixMode;
+    /**
+     * RecyclerView d'ajout article.
+     */
     private RecyclerView ajoutArticleRecyclerView;
 
-    // Listes pour stocker les données
-    private ArrayList<String> listeEntrepots, listeArticles, listeStock, listeChoixMode, listeRef;
-    private ArrayList<Integer> listeStockAvant, listeStockApres, listeQuantiteSaisie;
+    /**
+     * Liste des entrepots.
+     */
+    public static ArrayList<String> listeEntrepots;
+    /**
+     * Listes des articles.
+     */
+    public static ArrayList<String> listeArticles;
+    /**
+     * Listes des stocks.
+     */
+    public static ArrayList<String> listeStock;
+    /**
+     * Liste du choix du mode.
+     */
+    private ArrayList<String> listeChoixMode;
+    /**
+     * Liste pour la réference.
+     */
+    public static ArrayList<String> listeRef;
+    /**
+     * Liste avant les stocks.
+     */
+    private ArrayList<Integer> listeStockAvant;
+    /**
+     * Liste des stocks apres modification ou ajout.
+     */
+    private ArrayList<Integer> listeStockApres;
+    /**
+     * Liste pour la quantite saisie.
+     */
+    private ArrayList<Integer> listeQuantiteSaisie;
+
+    public static ArrayList<Pair<String, String>> listeArticlesIdEtNom;
+
+    public static ArrayList<Quartet<String, String, String, String>> listeInfosArticle;
+
+    public static ArrayList<Pair<String, String>> listeEntrepotIdEtNom;
+    /**
+     * Liste des articles à ajouter.
+     */
     private ArrayList<AjoutListe> articlesAAjouter;
-
-    // Adapteurs pour les vues
+    /**
+     * Adapter pour l'ajout d'une liste.
+     */
     private AjoutListeAdapter adaptateurAjoutListe;
+    /**
+     * Adpater pour la liste du choix du mode.
+     */
     private ArrayAdapter<String> adaptateurListeChoixMode;
-
-    // Token, utilisateur et URL de dolibarr à utiliser pour contacter l'API
-    private String token, user, URLApi;
-
-    // Variables de contrôle
+    /**
+     * String por le token de l'api.
+     */
+    private String token;
+    /**
+     * String pour le user de l'api.
+     */
+    private String user;
+    /**
+     * String pour l'URL de l'API.
+     */
+    private String urlApi;
+    /**
+     * Pour controler sir l'entrepot existe.
+     */
     private boolean entrepotOk;
 
+    /**
+     * Méthode on create
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.
+     *                           <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +168,6 @@ public class AjoutListeActivity extends AppCompatActivity {
         initialiserComposants();
         try {
             initialiserVariableAPI();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -107,10 +199,17 @@ public class AjoutListeActivity extends AppCompatActivity {
         listeStockAvant = new ArrayList<>();
         listeStockApres = new ArrayList<>();
         listeQuantiteSaisie = new ArrayList<>();
+        listeArticlesIdEtNom = new ArrayList<>();
+        listeEntrepotIdEtNom = new ArrayList<>();
+        listeInfosArticle = new ArrayList<>();
 
         entrepotOk = false;
     }
 
+    /**
+     * Méthode pour initialiser l'API.
+     * @throws Exception exception.
+     */
     private void initialiserVariableAPI() throws Exception {
         InputStreamReader fichier = new InputStreamReader(openFileInput("infouser.txt"));
         BufferedReader fichiertexte = new BufferedReader(fichier);
@@ -136,7 +235,7 @@ public class AjoutListeActivity extends AppCompatActivity {
 
         user = valeurFichierInfos[1];
 
-        URLApi = valeurFichierInfos[2];
+        urlApi = valeurFichierInfos[2];
     }
 
     /**
@@ -151,10 +250,11 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Initialisation et configuration des adapteurs.
      */
     private void initialiserAdapteurs() {
-        listeChoixMode.add("Ajout");
-        listeChoixMode.add("Modification");
+        listeChoixMode.add(String.valueOf(R.string.Ajout));
+        listeChoixMode.add(String.valueOf(R.string.Modification));
 
-        adaptateurListeChoixMode = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listeChoixMode);
+        adaptateurListeChoixMode = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, listeChoixMode);
         choixMode.setAdapter(adaptateurListeChoixMode);
 
         adaptateurAjoutListe = new AjoutListeAdapter(articlesAAjouter);
@@ -166,80 +266,18 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Chargement des données initiales pour les entrepôts et les articles.
      */
     private void chargerDonneesInitiales() {
-        getListeEntrepot();
-        getArticles();
+        getListeEntrepot(urlApi, token, getApplicationContext(), "AjoutListe");
+        getArticles(urlApi, token, getApplicationContext(), "AjoutListe");
     }
 
-    public void getListeEntrepot() {
-
-        String urlApi = String.format("http://%s/htdocs/api/index.php/warehouses?api_key=%s", URLApi, token);
-
-        OutilAPI.getApiRetour(getApplicationContext(), urlApi, new OutilAPI.ApiCallback() {
-
-            @Override
-            public void onSuccess(JSONObject result) {
-                // Null ici
-            }
-
-            @Override
-            public void onSuccess(JSONArray result) {
-                try {
-                    for (int i = 0; i < result.length(); i++) {
-                        JSONObject item = result.getJSONObject(i);
-                        String ref = item.getString("ref");
-                        listeEntrepots.add(ref);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-
-            }
-        });
-    }
-
-    public void getArticles() {
-
-        String urlApi = String.format("http://%s/htdocs/api/index.php/products?api_key=%s", URLApi, token);
-
-        OutilAPI.getApiRetour(getApplicationContext(), urlApi, new OutilAPI.ApiCallback() {
-
-            @Override
-            public void onSuccess(JSONObject result) {
-                // Null ici
-            }
-
-            @Override
-            public void onSuccess(JSONArray result) {
-                try {
-                    for (int i = 0; i < result.length(); i++) {
-                        JSONObject item = result.getJSONObject(i);
-                        String label = item.getString("label");
-                        String stockReel = item.getString("stock_reel");
-                        String refArticle = item.getString("ref");
-                        listeArticles.add(label);
-                        listeStock.add(stockReel.equals("null") ? "0" : stockReel);
-                        listeRef.add(refArticle);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-    }
-
+    /**
+     * Click pour ajouter
+     * @param view la vue
+     */
     public void clickAjouter(View view) {
         Pair<Boolean, String> verif = verificationChamp(false);
-        if(!verif.first) {
-            erreurSaisies.setText("Erreur de saisie : " + verif.second);
+        if(Boolean.FALSE.equals(verif.first)) {
+            erreurSaisies.setText(R.string.ErreurSaisie + "" +  verif.second);
             return;
         } else {
             erreurSaisies.setText("");
@@ -259,7 +297,11 @@ public class AjoutListeActivity extends AppCompatActivity {
             iteration++;
         }
 
-        if(choixMode.getSelectedItem().toString() == "Ajout") {
+        // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
+        saisieNomEntrepot.setEnabled(false);
+
+        if(choixMode.getSelectedItem().toString().equals(String.valueOf(R.string.Ajout))) {
+
             quantite += quantiteSaisie;
             if(listeChoixMode.size() > 1) {
                 listeChoixMode.remove(1);
@@ -278,6 +320,11 @@ public class AjoutListeActivity extends AppCompatActivity {
         adaptateurAjoutListe.notifyDataSetChanged(); // Mise à jour de l'adaptateur après l'ajout
     }
 
+    /**
+     *
+     * @param verifValiderFichier un boolean verifiant le fichier
+     * @return une pair
+     */
     public Pair<Boolean, String> verificationChamp(boolean verifValiderFichier) {
         String valeurSaisieArticle = saisieCodeArticle.getText().toString();
         String valeurSaisieQuantite = saisieQuantite.getText().toString();
@@ -288,8 +335,7 @@ public class AjoutListeActivity extends AppCompatActivity {
                 return new Pair<>(false, getString(R.string.veuillez_saisir_nom_liste));
             }
 
-            String valeurSaisieEntrepot = saisieNomEntrepot.getText().toString().trim();
-            if (!listeEntrepots.contains(valeurSaisieEntrepot)) {
+            if (!entrepotOk) {
                 return new Pair<>(false, getString(R.string.entrepot_incorrect));
             }
             return new Pair<>(true, "");
@@ -316,7 +362,10 @@ public class AjoutListeActivity extends AppCompatActivity {
         return new Pair<>(true, "");
     }
 
-
+    /**
+     * Suppresion de l'article
+     * @param view la vue
+     */
     public void supprimerArticle(View view) {
         int position = (int) view.getTag();
         if (position >= 0 && position < articlesAAjouter.size()) {
@@ -325,13 +374,18 @@ public class AjoutListeActivity extends AppCompatActivity {
         }
         // Cas où il n'y a plus d'article ajouter,
         // On remet à jour le choix du mode
-        if(articlesAAjouter.size() == 0) {
+        if(articlesAAjouter.isEmpty()) {
             listeChoixMode.clear();
             listeChoixMode.add("Ajout");
             listeChoixMode.add("Modification");
+            saisieNomEntrepot.setEnabled(true);
         }
     }
 
+    /**
+     * Réinitialisation des champs
+     * @param view la vue
+     */
     public void reinitialiserChamp(View view) {
         saisieNomListe.setText("");
         saisieNomEntrepot.setText("");
@@ -343,16 +397,22 @@ public class AjoutListeActivity extends AppCompatActivity {
         listeChoixMode.clear();
         listeChoixMode.add("Ajout");
         listeChoixMode.add("Modification");
+        saisieNomEntrepot.setEnabled(true);
         adaptateurListeChoixMode.notifyDataSetChanged();
         articlesAAjouter.clear();
         adaptateurAjoutListe.notifyDataSetChanged();
     }
 
+    /**
+     * Validation de la liste
+     * @param view la vue
+     * @throws IOException l'exception
+     */
     public void validerListe(View view) throws IOException {
         Pair<Boolean, String> verif = verificationChamp(true);
 
-        if(!verif.first) {
-            erreurSaisies.setText("Erreur saisie : " + verif.second);
+        if(Boolean.FALSE.equals(verif.first)) {
+            erreurSaisies.setText(R.string.ErreurSaisie + " " + verif.second);
         } else {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
@@ -378,7 +438,8 @@ public class AjoutListeActivity extends AppCompatActivity {
             String nomFichier = user + nomListe.toLowerCase().replace(" ", "")
                     + date + heure;
 
-            FileOutputStream fichier = openFileOutput(nomFichier + ".txt", Context.MODE_PRIVATE);
+            FileOutputStream fichier = openFileOutput(nomFichier + ".txt",
+                    Context.MODE_PRIVATE);
             for(int i = 0; i < articlesAAjouter.size(); i++) {
                 refArticle = listeRef.get(i);
                 libelleArticle = listeArticles.get(i);
@@ -398,39 +459,98 @@ public class AjoutListeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Verification de l'entrepot.
+     */
     private class VerificationEntrepotTextWatcher implements TextWatcher {
+        /**
+         * Avant la modification du texte.
+         * @param s charSequence.
+         * @param start int.
+         * @param count int.
+         * @param after int.
+         */
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             // Avant la modification du texte, pas d'action nécessaire
         }
 
+        /**
+         * Lorsque que le texte change.
+         * @param s charSequence.
+         * @param start int.
+         * @param before int.
+         * @param count int.
+         */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             // A chaque modification du texte
             String saisie = s.toString();
+            Pair<String, String> idEtNomEntrepotActuel = new Pair<>("", "");
+            listeEntrepots = new ArrayList<>();
+            for(Pair<String, String> pair : listeEntrepotIdEtNom)
+            {
+                listeEntrepots.add(pair.second);
+                if(pair.second.contains(saisie)) {
+                    idEtNomEntrepotActuel = new Pair<>(pair.first, pair.second);
+                }
+            }
             if (listeEntrepots.contains(saisie)) {
-                texteErreur.setText("Entrepot OK"); // Pas d'erreur
+                texteErreur.setText(R.string.EntrepotOk); // Pas d'erreur
                 texteErreur.setTextColor(getResources().getColor(R.color.green, getTheme()));
                 entrepotOk = true;
+                VerifArticles(idEtNomEntrepotActuel.first);
             } else {
-                texteErreur.setText("Entrepôt incorrect !");
+                listeArticles.clear();
+                listeRef.clear();
+                listeStock.clear();
+                texteErreur.setText(R.string.EntrepotIncorrect);
                 texteErreur.setTextColor(getResources().getColor(R.color.red, getTheme())); // Utilisez une couleur appropriée
                 entrepotOk = false;
             }
         }
 
+        /**
+         * Pas d'action.
+         * @param s un editable.
+         */
         @Override
         public void afterTextChanged(Editable s) {
             // Après la modification du texte, pas d'action nécessaire
         }
     }
 
+    public void VerifArticles(String idEntrepot) {
+        for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
+            RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
+                    "AjoutListe", quartet.first(), idEntrepot,quartet);
+        }
+    }
+
+
+    /**
+     * Filtre de l'article.
+     */
     private class FiltreArticleTextWatcher implements TextWatcher {
+        /**
+         * Avant qu'un texte change.
+         * @param s charsequence.
+         * @param start int.
+         * @param count int.
+         * @param after int.
+         */
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             // Avant la modification du texte, pas d'action nécessaire
         }
 
+        /**
+         * Quand le texte change..
+         * @param s charsequence.
+         * @param start int.
+         * @param before int.
+         * @param count int.
+         */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             // A chaque modification du texte
@@ -443,7 +563,8 @@ public class AjoutListeActivity extends AppCompatActivity {
                     }
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(AjoutListeActivity.this, android.R.layout.simple_dropdown_item_1line, suggestions);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(AjoutListeActivity.this,
+                        android.R.layout.simple_dropdown_item_1line, suggestions);
                 saisieCodeArticle.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
@@ -457,6 +578,10 @@ public class AjoutListeActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * Apres que le texte change
+         * @param s editable
+         */
         @Override
         public void afterTextChanged(Editable s) {
             // Après la modification du texte, pas d'action nécessaire

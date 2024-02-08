@@ -1,28 +1,36 @@
+/**
+ * Package de la SAE
+ */
 package com.example.saedolistocks5.pageajoutliste;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-
 import com.example.saedolistocks5.R;
-
 import java.util.List;
-
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * Classe AjoutListeAdapter.
+ */
 public class AjoutListeAdapter extends RecyclerView.Adapter<AjoutListeViewHolder> {
 
-    private List<AjoutListe> lesDonnees;
+    /**
+     * Liste ajout liste.
+     */
+    private final List<AjoutListe> lesDonnees;
 
-
+    /**
+     * Constructeur.
+     * @param donnees les données.
+     */
     public AjoutListeAdapter(List<AjoutListe> donnees) {
         lesDonnees = donnees;
     }
 
     /**
-     * Renvoie un contenant de type ListeAccueilViewHolder qui permettra d'afficher
-     * un élément de la liste
+     * Renvoie un contenant de type AjoutListeViewHolder qui permettra d'afficher
+     * un élément de la liste.
      */
     @Override
     public AjoutListeViewHolder onCreateViewHolder(ViewGroup viewGroup, int itemType) {
@@ -33,7 +41,7 @@ public class AjoutListeAdapter extends RecyclerView.Adapter<AjoutListeViewHolder
     }
 
     /**
-     * On remplit un item de la liste en fonction de sa position
+     * On remplit un item de la liste en fonction de sa position.
      */
     @Override
     public void onBindViewHolder(AjoutListeViewHolder myViewHolder, int position) {
@@ -43,12 +51,10 @@ public class AjoutListeAdapter extends RecyclerView.Adapter<AjoutListeViewHolder
     }
 
     /**
-     * Renvoie la taille de la liste
+     * Renvoie la taille de la liste.
      */
     @Override
     public int getItemCount() {
         return lesDonnees.size();
     }
-
-
 }

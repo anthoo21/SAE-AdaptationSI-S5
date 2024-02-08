@@ -1,51 +1,65 @@
+/**
+ * Package de la SAE.
+ */
 package com.example.saedolistocks5.pagevisualisation;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.pageliste.ListeActivity;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
+/**
+ * Class Visualisation.
+ */
 public class Visualisation extends AppCompatActivity {
 
-    private ArrayList<ItemVisualisation> listeArticles;
-    private RecyclerView recyclerView;
-
     /**
-     * Récupère la position de l'item
+     * ArrayList des items pour visualiser.
+     */
+    private ArrayList<ItemVisualisation> listeArticles;
+    /**
+     * Récupère la position de l'item.
      */
     private int positionItem;
-
     /**
-     * Liste des listes de l'utilisateur courant
+     * Liste des listes de l'utilisateur courant.
      */
     private ArrayList<String> fichierUser;
-
+    /**
+     * TextView libelleListe.
+     */
     private TextView libelleListe;
-
+    /**
+     * TextView libelleDate.
+     */
     private TextView libelleDateHeure;
-
+    /**
+     * TextView du libelleEntrepot
+     */
     private TextView libelleEntrepot;
 
+    /**
+     * Méthode OnCreate.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.
+     *                          <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        RecyclerView recyclerView;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.visualisation_liste_activity);
 
@@ -58,7 +72,7 @@ public class Visualisation extends AppCompatActivity {
         Intent intent = getIntent();
         positionItem = intent.getIntExtra("positionItem", 0);
 
-        fichierUser = ListeActivity.getListeFichierUser();
+        fichierUser = (ArrayList<String>) ListeActivity.getListeFichierUser();
         intialiserItem();
 
         LinearLayoutManager gestionnaireLineaire = new LinearLayoutManager(this);
@@ -66,16 +80,15 @@ public class Visualisation extends AppCompatActivity {
 
         ItemVisualisationAdpater adpater = new ItemVisualisationAdpater(listeArticles);
         recyclerView.setAdapter(adpater);
-
-
-
     }
 
+    /**
+     * Méthode inialiser les items.
+     */
     private void intialiserItem() {
         listeArticles = new ArrayList<>();
         try {
             String nomFichier = fichierUser.get(positionItem);
-
             InputStreamReader fichier = new InputStreamReader(openFileInput(nomFichier));
             BufferedReader fichiertxt = new BufferedReader(fichier);
             String ligne;
@@ -93,24 +106,21 @@ public class Visualisation extends AppCompatActivity {
                 listeArticles.add(new ItemVisualisation(elementListe[6], elementListe[3]
                         + " (" + elementListe[2] + ")", elementListe[8]));
             }
-
             libelleListe.setText(nomListe);
             libelleDateHeure.setText(String.format("Créée le %s à %s", date, heure));
-            libelleEntrepot.setText("Entrepôt : " + entrepot);
+            libelleEntrepot.setText(R.string.Entrepot + entrepot);
         } catch (FileNotFoundException e) {
            // throw new RuntimeException(e); peu importe
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
-    /**
-     * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
-     * de retour vers l'activité principale
-     * @param view  source du clic
-     */
-
     // TODO manque la pop-up entre liste activity et visu pour l'intention
+    /**
+     * Méthode quand on clique sur le boton retour.
+     * @param view la vue
+     */
     public void onClickRetour(View view) {
 
         // création d'une intention pour informer l'activté parente
