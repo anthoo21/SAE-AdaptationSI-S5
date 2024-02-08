@@ -84,6 +84,7 @@ public class RequetesApi {
                         if(classeAppelante.equals("AjoutListe")) {
                             listeInfosArticle.add(new Quartet<>(idArticle, label, refArticle,
                                     stockReel.equals("null") ? "0" : stockReel));
+                            listeArticlesIdEtNom.add(new Pair<>(idArticle, label));
                         } else if (classeAppelante.equals("Liste")) {
                             listeCodeArticleVerif.add(refArticle);
                         }
@@ -110,10 +111,13 @@ public class RequetesApi {
         OutilAPI.GetApiJsonObject(context, urlApi, new OutilAPI.ApiCallback() {
 
             @Override
-            public void onSuccess(JSONObject result) {
+            public void onSuccess(JSONObject result) throws JSONException {
+                JSONObject stockWarehouses = result.getJSONObject("stock_warehouses");
+                JSONObject idStock = stockWarehouses.getJSONObject(idEntrepot);
+                String stock = idStock.getString("real");
                 listeArticles.add(quartet.second());
                 listeRef.add(quartet.third());
-                listeStock.add(quartet.fourth());
+                listeStock.add(stock);
             }
 
             @Override

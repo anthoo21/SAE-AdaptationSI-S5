@@ -108,7 +108,7 @@ public class Visualisation extends AppCompatActivity {
             }
             libelleListe.setText(nomListe);
             libelleDateHeure.setText(String.format("Créée le %s à %s", date, heure));
-            libelleEntrepot.setText(R.string.Entrepot + entrepot);
+            libelleEntrepot.setText(getString(R.string.Entrepot) + " " + entrepot);
         } catch (FileNotFoundException e) {
            // throw new RuntimeException(e); peu importe
         } catch (IOException e) {

@@ -12,6 +12,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class OutilAPI {
          * Méthode en cas de succès.
          * @param result le résultat sous forme de JSONObject.
          */
-        void onSuccess(JSONObject result);
+        void onSuccess(JSONObject result) throws JSONException;
 
         /**
          * Méthode en cas de succès.
@@ -87,7 +88,11 @@ public class OutilAPI {
                      */
                     @Override
                     public void onResponse(JSONObject response) {
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -147,7 +152,11 @@ public class OutilAPI {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -169,7 +178,11 @@ public class OutilAPI {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
 
                     }
                 },
