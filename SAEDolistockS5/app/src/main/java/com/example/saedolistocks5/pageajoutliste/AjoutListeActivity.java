@@ -118,6 +118,8 @@ public class AjoutListeActivity extends AppCompatActivity {
      */
     private ArrayList<Integer> listeQuantiteSaisie;
 
+    private ArrayList<String> listeIdArticle;
+
     public static ArrayList<Pair<String, String>> listeArticlesIdEtNom;
 
     public static ArrayList<Quartet<String, String, String, String>> listeInfosArticle;
@@ -202,6 +204,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         listeArticlesIdEtNom = new ArrayList<>();
         listeEntrepotIdEtNom = new ArrayList<>();
         listeInfosArticle = new ArrayList<>();
+        listeIdArticle = new ArrayList<>();
 
         entrepotOk = false;
     }
@@ -250,8 +253,8 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Initialisation et configuration des adapteurs.
      */
     private void initialiserAdapteurs() {
-        listeChoixMode.add(String.valueOf(R.string.Ajout));
-        listeChoixMode.add(String.valueOf(R.string.Modification));
+        listeChoixMode.add(getString(R.string.Ajout));
+        listeChoixMode.add(getString(R.string.Modification));
 
         adaptateurListeChoixMode = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, listeChoixMode);
@@ -286,13 +289,21 @@ public class AjoutListeActivity extends AppCompatActivity {
         String libelleArticle = "";
         int quantite = 0;
         int iteration = 0;
+        String idArticle = "";
         String valeurSaisieCodeArticle = saisieCodeArticle.getText().toString();
         int quantiteSaisie = Integer.parseInt(saisieQuantite.getText().toString());
         for(String valLabel : listeRef) {
             if(valeurSaisieCodeArticle.equals(valLabel)) {
-                libelleArticle = listeArticles.get(iteration);
                 quantite = Integer.parseInt(listeStock.get(iteration));
                 listeStockAvant.add(Integer.valueOf(listeStock.get(iteration)));
+            }
+            iteration++;
+        }
+        iteration = 0;
+        for(Quartet<String, String, String, String> pair : listeInfosArticle) {
+            if(valeurSaisieCodeArticle.equals(pair.third())) {
+                libelleArticle = pair.second();
+                idArticle = pair.first();
             }
             iteration++;
         }
@@ -300,7 +311,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
         saisieNomEntrepot.setEnabled(false);
 
-        if(choixMode.getSelectedItem().toString().equals(String.valueOf(R.string.Ajout))) {
+        if(choixMode.getSelectedItem().toString().equals(getString(R.string.Ajout))) {
 
             quantite += quantiteSaisie;
             if(listeChoixMode.size() > 1) {
@@ -316,6 +327,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         }
         listeQuantiteSaisie.add(quantiteSaisie);
         listeStockApres.add(quantite);
+        listeIdArticle.add(idArticle);
         articlesAAjouter.add(new AjoutListe(libelleArticle,  valeurSaisieCodeArticle, quantite + ""));
         adaptateurAjoutListe.notifyDataSetChanged(); // Mise à jour de l'adaptateur après l'ajout
     }
@@ -371,13 +383,14 @@ public class AjoutListeActivity extends AppCompatActivity {
         if (position >= 0 && position < articlesAAjouter.size()) {
             articlesAAjouter.remove(position);
             adaptateurAjoutListe.notifyItemRemoved(position);
+            listeQuantiteSaisie.remove(position);
         }
         // Cas où il n'y a plus d'article ajouter,
         // On remet à jour le choix du mode
         if(articlesAAjouter.isEmpty()) {
             listeChoixMode.clear();
-            listeChoixMode.add("Ajout");
-            listeChoixMode.add("Modification");
+            listeChoixMode.add(getString(R.string.Ajout));
+            listeChoixMode.add(getString(R.string.Modification));
             saisieNomEntrepot.setEnabled(true);
         }
     }
@@ -395,8 +408,8 @@ public class AjoutListeActivity extends AppCompatActivity {
         texteErreur.setText("");
         erreurSaisies.setText("");
         listeChoixMode.clear();
-        listeChoixMode.add("Ajout");
-        listeChoixMode.add("Modification");
+        listeChoixMode.add(getString(R.string.Ajout));
+        listeChoixMode.add(getString(R.string.Modification));
         saisieNomEntrepot.setEnabled(true);
         adaptateurListeChoixMode.notifyDataSetChanged();
         articlesAAjouter.clear();
@@ -431,8 +444,17 @@ public class AjoutListeActivity extends AppCompatActivity {
             String quantiteSaisie;
             String stockAvant;
             String stockApres;
+            String idArticle;
+
+            String idEntrepot = "";
 
             String ligneFichier;
+
+            for(Pair<String, String> pair : listeEntrepotIdEtNom) {
+                if(pair.second.equals(nomEntrepot)) {
+                    idEntrepot = pair.first;
+                }
+            }
 
             erreurSaisies.setText("");
             String nomFichier = user + nomListe.toLowerCase().replace(" ", "")
@@ -441,15 +463,15 @@ public class AjoutListeActivity extends AppCompatActivity {
             FileOutputStream fichier = openFileOutput(nomFichier + ".txt",
                     Context.MODE_PRIVATE);
             for(int i = 0; i < articlesAAjouter.size(); i++) {
-                refArticle = listeRef.get(i);
-                libelleArticle = listeArticles.get(i);
+                refArticle = articlesAAjouter.get(i).getCodeArticle();
+                libelleArticle = articlesAAjouter.get(i).getLibelleArticle();
                 quantiteSaisie = listeQuantiteSaisie.get(i).toString();
                 stockAvant = listeStockAvant.get(i).toString();
                 stockApres = articlesAAjouter.get(i).getQuantite();
-
-                ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
+                idArticle = listeIdArticle.get(i);
+                ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
                         user, nomListe, refArticle, libelleArticle, nomEntrepot, quantiteSaisie,
-                        modeMaj, stockAvant, stockApres, date, heure, "\n");
+                        modeMaj, stockAvant, stockApres, date, heure, idArticle, idEntrepot, "\n");
                 fichier.write(ligneFichier.getBytes());
             }
 

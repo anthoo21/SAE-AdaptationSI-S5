@@ -141,7 +141,6 @@ public class ListeActivity extends AppCompatActivity {
      * @throws IOException exception.
      */
     private void initialiseListeAccueil() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        String utilisateurCourant;
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
         String[] valeurInfoUser;
         BufferedReader infosUserTxt = new BufferedReader(infosUser);
@@ -284,23 +283,20 @@ public class ListeActivity extends AppCompatActivity {
         BufferedReader listeText = new BufferedReader(liste);
 
         String ligne;
-
-
-
-
-        String utilisateur = utilisateurCourant;
         int maj = 0;
         String[] elementListe;
         while ((ligne = listeText.readLine()) != null) {
             JSONObject bodyJSON = new JSONObject();
-
             elementListe = ligne.split(";");
             if(elementListe[6].equals("Ajout")) {
                 elementListe[6] = "0";
             } else {
                 elementListe[6] = "1";
             }
-            // Méthode permettant de vérifier l'article et l'entrepôt
+
+
+
+                    // Méthode permettant de vérifier l'article et l'entrepôt
             maj = VerifArticlesEtEntrepots(elementListe[2], elementListe[4]);
 
             bodyJSON.put("ref", "");
@@ -316,8 +312,16 @@ public class ListeActivity extends AppCompatActivity {
             bodyJSON.put("StockAvant", Integer.parseInt(elementListe[7]));
             bodyJSON.put("StockApres", Integer.parseInt(elementListe[8]));
             bodyJSON.put("date", elementListe[9]);
-            bodyJSON.put("Utilisateur", utilisateur);
+            bodyJSON.put("Utilisateur", utilisateurCourant);
             EnvoyerListeSurDolibarr(nomFichier, bodyJSON);
+            if(maj == 0) {
+                JSONObject bodyJSONMvtStock = new JSONObject();
+                bodyJSONMvtStock.put("product_id", Integer.parseInt(elementListe[11]));
+                bodyJSONMvtStock.put("warehouse_id", Integer.parseInt(elementListe[12]));
+                bodyJSONMvtStock.put("qty", Integer.parseInt(elementListe[8]) - Integer.parseInt(elementListe[7]));
+                bodyJSONMvtStock.put("label", elementListe[1]);
+                ModifierMouvementStock(bodyJSONMvtStock);
+            }
         }
 
 
@@ -354,6 +358,7 @@ public class ListeActivity extends AppCompatActivity {
         return 1;
     }
 
+
     public void EnvoyerListeSurDolibarr(String nomFichier, JSONObject bodyJson) throws JSONException, FileNotFoundException {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/dolistockapi/listess?api_key=%s",
                 URLApi, token);
@@ -380,16 +385,43 @@ public class ListeActivity extends AppCompatActivity {
                 }
             }
         });
-        //TODO faire méthode envoyer liste et regarder mouvement de stock etc
 
+    }
+
+    public void ModifierMouvementStock(JSONObject bodyJson) {
+        String urlAPI = String.format("http://%s/htdocs/api/index.php/stockmovements?api_key=%s",
+                URLApi, token);
+
+        OutilAPI.PostApiJson(getApplicationContext(), urlAPI, bodyJson, new OutilAPI.ApiCallback() {
+
+            @Override
+            public void onSuccess(JSONObject result) {
+                Toast.makeText(getApplicationContext(), "INSERTION OK JSONOBJECT",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onSuccess(JSONArray result) {
+                Toast.makeText(getApplicationContext(), "INSERTION OK JSONARRAY",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Erreur : " + error.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void traiterResultatOK(String nomFichier) {
         Toast.makeText(ListeActivity.this, "Insertion OK",
                 Toast.LENGTH_LONG).show();
         deleteFile(nomFichier);
-        listeAccueil.remove(positionItemListe);
-        adaptateur.notifyItemRemoved(positionItemListe);
+        if(listeAccueil.size() != 0) {
+            listeAccueil.remove(positionItemListe);
+            adaptateur.notifyItemRemoved(positionItemListe);
+        }
     }
 
     /**
