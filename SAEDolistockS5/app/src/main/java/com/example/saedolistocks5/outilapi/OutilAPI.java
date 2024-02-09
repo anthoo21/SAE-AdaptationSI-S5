@@ -3,7 +3,7 @@
  */
 package com.example.saedolistocks5.outilapi;
 import android.content.Context;
-import com.android.volley.DefaultRetryPolicy;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -14,8 +14,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 /**
  * Classe pour facilitetr l'utilisation de l'API.
@@ -69,22 +67,22 @@ public class OutilAPI {
     }
 
     /**
-     * Recupere le retour de l'API
-     * @param context le contexte de l'app.
-     * @param url l'url de l'API
-     * @param callback le callback de l'API.
+     * Fais une requête GET avec un retour de type JSONObject
+     * @param context contexte de l'application appelant la méthode
+     * @param url URL de l'api à contacter
+     * @param callback retour de l'API
      */
-    public static void getApiRetour(Context context, String url, final ApiCallback callback) {
-        // Créer une nouvelle file de requêtes Volley
-        //
+    public static void GetApiJsonObject(Context context, String url,
+                                        final ApiCallback callback) {
+        // Créer une nouvelle requête JSONObject
         JsonObjectRequest requete = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,
                 new Response.Listener<JSONObject>() {
                     /**
-                     * Methode si succès.
-                     * @param response renvoie un JSONObject.
+                     * Si l'API renvoie une réponse correct
+                     * @param response réponse de l'API sous forme de JSONObject
                      */
                     @Override
                     public void onResponse(JSONObject response) {
@@ -97,8 +95,8 @@ public class OutilAPI {
                 },
                 new Response.ErrorListener() {
                     /**
-                     * Méthode si erreur
-                     * @param error renvoie une erreur volley
+                     * Si l'API renvoie une erreur volley
+                     * @param error erreur sous forme de VolleyError
                      */
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -106,6 +104,17 @@ public class OutilAPI {
                     }
                 }
         );
+        getFileRequete(context).add(requete);
+    }
+
+    /**
+     * Fais une requête GET avec un retour de type JSONArray
+     * @param context le contexte de l'app.
+     * @param url l'url de l'API
+     * @param callback le callback de l'API.
+     */
+    public static void GetApiJsonArray(Context context, String url, final ApiCallback callback) {
+        // Créer une nouvelle file de requêtes Volley
         // Cas pour les arrays.
         JsonArrayRequest arrayRequete = new JsonArrayRequest(
                 Request.Method.GET,
@@ -132,43 +141,17 @@ public class OutilAPI {
                     }
                 }
         );
-        requete.setRetryPolicy(new DefaultRetryPolicy(
-                TIMEOUT_MS,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        ));
-        getFileRequete(context).add(requete);
         getFileRequete(context).add(arrayRequete);
 
     }
 
-    public static void GetApiJsonObject(Context context, String url,
-                                        final ApiCallback callback) {
-        // Créer une nouvelle file de requêtes Volley
-        JsonObjectRequest requete = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-                null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            callback.onSuccess(response);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        callback.onError(error);
-                    }
-                }
-        );
-        getFileRequete(context).add(requete);
-    }
-
+    /**
+     * Fais une requête POST avec un retour de type JSONObject
+     * @param context context de l'application
+     * @param url URL de l'application
+     * @param jsonBody body json à envoyer
+     * @param callback le callback de l'API.
+     */
     public static void PostApiJson(Context context, String url,
                             JSONObject jsonBody, final ApiCallback callback) {
         JsonObjectRequest postRequest = new JsonObjectRequest(
@@ -176,6 +159,10 @@ public class OutilAPI {
                 url,
                 jsonBody,
                 new Response.Listener<JSONObject>() {
+                    /**
+                     * En cas de succès
+                     * @param response réponse sous forme de JSONObject
+                     */
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -187,6 +174,10 @@ public class OutilAPI {
                     }
                 },
                 new Response.ErrorListener() {
+                    /**
+                     * En cas d'erreur
+                     * @param error réponse sous forme de VolleyError
+                     */
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Gérez les erreurs ici

@@ -43,7 +43,7 @@ public class EncryptAndDecrypteToken {
      * Méthode pour crypter.
      * @param plainText la chaine à crypté.
      * @return un byte crypté.
-     * @throws NoSuchAlgorithmException si l'ago n'est pas reconnu.
+     * @throws NoSuchAlgorithmException si l'algo n'est pas reconnu.
      * @throws NoSuchPaddingException pas de padding.
      * @throws IllegalBlockSizeException taille du block illegal.
      * @throws BadPaddingException padding pas bon.
