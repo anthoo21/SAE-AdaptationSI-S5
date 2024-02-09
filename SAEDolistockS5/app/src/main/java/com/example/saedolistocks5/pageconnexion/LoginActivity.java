@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                     urlApi, user, password);
 
             // On appelle la méthode getApiRetour pour appeler l'API
-            OutilAPI.getApiRetour(LoginActivity.this ,urlApiEntiere, new OutilAPI.ApiCallback() {
+            OutilAPI.GetApiJsonArray(LoginActivity.this ,urlApiEntiere, new OutilAPI.ApiCallback() {
 
                 /**
                  * Méthode appelée lorsque l'appel à l'API se passe correctement.

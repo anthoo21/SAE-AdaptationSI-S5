@@ -22,6 +22,8 @@ import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.OutilAPI;
 import com.example.saedolistocks5.outilapi.RequetesApi;
+import com.example.saedolistocks5.outilsdivers.OutilDivers;
+import com.example.saedolistocks5.outilsdivers.Quartet;
 import com.example.saedolistocks5.pageconnexion.LoginActivity;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
@@ -47,7 +49,13 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
+/**
+ * Activité gérant la page d'accueil qui va afficher les listes de l'utilisateur courant
+ * et le permettre d'effectuer diverses actions dessus (Visualiser, Modifier, Supprimer, ...)
+ *
+ * @author BONNET, FROMENT et ENJALBERT
+ * @version 3.0
+ */
 public class ListeActivity extends AppCompatActivity {
 
     /**
@@ -57,8 +65,14 @@ public class ListeActivity extends AppCompatActivity {
      */
     private ArrayList<ListeAccueil> listeAccueil;
 
+    /**
+     * Liste pour récupérer les codes articles
+     */
     public static ArrayList<String> listeCodeArticleVerif;
 
+    /**
+     * Liste pour récupérer les entrepôts
+     */
     public static ArrayList<String> listeEntrepotsVerif;
 
     /**
@@ -74,7 +88,14 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Utilisateur courant sur l'application
      */
-    private String utilisateurCourant, token, URLApi;
+    private String utilisateurCourant,
+    /**
+     * Le token pour utiliser l'API
+     */
+    token, /**
+     * L'URL de l'API
+     */
+    URLApi;
 
     /**
      * Position de l'item liste
@@ -102,6 +123,7 @@ public class ListeActivity extends AppCompatActivity {
 
 
         try {
+            // Permet d'afficher les listes de l'utilisateur sur la vue
             initialiseListeAccueil();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -137,36 +159,33 @@ public class ListeActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour initialiser la liste des photos et des textes.
-     * @throws IOException exception.
+     * Méthode pour initialiser la ou les listes de l'utilisateur courant
+     * pour les aficher sur la vue
+     *
+     * @throws IOException               exception.
+     * @throws NoSuchPaddingException    the no such padding exception
+     * @throws IllegalBlockSizeException the illegal block size exception
+     * @throws NoSuchAlgorithmException  the no such algorithm exception
+     * @throws BadPaddingException       the bad padding exception
+     * @throws InvalidKeyException       the invalid key exception
      */
-    private void initialiseListeAccueil() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    private void initialiseListeAccueil() throws IOException, NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException,
+            InvalidKeyException {
+        // On ouvre le fichier infouser pour récupérer les infos à propos de l'utilisateur
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
-        String[] valeurInfoUser;
-        BufferedReader infosUserTxt = new BufferedReader(infosUser);
-        valeurInfoUser = infosUserTxt.readLine().split(";;;;");
 
+        // On appelle une méthode pour récupérer les infos de l'utilisateur
+        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser);
 
-        String tokenCrypte = valeurInfoUser[0];
+        // On récupère le token
+        token = infos.first();
 
-        // Supprimez les crochets et les espaces
-        tokenCrypte = tokenCrypte.replaceAll("[\\[\\]\\s]", "");
+        // On récupère l'URL de l'API
+        URLApi = infos.second();
 
-        // Séparez les valeurs en utilisant la virgule comme délimiteur
-        String[] valeurs = tokenCrypte.split(",");
-
-        // Créez un tableau de bytes et remplissez-le avec les valeurs
-        byte[] tableauDeBytes = new byte[valeurs.length];
-        for (int i = 0; i < valeurs.length; i++) {
-            tableauDeBytes[i] = Byte.parseByte(valeurs[i].trim());
-        }
-        Key key = EncryptAndDecrypteToken.stringToKey(valeurInfoUser[3], "DES");
-
-        token = EncryptAndDecrypteToken.decrypt(tableauDeBytes, key);
-
-        URLApi = valeurInfoUser[2];
-
-        utilisateurCourant = valeurInfoUser[1];
+        // On récupère l'utilisateur courant
+        utilisateurCourant = infos.third();
 
         listeAccueil = new ArrayList<>();
 
@@ -193,8 +212,10 @@ public class ListeActivity extends AppCompatActivity {
         }
 
     }
+
     /**
      * Méthod de click sur le menu.
+     *
      * @param view la vue.
      */
     public void onClickMenu(View view) {
@@ -248,7 +269,8 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Méthode invoquée automatiquement lors d'un clic retour.
      * de retour vers l'activité principale.
-     * @param view  source du clic.
+     *
+     * @param view source du clic.
      */
     public void onClickRetour(View view) {
         Intent intention = new Intent(ListeActivity.this, MainActivity.class);
@@ -257,7 +279,8 @@ public class ListeActivity extends AppCompatActivity {
 
     /**
      * Méthode invoquée automatiquement lors d'un clic sur ajouter.
-     * @param bouton  source du clic.
+     *
+     * @param bouton source du clic.
      */
     public void onClickAjouter(View bouton) {
         Intent intention = new Intent(ListeActivity.this, AjoutListeActivity.class);
@@ -267,7 +290,8 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
      * de deconnexion
-     * @param view  source du clic.
+     *
+     * @param view source du clic.
      */
     public void onClickDeco(View view) {
             Intent intention = new Intent(ListeActivity.this, LoginActivity.class);
@@ -276,6 +300,9 @@ public class ListeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Envoyer liste.
+     */
     public void EnvoyerListe() {
 
         String nomFichier = listeFichierUser.get(positionItemListe);        try {
@@ -335,6 +362,13 @@ public class ListeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Verif articles et entrepots int.
+     *
+     * @param codeArticle the code article
+     * @param nomEntrepot the nom entrepot
+     * @return the int
+     */
     public int VerifArticlesEtEntrepots(String codeArticle, String nomEntrepot) {
         boolean verifArticle = false;
         boolean verifEntrepot = false;
@@ -359,6 +393,14 @@ public class ListeActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Envoyer liste sur dolibarr.
+     *
+     * @param nomFichier the nom fichier
+     * @param bodyJson   the body json
+     * @throws JSONException         the json exception
+     * @throws FileNotFoundException the file not found exception
+     */
     public void EnvoyerListeSurDolibarr(String nomFichier, JSONObject bodyJson) throws JSONException, FileNotFoundException {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/dolistockapi/listess?api_key=%s",
                 URLApi, token);
@@ -388,6 +430,11 @@ public class ListeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Modifier mouvement stock.
+     *
+     * @param bodyJson the body json
+     */
     public void ModifierMouvementStock(JSONObject bodyJson) {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/stockmovements?api_key=%s",
                 URLApi, token);
@@ -414,6 +461,11 @@ public class ListeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Traiter resultat ok.
+     *
+     * @param nomFichier the nom fichier
+     */
     public void traiterResultatOK(String nomFichier) {
         Toast.makeText(ListeActivity.this, "Insertion OK",
                 Toast.LENGTH_LONG).show();
@@ -426,6 +478,7 @@ public class ListeActivity extends AppCompatActivity {
 
     /**
      * getter de la liste des fichier users.
+     *
      * @return la liste des fichiers Users.
      */
     public static List<String> getListeFichierUser() {
