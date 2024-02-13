@@ -76,11 +76,6 @@ public class ListeActivity extends AppCompatActivity {
     public static ArrayList<String> listeEntrepotsVerif;
 
     /**
-     * Element permettant d'afficher la liste des photos
-     */
-    private RecyclerView listeAccueilRecyclerView;
-
-    /**
      * Adatpateur de liste accueil
      */
     ListeAccueilAdapter adaptateur;
@@ -105,7 +100,7 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Liste des listes de l'utilisateur courant
      */
-    static ArrayList<String> listeFichierUser = new ArrayList<>();
+    static ArrayList<String> listeFichierUser;
 
     /**
      * Méthode onCreate.
@@ -189,6 +184,8 @@ public class ListeActivity extends AppCompatActivity {
 
         listeAccueil = new ArrayList<>();
 
+        listeFichierUser = new ArrayList<>();
+
         File filesDir = getFilesDir(); // Récupère le répertoire "files" de votre application
         File[] files = filesDir.listFiles(); // Obtient la liste des fichiers dans le répertoire
 
@@ -197,14 +194,16 @@ public class ListeActivity extends AppCompatActivity {
                 if (file.isFile() && file.getName().startsWith(utilisateurCourant)) {
                     InputStreamReader liste = new InputStreamReader(openFileInput(file.getName()));
                     try (BufferedReader listeText = new BufferedReader(liste)) {
-                        listeFichierUser.add(file.getName());
-                        String[] ligneListe = listeText.readLine().split(";");
-
-                        String nomListe = ligneListe[1];
-                        String dateCreation = "Date de création : " + ligneListe[9];
-                        String heureCreation = ligneListe[10];
-                        listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
-                    } catch (IOException e) {
+                        String ligne = listeText.readLine();
+                        if(ligne != null) {
+                            listeFichierUser.add(file.getName());
+                            String[] ligneListeSplit = ligne.split(";");
+                            String nomListe = ligneListeSplit[1];
+                            String dateCreation = "Date de création : " + ligneListeSplit[9];
+                            String heureCreation = ligneListeSplit[10];
+                            listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
+                        }
+                        } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -321,9 +320,7 @@ public class ListeActivity extends AppCompatActivity {
                 elementListe[6] = "1";
             }
 
-
-
-                    // Méthode permettant de vérifier l'article et l'entrepôt
+            // Méthode permettant de vérifier l'article et l'entrepôt
             maj = VerifArticlesEtEntrepots(elementListe[2], elementListe[4]);
 
             bodyJSON.put("ref", "");
@@ -341,19 +338,22 @@ public class ListeActivity extends AppCompatActivity {
             bodyJSON.put("date", elementListe[9]);
             bodyJSON.put("Utilisateur", utilisateurCourant);
             EnvoyerListeSurDolibarr(nomFichier, bodyJSON);
+            // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
             if(maj == 0) {
                 JSONObject bodyJSONMvtStock = new JSONObject();
                 bodyJSONMvtStock.put("product_id", Integer.parseInt(elementListe[11]));
                 bodyJSONMvtStock.put("warehouse_id", Integer.parseInt(elementListe[12]));
                 bodyJSONMvtStock.put("qty", Integer.parseInt(elementListe[8]) - Integer.parseInt(elementListe[7]));
-                bodyJSONMvtStock.put("label", elementListe[1]);
+                bodyJSONMvtStock.put("movementlabel",
+                        String.format("%s : %s", utilisateurCourant, elementListe[1]));
                 ModifierMouvementStock(bodyJSONMvtStock);
             }
         }
 
-
-
         listeText.close();
+
+        //TODO : regarder problème visualisation deuxième liste
+        listeFichierUser.remove(positionItemListe);
     } catch (IOException e) {
         e.printStackTrace();
     } catch (JSONException e) {
@@ -443,20 +443,23 @@ public class ListeActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(JSONObject result) {
-                Toast.makeText(getApplicationContext(), "INSERTION OK JSONOBJECT",
+                Toast.makeText(getApplicationContext(), "Insertion OK",
                         Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onSuccess(JSONArray result) {
-                Toast.makeText(getApplicationContext(), "INSERTION OK JSONARRAY",
+                Toast.makeText(getApplicationContext(), "Insertion OK",
                         Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Erreur : " + error.getMessage(),
-                        Toast.LENGTH_LONG).show();
+                if(!Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
+                    Toast.makeText(getApplicationContext(), "Erreur : " + error.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+
             }
         });
     }
