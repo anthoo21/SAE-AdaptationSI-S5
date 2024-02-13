@@ -141,7 +141,6 @@ public class LoginActivity extends AppCompatActivity {
 
             // On appelle la méthode getApiRetour pour appeler l'API
             OutilAPI.GetApiJsonObject(LoginActivity.this ,urlApiEntiere, new OutilAPI.ApiCallback() {
-
                 /**
                  * Méthode appelée lorsque l'appel à l'API se passe correctement.
                  * @param result object JSON contenant la réponse de l'API.
