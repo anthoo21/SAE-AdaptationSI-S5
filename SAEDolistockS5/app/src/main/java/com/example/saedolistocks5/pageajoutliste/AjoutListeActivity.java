@@ -720,18 +720,6 @@ public class AjoutListeActivity extends AppCompatActivity {
     }
 
     /**
-     * Permet de vérifier si un article se trouve dans un entrepot
-     * @param idEntrepot id de l'entrepôt
-     */
-    public void VerifArticles(String idEntrepot) {
-        for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
-            RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
-                    "AjoutListe", quartet.first(), idEntrepot,quartet,
-                    null);
-        }
-    }
-
-    /**
      * Vérifie à chaque saisie de l'utilisateur sur le champ saisie article
      */
     private class FiltreArticleTextWatcher implements TextWatcher {

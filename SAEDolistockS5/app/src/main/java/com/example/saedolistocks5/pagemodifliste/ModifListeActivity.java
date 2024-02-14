@@ -613,7 +613,7 @@ public class ModifListeActivity extends AppCompatActivity {
     public void VerifArticles(String idEntrepot) {
         for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
             RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
-                    "AjoutListe", quartet.first(), idEntrepot,quartet);
+                    "AjoutListe", quartet.first(), idEntrepot,quartet, null);
         }
     }
 
