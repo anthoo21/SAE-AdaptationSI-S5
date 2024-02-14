@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connManager =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
-        if (mWifi != null && readFichier() && mWifi.isConnectedOrConnecting()) {
+        if (mWifi != null && mWifi.isConnectedOrConnecting()) {
             estConnecter = true;
         }
         return estConnecter;
