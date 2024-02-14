@@ -153,7 +153,7 @@ public class OutilAPI {
      * @param callback le callback de l'API.
      */
     public static void PostApiJson(Context context, String url,
-                            JSONObject jsonBody, final ApiCallback callback) {
+                                   JSONObject jsonBody, final ApiCallback callback) {
         JsonObjectRequest postRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
@@ -188,4 +188,3 @@ public class OutilAPI {
         getFileRequete(context).add(postRequest);
     }
 }
-

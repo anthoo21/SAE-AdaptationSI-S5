@@ -4,6 +4,7 @@
 package com.example.saedolistocks5.pageliste;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -41,9 +42,13 @@ import java.io.InputStreamReader;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -199,8 +204,8 @@ public class ListeActivity extends AppCompatActivity {
                             listeFichierUser.add(file.getName());
                             String[] ligneListeSplit = ligne.split(";");
                             String nomListe = ligneListeSplit[1];
-                            String dateCreation = "Date de création : " + ligneListeSplit[9];
-                            String heureCreation = ligneListeSplit[10];
+                            String dateCreation = "Date de création : " + ligneListeSplit[7];
+                            String heureCreation = ligneListeSplit[8];
                             listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
                         }
                         } catch (IOException e) {
@@ -308,56 +313,71 @@ public class ListeActivity extends AppCompatActivity {
         InputStreamReader liste = new InputStreamReader(openFileInput(nomFichier));
         BufferedReader listeText = new BufferedReader(liste);
 
-        String ligne;
-        int maj = 0;
+
         String[] elementListe;
+        String ligne;
         while ((ligne = listeText.readLine()) != null) {
-            JSONObject bodyJSON = new JSONObject();
             elementListe = ligne.split(";");
-            if(elementListe[6].equals("Ajout")) {
-                elementListe[6] = "0";
-            } else {
-                elementListe[6] = "1";
-            }
+            String[] finalElementListe = elementListe;
+            RequetesApi.GetArticlesByEntrepot(URLApi, token, getApplicationContext(),
+                    "Liste", elementListe[9], elementListe[10], null, new RequetesApi.QuantiteCallback() {
+                        @Override
+                        public void onQuantiteRecuperee(int quantiteAvantEnvoieListe)
+                                throws FileNotFoundException, JSONException {
+                            JSONObject bodyJSON = new JSONObject();
+                            int quantiteApres;
+                            int quantiteSaisie;
+                            int maj = 0;
 
-            // Méthode permettant de vérifier l'article et l'entrepôt
-            maj = VerifArticlesEtEntrepots(elementListe[2], elementListe[4]);
+                            quantiteSaisie = Integer.parseInt(finalElementListe[5]);
 
-            bodyJSON.put("ref", "");
-            bodyJSON.put("status", 1);
-            bodyJSON.put("Libelle", elementListe[1]);
-            bodyJSON.put("CodeArticle", elementListe[2]);
-            bodyJSON.put("CodeBarre", "");
-            bodyJSON.put("Designation", elementListe[3]);
-            bodyJSON.put("Entrepot", elementListe[4]);
-            bodyJSON.put("Quantite",Integer.parseInt(elementListe[5]));
-            bodyJSON.put("Mode", Integer.parseInt(elementListe[6]));
-            bodyJSON.put("Maj", maj);
-            bodyJSON.put("StockAvant", Integer.parseInt(elementListe[7]));
-            bodyJSON.put("StockApres", Integer.parseInt(elementListe[8]));
-            bodyJSON.put("date", elementListe[9]);
-            bodyJSON.put("Utilisateur", utilisateurCourant);
-            EnvoyerListeSurDolibarr(nomFichier, bodyJSON);
-            // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
-            if(maj == 0) {
-                JSONObject bodyJSONMvtStock = new JSONObject();
-                bodyJSONMvtStock.put("product_id", Integer.parseInt(elementListe[11]));
-                bodyJSONMvtStock.put("warehouse_id", Integer.parseInt(elementListe[12]));
-                bodyJSONMvtStock.put("qty", Integer.parseInt(elementListe[8]) - Integer.parseInt(elementListe[7]));
-                bodyJSONMvtStock.put("movementlabel",
-                        String.format("%s : %s", utilisateurCourant, elementListe[1]));
-                ModifierMouvementStock(bodyJSONMvtStock);
-            }
+                            if(finalElementListe[6].equals("Ajout")) {
+                                finalElementListe[6] = "0";
+                                quantiteApres = quantiteAvantEnvoieListe + quantiteSaisie;
+                            } else {
+                                finalElementListe[6] = "1";
+                                quantiteApres = Integer.parseInt(finalElementListe[5]);
+                                quantiteSaisie = quantiteApres - quantiteAvantEnvoieListe;
+                            }
+                            maj = VerifArticlesEtEntrepots(finalElementListe[2], finalElementListe[4]);
+                            bodyJSON.put("ref", "");
+                            bodyJSON.put("status", 1);
+                            bodyJSON.put("Libelle", finalElementListe[1]);
+                            bodyJSON.put("CodeArticle", finalElementListe[2]);
+                            bodyJSON.put("CodeBarre", "");
+                            bodyJSON.put("Designation", finalElementListe[3]);
+                            bodyJSON.put("Entrepot", finalElementListe[4]);
+                            bodyJSON.put("Quantite", quantiteSaisie);
+                            bodyJSON.put("Mode", Integer.parseInt(finalElementListe[6]));
+                            bodyJSON.put("Maj", maj);
+                            bodyJSON.put("StockAvant", quantiteAvantEnvoieListe);
+                            bodyJSON.put("StockApres", quantiteApres);
+                            bodyJSON.put("date", finalElementListe[7]);
+                            bodyJSON.put("Utilisateur", utilisateurCourant);
+                            EnvoyerListeSurDolibarr(nomFichier, bodyJSON);
+                            // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
+                            if(maj == 0) {
+                                JSONObject bodyJSONMvtStock = new JSONObject();
+                                bodyJSONMvtStock.put("product_id", Integer.parseInt(finalElementListe[9]));
+                                bodyJSONMvtStock.put("warehouse_id", Integer.parseInt(finalElementListe[10]));
+                                bodyJSONMvtStock.put("qty", quantiteSaisie);
+                                bodyJSONMvtStock.put("datem", finalElementListe[7]);
+                                bodyJSONMvtStock.put("movementlabel",
+                                        String.format("%s : %s", utilisateurCourant, finalElementListe[1]));
+                                ModifierMouvementStock(bodyJSONMvtStock);
+                            }
+                        }
+                    });
+
+
         }
 
         listeText.close();
 
-        //TODO : regarder problème visualisation deuxième liste
         listeFichierUser.remove(positionItemListe);
+
     } catch (IOException e) {
         e.printStackTrace();
-    } catch (JSONException e) {
-        throw new RuntimeException(e);
     }
 
     }
@@ -419,11 +439,17 @@ public class ListeActivity extends AppCompatActivity {
 
             @Override
             public void onError(VolleyError error) {
-                if(Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
-                    traiterResultatOK(nomFichier);
+                if(error.networkResponse != null ) {
+                    if(error.networkResponse.statusCode != 503) {
+                        if(Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
+                            traiterResultatOK(nomFichier);
+                        } else {
+                            Toast.makeText(ListeActivity.this, "Problème d'insertion",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
                 } else {
-                    Toast.makeText(ListeActivity.this, "Problème d'insertion",
-                            Toast.LENGTH_LONG).show();
+                    traiterResultatOK(nomFichier);
                 }
             }
         });
@@ -455,11 +481,12 @@ public class ListeActivity extends AppCompatActivity {
 
             @Override
             public void onError(VolleyError error) {
-                if(!Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
-                    Toast.makeText(getApplicationContext(), "Erreur : " + error.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                if(error.getMessage() != null) {
+                    if(!error.getMessage().contains("JSONException")) {
+                        Toast.makeText(getApplicationContext(), "Erreur : " + error.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
-
             }
         });
     }
@@ -476,6 +503,8 @@ public class ListeActivity extends AppCompatActivity {
         if(listeAccueil.size() != 0) {
             listeAccueil.remove(positionItemListe);
             adaptateur.notifyItemRemoved(positionItemListe);
+            // Recrée la vue pour remettre à jour le positionItemListe
+            this.recreate();
         }
     }
 
