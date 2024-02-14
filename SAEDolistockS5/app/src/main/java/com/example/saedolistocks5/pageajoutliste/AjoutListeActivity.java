@@ -7,18 +7,25 @@ import static com.example.saedolistocks5.outilapi.RequetesApi.getArticles;
 import static com.example.saedolistocks5.outilapi.RequetesApi.getListeEntrepot;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -55,7 +62,7 @@ public class AjoutListeActivity extends AppCompatActivity {
     /**
      * Editext pour la saisie du nom de l'entrepot.
      */
-    private EditText saisieNomEntrepot;
+    private AutoCompleteTextView saisieNomEntrepot;
     /**
      * Editext pour saisir la quantite.
      */
@@ -105,10 +112,6 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Liste pour la réference.
      */
     public static ArrayList<String> listeRef;
-    /**
-     * Liste avant les stocks.
-     */
-    private ArrayList<Integer> listeStockAvant;
 
     /**
      * Liste pour la quantite saisie.
@@ -149,6 +152,22 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Adpater pour la liste du choix du mode.
      */
     private ArrayAdapter<String> adaptateurListeChoixMode;
+
+    /**
+     * Suggestion à afficher lors du saisie du libellé d'un article
+     */
+    private ArrayList<String> suggetsionSaisieLibelleArticle;
+
+    /**
+     * Permet de récupérer l'ID associé à la suggestion de l'article
+     */
+    private ArrayList<String> suggestionRecupRefArticle;
+
+    /**
+     * Adaptateur pour la suggestion du libellé d'un article
+     */
+    public static ArrayAdapter<String> adapterSuggestionArticle;
+
     /**
      * String por le token de l'api.
      */
@@ -165,6 +184,11 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Pour controler si l'entrepot existe.
      */
     private boolean entrepotOk;
+
+    /**
+     * Image Button permettant d'afficher la fenêtre pour chercher un libellé d'article
+     */
+    private ImageButton rechercheArticle;
 
     /**
      * Méthode on create
@@ -211,6 +235,8 @@ public class AjoutListeActivity extends AppCompatActivity {
         erreurSaisies = findViewById(R.id.erreurSaisies);
         choixMode = findViewById(R.id.ddlModeMaj);
         ajoutArticleRecyclerView = findViewById(R.id.ajout_article_recycler);
+        rechercheArticle = findViewById(R.id.rechercheArticle);
+
 
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
@@ -218,12 +244,17 @@ public class AjoutListeActivity extends AppCompatActivity {
         listeChoixMode = new ArrayList<>();
         listeRef = new ArrayList<>();
         articlesAAjouter = new ArrayList<>();
-        listeStockAvant = new ArrayList<>();
         listeQuantiteSaisie = new ArrayList<>();
         listeArticlesIdEtNom = new ArrayList<>();
         listeEntrepotIdEtNom = new ArrayList<>();
         listeInfosArticle = new ArrayList<>();
         listeIdArticle = new ArrayList<>();
+        suggetsionSaisieLibelleArticle = new ArrayList<>();
+        suggestionRecupRefArticle = new ArrayList<>();
+
+        adapterSuggestionArticle = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1,
+                listeArticles);
 
         entrepotOk = false;
     }
@@ -519,6 +550,95 @@ public class AjoutListeActivity extends AppCompatActivity {
     }
 
     /**
+     * Permet de vérifier si un article se trouve dans un entrepot
+     * @param idEntrepot id de l'entrepôt
+     */
+    public void VerifArticles(String idEntrepot) {
+        for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
+            RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
+                    "AjoutListe", quartet.first(), idEntrepot,quartet,
+                    null);
+        }
+    }
+
+    /**
+     * Permet d'afficher une popup qui va permettre de rechercher un article
+     * par son libellé
+     * @param view
+     */
+    public void afficherPopup(View view) {
+        // Création de la pop-up
+        AlertDialog.Builder builder = new AlertDialog.Builder(AjoutListeActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.popup_recherche_article, null);
+        builder.setView(dialogView);
+
+
+        // Initialiser le EditText et le ListView
+        final EditText editText = dialogView.findViewById(R.id.saisieLibelleArticle);
+        final ListView listView = dialogView.findViewById(R.id.libellesArticles);
+
+        // Exemple pour ajouter des éléments à la liste en fonction de la saisie
+        adapterSuggestionArticle = new ArrayAdapter<>(AjoutListeActivity.this,
+                android.R.layout.simple_list_item_1, listeArticles);
+        listView.setAdapter(adapterSuggestionArticle);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String saisie = s.toString();
+                suggetsionSaisieLibelleArticle = new ArrayList<>();
+                suggestionRecupRefArticle = new ArrayList<>();
+
+                for(int i = 0; i < listeArticles.size(); i++) {
+                    if(listeArticles.get(i).toLowerCase()
+                            .startsWith(saisie.toLowerCase())) {
+                        suggestionRecupRefArticle.add(listeRef.get(i));
+                        suggetsionSaisieLibelleArticle.add(listeArticles.get(i));
+                    }
+                }
+
+
+                adapterSuggestionArticle = new ArrayAdapter<>(AjoutListeActivity.this,
+                        android.R.layout.simple_list_item_1, suggetsionSaisieLibelleArticle);
+                listView.setAdapter(adapterSuggestionArticle);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+        });
+
+        // Afficher la pop-up
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Gérer le clic sur un élément de la liste
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String refAInserer;
+                if(suggestionRecupRefArticle.size() == 0) {
+                    refAInserer = listeRef.get(position);
+                } else {
+                    refAInserer = suggestionRecupRefArticle.get(position); // Récupère l'élément sélectionné
+
+                }
+                saisieCodeArticle.setText(refAInserer);
+                dialog.dismiss();
+                suggetsionSaisieLibelleArticle.clear();
+                suggestionRecupRefArticle.clear();
+            }
+        });
+
+    }
+
+    /**
      * Verification de l'entrepot.
      */
     private class VerificationEntrepotTextWatcher implements TextWatcher {
@@ -546,15 +666,25 @@ public class AjoutListeActivity extends AppCompatActivity {
             // A chaque modification du texte
             String saisie = s.toString();
             Pair<String, String> idEtNomEntrepotActuel = new Pair<>("", "");
+            ArrayList<String> suggestions = new ArrayList<>();
+
             listeEntrepots = new ArrayList<>();
+
             for(Pair<String, String> pair : listeEntrepotIdEtNom)
             {
                 listeEntrepots.add(pair.second);
                 // On vérifie si le nom de l'entrepôt est celui saisi par l'utilisateur
                 if(pair.second.contains(saisie)) {
                     idEtNomEntrepotActuel = new Pair<>(pair.first, pair.second);
+                    suggestions.add(pair.second);
                 }
             }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(AjoutListeActivity.this,
+                    android.R.layout.simple_dropdown_item_1line, suggestions);
+            saisieNomEntrepot.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
 
             // Si l'entrepôt existe
             if (listeEntrepots.contains(saisie)) {
@@ -564,6 +694,7 @@ public class AjoutListeActivity extends AppCompatActivity {
                 entrepotOk = true;
                 // On appel verifArticle pour mettre à jour la liste des articles
                 // en fonction de l'entrepôt
+                listeArticles = new ArrayList<>();
                 VerifArticles(idEtNomEntrepotActuel.first);
             } else {
                 // On vide la liste des noms et codes articles et de leur stock
@@ -599,7 +730,6 @@ public class AjoutListeActivity extends AppCompatActivity {
                     null);
         }
     }
-
 
     /**
      * Vérifie à chaque saisie de l'utilisateur sur le champ saisie article
