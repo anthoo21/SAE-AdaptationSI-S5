@@ -84,7 +84,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
-            android:hint="@string/info_title_liste"/>
+            android:hint="@string/info_title_liste"
+            android:inputType="text"
+            android:maxLines="2"/>
 
 
 
@@ -109,7 +111,9 @@
             android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
-            android:hint="@string/info_entrepot"/>
+            android:hint="@string/info_entrepot"
+            android:inputType="text"
+            android:maxLines="3"/>
 
         <!-- <ImageButton
             android:layout_width="wrap_content"
@@ -177,16 +181,19 @@
 
         <AutoCompleteTextView
             android:id="@+id/saisieCodeArticle"
-            android:layout_width="90dp"
-            android:layout_height="match_parent"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_8"
             android:layout_weight="1"
-            android:hint="@string/info_code_article" />
+            android:hint="@string/info_code_article"
+            android:maxLines="1"/>
 
         <ImageButton
             android:id="@+id/rechercheArticle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
             android:src="@drawable/louperesize"
             android:onClick="afficherPopup"/>
 

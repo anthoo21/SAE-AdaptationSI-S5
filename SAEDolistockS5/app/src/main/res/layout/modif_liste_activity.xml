@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Layout de ModifListeActivity -->
+<!-- Layout de AjoutListeActivity -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -78,14 +78,17 @@
             android:textStyle="bold"
             android:text="@string/label_title_liste"
             android:textSize="@dimen/taille_texte"/>
-
         <!-- Premier Edit Text -->
         <EditText
             android:id="@+id/saisieNomListe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
-            android:hint="@string/info_title_liste"/>
+            android:hint="@string/info_title_liste"
+            android:inputType="text"
+            android:maxLines="2"/>
+
+
 
     </LinearLayout>
 
@@ -103,12 +106,22 @@
             android:textSize="@dimen/taille_texte"/>
 
         <!-- Deuxième Edit Text -->
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/saisieNomEntrepot"
-            android:layout_width="match_parent"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
-            android:hint="@string/info_entrepot"/>
+            android:hint="@string/info_entrepot"
+            android:inputType="text"
+            android:maxLines="3"/>
+
+        <!-- <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:src="@drawable/louperesize"/> -->
+
     </LinearLayout>
 
     <TextView
@@ -161,24 +174,35 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/marge_5"
             android:layout_marginRight="@dimen/marge_8"
+            android:layout_marginTop="@dimen/marge_10"
             android:text="@string/label_code_article"
             android:textSize="@dimen/taille_texte"/>
 
         <AutoCompleteTextView
             android:id="@+id/saisieCodeArticle"
-            android:layout_width="104dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_8"
             android:layout_weight="1"
-            android:hint="@string/info_code_article" />
+            android:hint="@string/info_code_article"
+            android:maxLines="1"/>
+
+        <ImageButton
+            android:id="@+id/rechercheArticle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:src="@drawable/louperesize"
+            android:onClick="afficherPopup"/>
 
         <TextView
             android:id="@+id/libelleStock"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginRight="@dimen/marge_5"
             android:textSize="@dimen/taille_texte"/>
@@ -203,6 +227,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:inputType="number"
+            android:maxLength="10"
             android:hint="@string/info_quantite"/>
 
         <TextView
