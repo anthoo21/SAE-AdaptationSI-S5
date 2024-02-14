@@ -2,9 +2,10 @@
 <!--  fichier définissant les dimensions utilisées dans l'application DoliStocks -->
 
 <resources>
-    <!--  tailles du logo  -->
+    <!--  tailles images/logos  -->
     <dimen name="hauteur_image">200dp</dimen>
     <dimen name="hauteur_image_mini">50dp</dimen>
+    <dimen name="hauteur_image_40">40dp</dimen>
 
     <!--   marges diverses  -->
     <dimen name="marge_15">15dp</dimen>
