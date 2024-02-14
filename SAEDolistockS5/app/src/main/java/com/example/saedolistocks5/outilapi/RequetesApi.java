@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+
 /**
  * Classe regroupant différentes requêtes vers l'API de dolibarr
  *
@@ -26,6 +28,12 @@ import org.json.JSONObject;
  * @version 1.0
  */
 public class RequetesApi {
+
+
+    public interface QuantiteCallback {
+        void onQuantiteRecuperee(int quantite) throws FileNotFoundException, JSONException;
+    }
+
 
     /**
      * Méthode requêtant l'ensemble des entrepôts de dolibarr
@@ -66,8 +74,8 @@ public class RequetesApi {
                         // le nom de l'entrepôt
                         if(classeAppelante.equals("AjoutListe")) {
                             listeEntrepotIdEtNom.add(new Pair<>(id, ref));
-                        // Et si la classe appelante est "Liste",
-                        // Alors on récupère le nom de l'entrepôt
+                            // Et si la classe appelante est "Liste",
+                            // Alors on récupère le nom de l'entrepôt
                         } else if (classeAppelante.equals("Liste")) {
                             listeEntrepotsVerif.add(ref);
                         }
@@ -131,8 +139,8 @@ public class RequetesApi {
                             listeInfosArticle.add(new Quartet<>(idArticle, label, refArticle,
                                     stockReel.equals("null") ? "0" : stockReel));
                             listeArticlesIdEtNom.add(new Pair<>(idArticle, label));
-                        // Et si la classe appelante est "Liste", alors on récupère
-                        // le code de tous les articles
+                            // Et si la classe appelante est "Liste", alors on récupère
+                            // le code de tous les articles
                         } else if (classeAppelante.equals("Liste")) {
                             listeCodeArticleVerif.add(refArticle);
                         }
@@ -167,7 +175,8 @@ public class RequetesApi {
      */
     public static void GetArticlesByEntrepot(String URLApi, String token, Context context,
                                              String classeAppelante, String idProduit, String idEntrepot,
-                                                Quartet<String, String, String, String> quartet) {
+                                             Quartet<String, String, String, String> quartet,
+                                             QuantiteCallback callback) {
         String urlApi = String.format("http://%s/htdocs/api/index.php/products/%s/stock?selected_warehouse_id=%s&api_key=%s",
                 URLApi, idProduit, idEntrepot, token);
 
@@ -183,9 +192,18 @@ public class RequetesApi {
                 JSONObject stockWarehouses = result.getJSONObject("stock_warehouses");
                 JSONObject idStock = stockWarehouses.getJSONObject(idEntrepot);
                 String stock = idStock.getString("real");
-                listeArticles.add(quartet.second());
-                listeRef.add(quartet.third());
-                listeStock.add(stock);
+
+                if(classeAppelante.equals("Liste")) {
+                    try {
+                        callback.onQuantiteRecuperee(Integer.parseInt(stock));
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    listeArticles.add(quartet.second());
+                    listeRef.add(quartet.third());
+                    listeStock.add(stock);
+                }
             }
 
             /**

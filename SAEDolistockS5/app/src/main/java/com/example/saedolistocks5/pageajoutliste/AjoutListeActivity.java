@@ -301,37 +301,20 @@ public class AjoutListeActivity extends AppCompatActivity {
             erreurSaisies.setText("");
 
             String libelleArticle = "";
-            int quantite = 0;
-            int iteration = 0;
             String idArticle = "";
-            // On récupère le code article saisie
+            // On récupère le code article saisis
             String valeurSaisieCodeArticle = saisieCodeArticle.getText().toString();
             // On récupère la quantité saisie
-            int quantiteSaisie = Integer.parseInt(saisieQuantite.getText().toString());
+            String quantiteSaisie = saisieQuantite.getText().toString();
 
-            // On boucle sur la liste des références de tous les articles dans l'entrepôt saisi
-            for(String valLabel : listeRef) {
-                // Si l'article saisie est égal à valLabel
-                if(valeurSaisieCodeArticle.equals(valLabel)) {
-                    // On met à jour la quantité de l'article dans l'entrepôt
-                    quantite = Integer.parseInt(listeStock.get(iteration));
-                    // On ajoute le stock avant
-                    listeStockAvant.add(Integer.valueOf(listeStock.get(iteration)));
-                }
-                iteration++;
-            }
-
-            // On remet l'itération à 0
-            iteration = 0;
             // On boucle sur les infos de tous article
-            for(Quartet<String, String, String, String> pair : listeInfosArticle) {
-                if(valeurSaisieCodeArticle.equals(pair.third())) {
+            for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
+                if(valeurSaisieCodeArticle.equals(quartet.third())) {
                     // On récupère le libellé de l'article
-                    libelleArticle = pair.second();
+                    libelleArticle = quartet.second();
                     // On récupère l'ID de l'article
-                    idArticle = pair.first();
+                    idArticle = quartet.first();
                 }
-                iteration++;
             }
 
             // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
@@ -339,18 +322,14 @@ public class AjoutListeActivity extends AppCompatActivity {
 
             // Si le choix du mode est "Ajout
             if(choixMode.getSelectedItem().toString().equals(getString(R.string.Ajout))) {
-                // On ajoute à la quantité la quantite saisie
-                quantite += quantiteSaisie;
                 // On verouille la possibilité de choisir un autre mode
                 // Car il n'y a qu'un mode par liste
                 if(listeChoixMode.size() > 1) {
                     listeChoixMode.remove(1);
                     adaptateurListeChoixMode.notifyDataSetChanged();
                 }
-            // Sinon le choix du mode est "Modification"
+                // Sinon le choix du mode est "Modification"
             } else {
-                // On remplace la quantité par la quantité saisie
-                quantite = quantiteSaisie;
                 // On verouille la possibilité de choisir un autre mode
                 // Car il n'y a qu'un mode par liste
                 if(listeChoixMode.size() > 1) {
@@ -358,12 +337,16 @@ public class AjoutListeActivity extends AppCompatActivity {
                     adaptateurListeChoixMode.notifyDataSetChanged();
                 }
             }
+
+            // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
+            saisieNomEntrepot.setEnabled(false);
+
             // On récupère la quantité saisie pour la mettre dans une liste
-            listeQuantiteSaisie.add(quantiteSaisie);
+            listeQuantiteSaisie.add(Integer.parseInt(quantiteSaisie));
             // On récupère l'ID de l'article pour le mettre dans une liste
             listeIdArticle.add(idArticle);
             // On ajoute au recycler view l'article
-            articlesAAjouter.add(new AjoutListe(libelleArticle,  valeurSaisieCodeArticle, String.valueOf(quantite)));
+            articlesAAjouter.add(new AjoutListe(libelleArticle,  valeurSaisieCodeArticle, quantiteSaisie));
             // On met à jour l'adaptateur pour qu'il mette à jour la vue
             adaptateurAjoutListe.notifyDataSetChanged(); // Mise à jour de l'adaptateur après l'ajout
         }
@@ -408,9 +391,11 @@ public class AjoutListeActivity extends AppCompatActivity {
             return new Pair<>(false, getString(R.string.code_article_incorrect));
         }
 
-        for (AjoutListe ajoutListe : articlesAAjouter) {
-            if (ajoutListe.getCodeArticle().equals(valeurSaisieArticle)) {
-                return new Pair<>(false, getString(R.string.article_deja_present));
+        if(choixMode.getSelectedItem().toString().equals(getString(R.string.Modification))) {
+            for (AjoutListe ajoutListe : articlesAAjouter) {
+                if (ajoutListe.getCodeArticle().equals(valeurSaisieArticle)) {
+                    return new Pair<>(false, getString(R.string.article_deja_present));
+                }
             }
         }
 
@@ -479,9 +464,8 @@ public class AjoutListeActivity extends AppCompatActivity {
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
             // On met à jour le format pour la date
-            simpleDateFormat.applyPattern("yyyy-dd-MM");
+            simpleDateFormat.applyPattern("yyyy-MM-dd");
             String date = simpleDateFormat.format(Calendar.getInstance().getTime());
-
             // On met à jour le format pour l'heure
             simpleDateFormat.applyPattern("HH:mm");
             String heure = simpleDateFormat.format(Calendar.getInstance().getTime());
@@ -493,8 +477,6 @@ public class AjoutListeActivity extends AppCompatActivity {
             String refArticle;
             String libelleArticle;
             String quantiteSaisie;
-            String stockAvant;
-            String stockApres;
             String idArticle;
             String ligneFichier;
 
@@ -520,14 +502,11 @@ public class AjoutListeActivity extends AppCompatActivity {
                 refArticle = articlesAAjouter.get(i).getCodeArticle();
                 libelleArticle = articlesAAjouter.get(i).getLibelleArticle();
                 quantiteSaisie = listeQuantiteSaisie.get(i).toString();
-                stockAvant = listeStockAvant.get(i).toString();
-                stockApres = articlesAAjouter.get(i).getQuantite();
                 idArticle = listeIdArticle.get(i);
-
                 // On constitue la ligne du fichier
-                ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
+                ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
                         user, nomListe, refArticle, libelleArticle, nomEntrepot, quantiteSaisie,
-                        modeMaj, stockAvant, stockApres, date, heure, idArticle, idEntrepot, "\n");
+                        modeMaj, date, heure, idArticle, idEntrepot, "\n");
                 // On écrit la ligne dans le fichier
                 fichier.write(ligneFichier.getBytes());
             }
@@ -580,7 +559,7 @@ public class AjoutListeActivity extends AppCompatActivity {
             // Si l'entrepôt existe
             if (listeEntrepots.contains(saisie)) {
                 // On indique à l'utilisateur que l'entrepôt est correct
-                texteErreur.setText(R.string.EntrepotOk); // Pas d'erreur
+                texteErreur.setText(getString(R.string.EntrepotOk)); // Pas d'erreur
                 texteErreur.setTextColor(getResources().getColor(R.color.green, getTheme()));
                 entrepotOk = true;
                 // On appel verifArticle pour mettre à jour la liste des articles
@@ -591,8 +570,9 @@ public class AjoutListeActivity extends AppCompatActivity {
                 listeArticles.clear();
                 listeRef.clear();
                 listeStock.clear();
+                libelleStock.setText("");
                 // On indique à l'utilisateur que l'entrepôt est incorrect
-                texteErreur.setText(R.string.EntrepotIncorrect);
+                texteErreur.setText(getString(R.string.EntrepotIncorrect));
                 texteErreur.setTextColor(getResources().getColor(R.color.red, getTheme())); // Utilisez une couleur appropriée
                 entrepotOk = false;
             }
@@ -615,7 +595,8 @@ public class AjoutListeActivity extends AppCompatActivity {
     public void VerifArticles(String idEntrepot) {
         for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
             RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
-                    "AjoutListe", quartet.first(), idEntrepot,quartet);
+                    "AjoutListe", quartet.first(), idEntrepot,quartet,
+                    null);
         }
     }
 
