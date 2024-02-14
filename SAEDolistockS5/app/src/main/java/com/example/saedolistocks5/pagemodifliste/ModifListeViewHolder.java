@@ -1,7 +1,7 @@
 /**
  * Package de la SAE.
  */
-package com.example.saedolistocks5.pageajoutliste;
+package com.example.saedolistocks5.pagemodifliste;
 
 import android.view.View;
 import android.widget.ImageButton;
@@ -10,9 +10,9 @@ import com.example.saedolistocks5.R;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Classe AjoutListeViewHolder.
+ * Classe ModifListeViewHolder.
  */
-public class AjoutListeViewHolder extends RecyclerView.ViewHolder {
+public class ModifListeViewHolder extends RecyclerView.ViewHolder {
 
     /**
      * Textview pour le nom et le code de l'article.
@@ -33,7 +33,7 @@ public class AjoutListeViewHolder extends RecyclerView.ViewHolder {
      * Constructeur
      * @param itemView la vue
      */
-    public AjoutListeViewHolder(View itemView) {
+    public ModifListeViewHolder(View itemView) {
         super(itemView);
         nomEtCodeArticle = itemView.findViewById(R.id.libelleArticle);
         quantite = itemView.findViewById(R.id.valeurQuantite);
@@ -44,7 +44,7 @@ public class AjoutListeViewHolder extends RecyclerView.ViewHolder {
      * Place les informations contenus.
      * @param maListe la liste.
      */
-    public void bind(AjoutListe maListe) {
+    public void bind(ModifListe maListe) {
         nomEtCodeArticle.setText(String.format("%s (%s)", maListe.getLibelleArticle(),
                 maListe.getCodeArticle()));
         quantite.setText(maListe.getQuantite());

@@ -13,6 +13,7 @@
     <string name="titre_co">Connexion</string>
     <string name="titre_liste">Toutes les listes</string>
     <string name="titre_ajout_liste">Création d\'une liste</string>
+    <string name="titre_modif_liste">Modification d\'une liste</string>
 
     <!-- texte de la sous-ligne de titre -->
     <string name="sous_titre_mode">Choix du mode</string>

@@ -100,15 +100,15 @@ public class Visualisation extends AppCompatActivity {
             while ((ligne = fichiertxt.readLine()) != null) {
                 elementListe = ligne.split(";");
                 nomListe = elementListe[1];
-                date = elementListe[9];
-                heure = elementListe[10];
+                date = elementListe[7];
+                heure = elementListe[8];
                 entrepot = elementListe[4];
                 listeArticles.add(new ItemVisualisation(elementListe[6], elementListe[3]
-                        + " (" + elementListe[2] + ")", elementListe[8]));
+                        + " (" + elementListe[2] + ")", elementListe[5]));
             }
             libelleListe.setText(nomListe);
             libelleDateHeure.setText(String.format("Créée le %s à %s", date, heure));
-            libelleEntrepot.setText(R.string.Entrepot + entrepot);
+            libelleEntrepot.setText(getString(R.string.Entrepot) + " " + entrepot);
         } catch (FileNotFoundException e) {
            // throw new RuntimeException(e); peu importe
         } catch (IOException e) {

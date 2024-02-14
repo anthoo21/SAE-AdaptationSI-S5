@@ -4,6 +4,7 @@
 package com.example.saedolistocks5.pageliste;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -22,7 +23,10 @@ import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.OutilAPI;
 import com.example.saedolistocks5.outilapi.RequetesApi;
+import com.example.saedolistocks5.outilsdivers.OutilDivers;
+import com.example.saedolistocks5.outilsdivers.Quartet;
 import com.example.saedolistocks5.pageconnexion.LoginActivity;
+import com.example.saedolistocks5.pagemodifliste.ModifListeActivity;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
@@ -39,15 +43,25 @@ import java.io.InputStreamReader;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
+/**
+ * Activité gérant la page d'accueil qui va afficher les listes de l'utilisateur courant
+ * et le permettre d'effectuer diverses actions dessus (Visualiser, Modifier, Supprimer, ...)
+ *
+ * @author BONNET, FROMENT et ENJALBERT
+ * @version 3.0
+ */
 public class ListeActivity extends AppCompatActivity {
 
     /**
@@ -57,14 +71,15 @@ public class ListeActivity extends AppCompatActivity {
      */
     private ArrayList<ListeAccueil> listeAccueil;
 
+    /**
+     * Liste pour récupérer les codes articles
+     */
     public static ArrayList<String> listeCodeArticleVerif;
 
-    public static ArrayList<String> listeEntrepotsVerif;
-
     /**
-     * Element permettant d'afficher la liste des photos
+     * Liste pour récupérer les entrepôts
      */
-    private RecyclerView listeAccueilRecyclerView;
+    public static ArrayList<String> listeEntrepotsVerif;
 
     /**
      * Adatpateur de liste accueil
@@ -74,7 +89,14 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Utilisateur courant sur l'application
      */
-    private String utilisateurCourant, token, URLApi;
+    private String utilisateurCourant,
+    /**
+     * Le token pour utiliser l'API
+     */
+    token, /**
+     * L'URL de l'API
+     */
+    URLApi;
 
     /**
      * Position de l'item liste
@@ -84,7 +106,7 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Liste des listes de l'utilisateur courant
      */
-    static ArrayList<String> listeFichierUser = new ArrayList<>();
+    static ArrayList<String> listeFichierUser;
 
     /**
      * Méthode onCreate.
@@ -102,6 +124,7 @@ public class ListeActivity extends AppCompatActivity {
 
 
         try {
+            // Permet d'afficher les listes de l'utilisateur sur la vue
             initialiseListeAccueil();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -137,39 +160,37 @@ public class ListeActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour initialiser la liste des photos et des textes.
-     * @throws IOException exception.
+     * Méthode pour initialiser la ou les listes de l'utilisateur courant
+     * pour les aficher sur la vue
+     *
+     * @throws IOException               exception.
+     * @throws NoSuchPaddingException    the no such padding exception
+     * @throws IllegalBlockSizeException the illegal block size exception
+     * @throws NoSuchAlgorithmException  the no such algorithm exception
+     * @throws BadPaddingException       the bad padding exception
+     * @throws InvalidKeyException       the invalid key exception
      */
-    private void initialiseListeAccueil() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        String utilisateurCourant;
+    private void initialiseListeAccueil() throws IOException, NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException,
+            InvalidKeyException {
+        // On ouvre le fichier infouser pour récupérer les infos à propos de l'utilisateur
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
-        String[] valeurInfoUser;
-        BufferedReader infosUserTxt = new BufferedReader(infosUser);
-        valeurInfoUser = infosUserTxt.readLine().split(";;;;");
 
+        // On appelle une méthode pour récupérer les infos de l'utilisateur
+        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser);
 
-        String tokenCrypte = valeurInfoUser[0];
+        // On récupère le token
+        token = infos.first();
 
-        // Supprimez les crochets et les espaces
-        tokenCrypte = tokenCrypte.replaceAll("[\\[\\]\\s]", "");
+        // On récupère l'URL de l'API
+        URLApi = infos.second();
 
-        // Séparez les valeurs en utilisant la virgule comme délimiteur
-        String[] valeurs = tokenCrypte.split(",");
-
-        // Créez un tableau de bytes et remplissez-le avec les valeurs
-        byte[] tableauDeBytes = new byte[valeurs.length];
-        for (int i = 0; i < valeurs.length; i++) {
-            tableauDeBytes[i] = Byte.parseByte(valeurs[i].trim());
-        }
-        Key key = EncryptAndDecrypteToken.stringToKey(valeurInfoUser[3], "DES");
-
-        token = EncryptAndDecrypteToken.decrypt(tableauDeBytes, key);
-
-        URLApi = valeurInfoUser[2];
-
-        utilisateurCourant = valeurInfoUser[1];
+        // On récupère l'utilisateur courant
+        utilisateurCourant = infos.third();
 
         listeAccueil = new ArrayList<>();
+
+        listeFichierUser = new ArrayList<>();
 
         File filesDir = getFilesDir(); // Récupère le répertoire "files" de votre application
         File[] files = filesDir.listFiles(); // Obtient la liste des fichiers dans le répertoire
@@ -179,14 +200,16 @@ public class ListeActivity extends AppCompatActivity {
                 if (file.isFile() && file.getName().startsWith(utilisateurCourant)) {
                     InputStreamReader liste = new InputStreamReader(openFileInput(file.getName()));
                     try (BufferedReader listeText = new BufferedReader(liste)) {
-                        listeFichierUser.add(file.getName());
-                        String[] ligneListe = listeText.readLine().split(";");
-
-                        String nomListe = ligneListe[1];
-                        String dateCreation = "Date de création : " + ligneListe[9];
-                        String heureCreation = ligneListe[10];
-                        listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
-                    } catch (IOException e) {
+                        String ligne = listeText.readLine();
+                        if(ligne != null) {
+                            listeFichierUser.add(file.getName());
+                            String[] ligneListeSplit = ligne.split(";");
+                            String nomListe = ligneListeSplit[1];
+                            String dateCreation = "Date de création : " + ligneListeSplit[7];
+                            String heureCreation = ligneListeSplit[8];
+                            listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
+                        }
+                        } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -194,8 +217,10 @@ public class ListeActivity extends AppCompatActivity {
         }
 
     }
+
     /**
      * Méthod de click sur le menu.
+     *
      * @param view la vue.
      */
     public void onClickMenu(View view) {
@@ -237,7 +262,9 @@ public class ListeActivity extends AppCompatActivity {
             intention.putExtra("positionItem", positionItemListe);
             startActivity(intention);
         } else if (item.getItemId() == R.id.optionModification) { // modification d'une liste
-
+            Intent intention = new Intent(ListeActivity.this, ModifListeActivity.class);
+            intention.putExtra("positionItem", positionItemListe);
+            startActivity(intention);
         } else if (item.getItemId() == R.id.optionEnvoyer) {
             EnvoyerListe();
         } else {
@@ -249,7 +276,8 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Méthode invoquée automatiquement lors d'un clic retour.
      * de retour vers l'activité principale.
-     * @param view  source du clic.
+     *
+     * @param view source du clic.
      */
     public void onClickRetour(View view) {
         Intent intention = new Intent(ListeActivity.this, MainActivity.class);
@@ -258,7 +286,8 @@ public class ListeActivity extends AppCompatActivity {
 
     /**
      * Méthode invoquée automatiquement lors d'un clic sur ajouter.
-     * @param bouton  source du clic.
+     *
+     * @param bouton source du clic.
      */
     public void onClickAjouter(View bouton) {
         Intent intention = new Intent(ListeActivity.this, AjoutListeActivity.class);
@@ -268,7 +297,8 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Méthode invoquée automatiquement lors d'un clic sur l'image bouton
      * de deconnexion
-     * @param view  source du clic.
+     *
+     * @param view source du clic.
      */
     public void onClickDeco(View view) {
             Intent intention = new Intent(ListeActivity.this, LoginActivity.class);
@@ -277,60 +307,91 @@ public class ListeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Envoyer liste.
+     */
     public void EnvoyerListe() {
 
         String nomFichier = listeFichierUser.get(positionItemListe);        try {
         InputStreamReader liste = new InputStreamReader(openFileInput(nomFichier));
         BufferedReader listeText = new BufferedReader(liste);
 
-        String ligne;
 
-
-
-
-        String utilisateur = utilisateurCourant;
-        int maj = 0;
         String[] elementListe;
+        String ligne;
         while ((ligne = listeText.readLine()) != null) {
-            JSONObject bodyJSON = new JSONObject();
-
             elementListe = ligne.split(";");
-            if(elementListe[6].equals("Ajout")) {
-                elementListe[6] = "0";
-            } else {
-                elementListe[6] = "1";
-            }
-            // Méthode permettant de vérifier l'article et l'entrepôt
-            maj = VerifArticlesEtEntrepots(elementListe[2], elementListe[4]);
+            String[] finalElementListe = elementListe;
+            RequetesApi.GetArticlesByEntrepot(URLApi, token, getApplicationContext(),
+                    "Liste", elementListe[9], elementListe[10], null, new RequetesApi.QuantiteCallback() {
+                        @Override
+                        public void onQuantiteRecuperee(int quantiteAvantEnvoieListe)
+                                throws FileNotFoundException, JSONException {
+                            JSONObject bodyJSON = new JSONObject();
+                            int quantiteApres;
+                            int quantiteSaisie;
+                            int maj = 0;
 
-            bodyJSON.put("ref", "");
-            bodyJSON.put("status", 1);
-            bodyJSON.put("Libelle", elementListe[1]);
-            bodyJSON.put("CodeArticle", elementListe[2]);
-            bodyJSON.put("CodeBarre", "");
-            bodyJSON.put("Designation", elementListe[3]);
-            bodyJSON.put("Entrepot", elementListe[4]);
-            bodyJSON.put("Quantite",Integer.parseInt(elementListe[5]));
-            bodyJSON.put("Mode", Integer.parseInt(elementListe[6]));
-            bodyJSON.put("Maj", maj);
-            bodyJSON.put("StockAvant", Integer.parseInt(elementListe[7]));
-            bodyJSON.put("StockApres", Integer.parseInt(elementListe[8]));
-            bodyJSON.put("date", elementListe[9]);
-            bodyJSON.put("Utilisateur", utilisateur);
-            EnvoyerListeSurDolibarr(nomFichier, bodyJSON);
+                            quantiteSaisie = Integer.parseInt(finalElementListe[5]);
+
+                            if(finalElementListe[6].equals("Ajout")) {
+                                finalElementListe[6] = "0";
+                                quantiteApres = quantiteAvantEnvoieListe + quantiteSaisie;
+                            } else {
+                                finalElementListe[6] = "1";
+                                quantiteApres = Integer.parseInt(finalElementListe[5]);
+                                quantiteSaisie = quantiteApres - quantiteAvantEnvoieListe;
+                            }
+                            maj = VerifArticlesEtEntrepots(finalElementListe[2], finalElementListe[4]);
+                            bodyJSON.put("ref", "");
+                            bodyJSON.put("status", 1);
+                            bodyJSON.put("Libelle", finalElementListe[1]);
+                            bodyJSON.put("CodeArticle", finalElementListe[2]);
+                            bodyJSON.put("CodeBarre", "");
+                            bodyJSON.put("Designation", finalElementListe[3]);
+                            bodyJSON.put("Entrepot", finalElementListe[4]);
+                            bodyJSON.put("Quantite", quantiteSaisie);
+                            bodyJSON.put("Mode", Integer.parseInt(finalElementListe[6]));
+                            bodyJSON.put("Maj", maj);
+                            bodyJSON.put("StockAvant", quantiteAvantEnvoieListe);
+                            bodyJSON.put("StockApres", quantiteApres);
+                            bodyJSON.put("date", finalElementListe[7]);
+                            bodyJSON.put("Utilisateur", utilisateurCourant);
+                            EnvoyerListeSurDolibarr(nomFichier, bodyJSON);
+                            // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
+                            if(maj == 0) {
+                                JSONObject bodyJSONMvtStock = new JSONObject();
+                                bodyJSONMvtStock.put("product_id", Integer.parseInt(finalElementListe[9]));
+                                bodyJSONMvtStock.put("warehouse_id", Integer.parseInt(finalElementListe[10]));
+                                bodyJSONMvtStock.put("qty", quantiteSaisie);
+                                bodyJSONMvtStock.put("datem", finalElementListe[7]);
+                                bodyJSONMvtStock.put("movementlabel",
+                                        String.format("%s : %s", utilisateurCourant, finalElementListe[1]));
+                                ModifierMouvementStock(bodyJSONMvtStock);
+                            }
+                        }
+                    });
+
+
         }
 
-
-
         listeText.close();
+
+        listeFichierUser.remove(positionItemListe);
+
     } catch (IOException e) {
         e.printStackTrace();
-    } catch (JSONException e) {
-        throw new RuntimeException(e);
     }
 
     }
 
+    /**
+     * Verif articles et entrepots int.
+     *
+     * @param codeArticle the code article
+     * @param nomEntrepot the nom entrepot
+     * @return the int
+     */
     public int VerifArticlesEtEntrepots(String codeArticle, String nomEntrepot) {
         boolean verifArticle = false;
         boolean verifEntrepot = false;
@@ -354,6 +415,15 @@ public class ListeActivity extends AppCompatActivity {
         return 1;
     }
 
+
+    /**
+     * Envoyer liste sur dolibarr.
+     *
+     * @param nomFichier the nom fichier
+     * @param bodyJson   the body json
+     * @throws JSONException         the json exception
+     * @throws FileNotFoundException the file not found exception
+     */
     public void EnvoyerListeSurDolibarr(String nomFichier, JSONObject bodyJson) throws JSONException, FileNotFoundException {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/dolistockapi/listess?api_key=%s",
                 URLApi, token);
@@ -372,28 +442,78 @@ public class ListeActivity extends AppCompatActivity {
 
             @Override
             public void onError(VolleyError error) {
-                if(Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
-                    traiterResultatOK(nomFichier);
+                if(error.networkResponse != null ) {
+                    if(error.networkResponse.statusCode != 503) {
+                        if(Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
+                            traiterResultatOK(nomFichier);
+                        } else {
+                            Toast.makeText(ListeActivity.this, "Problème d'insertion",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
                 } else {
-                    Toast.makeText(ListeActivity.this, "Problème d'insertion",
-                            Toast.LENGTH_LONG).show();
+                    traiterResultatOK(nomFichier);
                 }
             }
         });
-        //TODO faire méthode envoyer liste et regarder mouvement de stock etc
 
     }
 
+    /**
+     * Modifier mouvement stock.
+     *
+     * @param bodyJson the body json
+     */
+    public void ModifierMouvementStock(JSONObject bodyJson) {
+        String urlAPI = String.format("http://%s/htdocs/api/index.php/stockmovements?api_key=%s",
+                URLApi, token);
+
+        OutilAPI.PostApiJson(getApplicationContext(), urlAPI, bodyJson, new OutilAPI.ApiCallback() {
+
+            @Override
+            public void onSuccess(JSONObject result) {
+                Toast.makeText(getApplicationContext(), "Insertion OK",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onSuccess(JSONArray result) {
+                Toast.makeText(getApplicationContext(), "Insertion OK",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                if(error.getMessage() != null) {
+                    if(!error.getMessage().contains("JSONException")) {
+                        Toast.makeText(getApplicationContext(), "Erreur : " + error.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Traiter resultat ok.
+     *
+     * @param nomFichier the nom fichier
+     */
     public void traiterResultatOK(String nomFichier) {
         Toast.makeText(ListeActivity.this, "Insertion OK",
                 Toast.LENGTH_LONG).show();
         deleteFile(nomFichier);
-        listeAccueil.remove(positionItemListe);
-        adaptateur.notifyItemRemoved(positionItemListe);
+        if(listeAccueil.size() != 0) {
+            listeAccueil.remove(positionItemListe);
+            adaptateur.notifyItemRemoved(positionItemListe);
+            // Recrée la vue pour remettre à jour le positionItemListe
+            this.recreate();
+        }
     }
 
     /**
      * getter de la liste des fichier users.
+     *
      * @return la liste des fichiers Users.
      */
     public static List<String> getListeFichierUser() {

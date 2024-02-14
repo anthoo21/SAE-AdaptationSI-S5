@@ -1,44 +1,35 @@
 /**
  * Package de la SAE
  */
-package com.example.saedolistocks5.pageajoutliste;
+package com.example.saedolistocks5.pagemodifliste;
 
 import static com.example.saedolistocks5.outilapi.RequetesApi.getArticles;
 import static com.example.saedolistocks5.outilapi.RequetesApi.getListeEntrepot;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.saedolistocks5.R;
-import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
 import com.example.saedolistocks5.pageliste.ListeActivity;
-import java.io.BufferedReader;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,13 +38,13 @@ import java.util.TimeZone;
 import com.example.saedolistocks5.outilsdivers.Quartet;
 
 /**
- * Classe AjoutListeActivity qui permet d'ajouter une liste sur l'application Dolistock
- * en fonction du nom de la liste, du nom de l'entrepôt et d'ajouter des lignes à la liste
+ * Classe ModifListeActivity qui permet de modifier une liste sur l'application Dolistock
+ * en fonction du nom de la liste, du nom de l'entrepôt et de modifier des lignes à la liste
  * en fonction du code de l'article et de la quantité à ajouter ou à modifier
  * @author BONNET, FROMENT et ENJALBERT
  * @version 2.0
  */
-public class AjoutListeActivity extends AppCompatActivity {
+public class ModifListeActivity extends AppCompatActivity {
 
     /**
      * Editext pour la saisie du Nom de la liste.
@@ -62,7 +53,7 @@ public class AjoutListeActivity extends AppCompatActivity {
     /**
      * Editext pour la saisie du nom de l'entrepot.
      */
-    private AutoCompleteTextView saisieNomEntrepot;
+    private EditText saisieNomEntrepot;
     /**
      * Editext pour saisir la quantite.
      */
@@ -88,9 +79,9 @@ public class AjoutListeActivity extends AppCompatActivity {
      */
     private Spinner choixMode;
     /**
-     * RecyclerView d'ajout article.
+     * RecyclerView modif article.
      */
-    private RecyclerView ajoutArticleRecyclerView;
+    private RecyclerView modifArticleRecyclerView;
 
     /**
      * Liste des entrepots.
@@ -112,6 +103,10 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Liste pour la réference.
      */
     public static ArrayList<String> listeRef;
+    /**
+     * Liste avant les stocks.
+     */
+    private ArrayList<Integer> listeStockAvant;
 
     /**
      * Liste pour la quantite saisie.
@@ -139,35 +134,19 @@ public class AjoutListeActivity extends AppCompatActivity {
     public static ArrayList<Pair<String, String>> listeEntrepotIdEtNom;
 
     /**
-     * Liste des articles à ajouter.
+     * Liste des articles à modifier.
      */
-    private ArrayList<AjoutListe> articlesAAjouter;
+    private ArrayList<ModifListe> articlesAModifier;
 
     /**
-     * Adapter pour l'ajout d'une liste.
+     * Adapter pour la modif d'une liste.
      */
-    private AjoutListeAdapter adaptateurAjoutListe;
+    private ModifListeAdapter adaptateurModifListe;
 
     /**
      * Adpater pour la liste du choix du mode.
      */
     private ArrayAdapter<String> adaptateurListeChoixMode;
-
-    /**
-     * Suggestion à afficher lors du saisie du libellé d'un article
-     */
-    private ArrayList<String> suggetsionSaisieLibelleArticle;
-
-    /**
-     * Permet de récupérer l'ID associé à la suggestion de l'article
-     */
-    private ArrayList<String> suggestionRecupRefArticle;
-
-    /**
-     * Adaptateur pour la suggestion du libellé d'un article
-     */
-    public static ArrayAdapter<String> adapterSuggestionArticle;
-
     /**
      * String por le token de l'api.
      */
@@ -186,11 +165,6 @@ public class AjoutListeActivity extends AppCompatActivity {
     private boolean entrepotOk;
 
     /**
-     * Image Button permettant d'afficher la fenêtre pour chercher un libellé d'article
-     */
-    private ImageButton rechercheArticle;
-
-    /**
      * Méthode on create
      * @param savedInstanceState If the activity is being re-initialized after
      *     previously being shut down then this Bundle contains the data it most
@@ -201,7 +175,7 @@ public class AjoutListeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ajout_liste_activity);
+        setContentView(R.layout.modif_liste_activity);
 
         // Initialse les composants de base
         initialiserComposants();
@@ -234,27 +208,20 @@ public class AjoutListeActivity extends AppCompatActivity {
         texteErreur = findViewById(R.id.erreurSaisieEntrepot);
         erreurSaisies = findViewById(R.id.erreurSaisies);
         choixMode = findViewById(R.id.ddlModeMaj);
-        ajoutArticleRecyclerView = findViewById(R.id.ajout_article_recycler);
-        rechercheArticle = findViewById(R.id.rechercheArticle);
-
+        modifArticleRecyclerView = findViewById(R.id.ajout_article_recycler);
 
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
         listeStock = new ArrayList<>();
         listeChoixMode = new ArrayList<>();
         listeRef = new ArrayList<>();
-        articlesAAjouter = new ArrayList<>();
+        articlesAModifier = new ArrayList<>();
+        listeStockAvant = new ArrayList<>();
         listeQuantiteSaisie = new ArrayList<>();
         listeArticlesIdEtNom = new ArrayList<>();
         listeEntrepotIdEtNom = new ArrayList<>();
         listeInfosArticle = new ArrayList<>();
         listeIdArticle = new ArrayList<>();
-        suggetsionSaisieLibelleArticle = new ArrayList<>();
-        suggestionRecupRefArticle = new ArrayList<>();
-
-        adapterSuggestionArticle = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                listeArticles);
 
         entrepotOk = false;
     }
@@ -300,9 +267,9 @@ public class AjoutListeActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item, listeChoixMode);
         choixMode.setAdapter(adaptateurListeChoixMode);
 
-        adaptateurAjoutListe = new AjoutListeAdapter(articlesAAjouter);
-        ajoutArticleRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ajoutArticleRecyclerView.setAdapter(adaptateurAjoutListe);
+        adaptateurModifListe = new ModifListeAdapter(articlesAModifier);
+        modifArticleRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        modifArticleRecyclerView.setAdapter(adaptateurModifListe);
     }
 
     /**
@@ -310,14 +277,14 @@ public class AjoutListeActivity extends AppCompatActivity {
      */
     private void chargerDonneesInitiales() {
         // Récupère la liste des entrepôts
-        getListeEntrepot(urlApi, token, getApplicationContext(), "AjoutListe");
+        getListeEntrepot(urlApi, token, getApplicationContext(), "ModifListe");
 
         // Récupère la liste des articles
-        getArticles(urlApi, token, getApplicationContext(), "AjoutListe");
+        getArticles(urlApi, token, getApplicationContext(), "ModifListe");
     }
 
     /**
-     * Lors d'un click pour ajouter un article à la liste
+     * Lors d'un click pour modifier un article à la liste
      * @param view la vue
      */
     public void clickAjouter(View view) {
@@ -332,20 +299,37 @@ public class AjoutListeActivity extends AppCompatActivity {
             erreurSaisies.setText("");
 
             String libelleArticle = "";
+            int quantite = 0;
+            int iteration = 0;
             String idArticle = "";
-            // On récupère le code article saisis
+            // On récupère le code article saisie
             String valeurSaisieCodeArticle = saisieCodeArticle.getText().toString();
             // On récupère la quantité saisie
-            String quantiteSaisie = saisieQuantite.getText().toString();
+            int quantiteSaisie = Integer.parseInt(saisieQuantite.getText().toString());
 
-            // On boucle sur les infos de tous article
-            for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
-                if(valeurSaisieCodeArticle.equals(quartet.third())) {
-                    // On récupère le libellé de l'article
-                    libelleArticle = quartet.second();
-                    // On récupère l'ID de l'article
-                    idArticle = quartet.first();
+            // On boucle sur la liste des références de tous les articles dans l'entrepôt saisi
+            for(String valLabel : listeRef) {
+                // Si l'article saisie est égal à valLabel
+                if(valeurSaisieCodeArticle.equals(valLabel)) {
+                    // On met à jour la quantité de l'article dans l'entrepôt
+                    quantite = Integer.parseInt(listeStock.get(iteration));
+                    // On ajoute le stock avant
+                    listeStockAvant.add(Integer.valueOf(listeStock.get(iteration)));
                 }
+                iteration++;
+            }
+
+            // On remet l'itération à 0
+            iteration = 0;
+            // On boucle sur les infos de tous article
+            for(Quartet<String, String, String, String> pair : listeInfosArticle) {
+                if(valeurSaisieCodeArticle.equals(pair.third())) {
+                    // On récupère le libellé de l'article
+                    libelleArticle = pair.second();
+                    // On récupère l'ID de l'article
+                    idArticle = pair.first();
+                }
+                iteration++;
             }
 
             // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
@@ -353,14 +337,18 @@ public class AjoutListeActivity extends AppCompatActivity {
 
             // Si le choix du mode est "Ajout
             if(choixMode.getSelectedItem().toString().equals(getString(R.string.Ajout))) {
+                // On ajoute à la quantité la quantite saisie
+                quantite += quantiteSaisie;
                 // On verouille la possibilité de choisir un autre mode
                 // Car il n'y a qu'un mode par liste
                 if(listeChoixMode.size() > 1) {
                     listeChoixMode.remove(1);
                     adaptateurListeChoixMode.notifyDataSetChanged();
                 }
-                // Sinon le choix du mode est "Modification"
+            // Sinon le choix du mode est "Modification"
             } else {
+                // On remplace la quantité par la quantité saisie
+                quantite = quantiteSaisie;
                 // On verouille la possibilité de choisir un autre mode
                 // Car il n'y a qu'un mode par liste
                 if(listeChoixMode.size() > 1) {
@@ -368,18 +356,14 @@ public class AjoutListeActivity extends AppCompatActivity {
                     adaptateurListeChoixMode.notifyDataSetChanged();
                 }
             }
-
-            // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
-            saisieNomEntrepot.setEnabled(false);
-
             // On récupère la quantité saisie pour la mettre dans une liste
-            listeQuantiteSaisie.add(Integer.parseInt(quantiteSaisie));
+            listeQuantiteSaisie.add(quantiteSaisie);
             // On récupère l'ID de l'article pour le mettre dans une liste
             listeIdArticle.add(idArticle);
             // On ajoute au recycler view l'article
-            articlesAAjouter.add(new AjoutListe(libelleArticle,  valeurSaisieCodeArticle, quantiteSaisie));
+            articlesAModifier.add(new ModifListe(libelleArticle,  valeurSaisieCodeArticle, String.valueOf(quantite)));
             // On met à jour l'adaptateur pour qu'il mette à jour la vue
-            adaptateurAjoutListe.notifyDataSetChanged(); // Mise à jour de l'adaptateur après l'ajout
+            adaptateurModifListe.notifyDataSetChanged(); // Mise à jour de l'adaptateur après l'ajout
         }
     }
 
@@ -422,11 +406,9 @@ public class AjoutListeActivity extends AppCompatActivity {
             return new Pair<>(false, getString(R.string.code_article_incorrect));
         }
 
-        if(choixMode.getSelectedItem().toString().equals(getString(R.string.Modification))) {
-            for (AjoutListe ajoutListe : articlesAAjouter) {
-                if (ajoutListe.getCodeArticle().equals(valeurSaisieArticle)) {
-                    return new Pair<>(false, getString(R.string.article_deja_present));
-                }
+        for (ModifListe modifListe : articlesAModifier) {
+            if (modifListe.getCodeArticle().equals(valeurSaisieArticle)) {
+                return new Pair<>(false, getString(R.string.article_deja_present));
             }
         }
 
@@ -442,14 +424,14 @@ public class AjoutListeActivity extends AppCompatActivity {
         // On récupère la position de la ligne à supprimer
         int position = (int) view.getTag();
         // Si ce n'est pas le dernier article de la liste
-        if (position >= 0 && position < articlesAAjouter.size()) {
+        if (position >= 0 && position < articlesAModifier.size()) {
             listeQuantiteSaisie.remove(position);
-            articlesAAjouter.remove(position);
-            adaptateurAjoutListe.notifyItemRemoved(position);
+            articlesAModifier.remove(position);
+            adaptateurModifListe.notifyItemRemoved(position);
         }
         // Cas où il n'y a plus d'article ajouter,
         // On remet à jour le choix du mode
-        if(articlesAAjouter.isEmpty()) {
+        if(articlesAModifier.isEmpty()) {
             listeChoixMode.clear();
             listeChoixMode.add(getString(R.string.Ajout));
             listeChoixMode.add(getString(R.string.Modification));
@@ -474,8 +456,8 @@ public class AjoutListeActivity extends AppCompatActivity {
         listeChoixMode.add(getString(R.string.Modification));
         saisieNomEntrepot.setEnabled(true);
         adaptateurListeChoixMode.notifyDataSetChanged();
-        articlesAAjouter.clear();
-        adaptateurAjoutListe.notifyDataSetChanged();
+        articlesAModifier.clear();
+        adaptateurModifListe.notifyDataSetChanged();
     }
 
     /**
@@ -495,8 +477,9 @@ public class AjoutListeActivity extends AppCompatActivity {
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
             // On met à jour le format pour la date
-            simpleDateFormat.applyPattern("yyyy-MM-dd");
+            simpleDateFormat.applyPattern("yyyy-dd-MM");
             String date = simpleDateFormat.format(Calendar.getInstance().getTime());
+
             // On met à jour le format pour l'heure
             simpleDateFormat.applyPattern("HH:mm");
             String heure = simpleDateFormat.format(Calendar.getInstance().getTime());
@@ -508,6 +491,8 @@ public class AjoutListeActivity extends AppCompatActivity {
             String refArticle;
             String libelleArticle;
             String quantiteSaisie;
+            String stockAvant;
+            String stockApres;
             String idArticle;
             String ligneFichier;
 
@@ -529,113 +514,27 @@ public class AjoutListeActivity extends AppCompatActivity {
             FileOutputStream fichier = openFileOutput(nomFichier + ".txt",
                     Context.MODE_PRIVATE);
             // On boucle sur l'ensemble des articles de la liste
-            for(int i = 0; i < articlesAAjouter.size(); i++) {
-                refArticle = articlesAAjouter.get(i).getCodeArticle();
-                libelleArticle = articlesAAjouter.get(i).getLibelleArticle();
+            for(int i = 0; i < articlesAModifier.size(); i++) {
+                refArticle = articlesAModifier.get(i).getCodeArticle();
+                libelleArticle = articlesAModifier.get(i).getLibelleArticle();
                 quantiteSaisie = listeQuantiteSaisie.get(i).toString();
+                stockAvant = listeStockAvant.get(i).toString();
+                stockApres = articlesAModifier.get(i).getQuantite();
                 idArticle = listeIdArticle.get(i);
+
                 // On constitue la ligne du fichier
-                ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
+                ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
                         user, nomListe, refArticle, libelleArticle, nomEntrepot, quantiteSaisie,
-                        modeMaj, date, heure, idArticle, idEntrepot, "\n");
+                        modeMaj, stockAvant, stockApres, date, heure, idArticle, idEntrepot, "\n");
                 // On écrit la ligne dans le fichier
                 fichier.write(ligneFichier.getBytes());
             }
 
             // On retourne sur la page de visualisation de toutes les listes
-            Intent intention = new Intent(AjoutListeActivity.this, ListeActivity.class);
+            Intent intention = new Intent(ModifListeActivity.this, ListeActivity.class);
             startActivity(intention);
 
         }
-    }
-
-    /**
-     * Permet de vérifier si un article se trouve dans un entrepot
-     * @param idEntrepot id de l'entrepôt
-     */
-    public void VerifArticles(String idEntrepot) {
-        for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
-            RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
-                    "AjoutListe", quartet.first(), idEntrepot,quartet,
-                    null);
-        }
-    }
-
-    /**
-     * Permet d'afficher une popup qui va permettre de rechercher un article
-     * par son libellé
-     * @param view
-     */
-    public void afficherPopup(View view) {
-        // Création de la pop-up
-        AlertDialog.Builder builder = new AlertDialog.Builder(AjoutListeActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.popup_recherche_article, null);
-        builder.setView(dialogView);
-
-
-        // Initialiser le EditText et le ListView
-        final EditText editText = dialogView.findViewById(R.id.saisieLibelleArticle);
-        final ListView listView = dialogView.findViewById(R.id.libellesArticles);
-
-        // Exemple pour ajouter des éléments à la liste en fonction de la saisie
-        adapterSuggestionArticle = new ArrayAdapter<>(AjoutListeActivity.this,
-                android.R.layout.simple_list_item_1, listeArticles);
-        listView.setAdapter(adapterSuggestionArticle);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String saisie = s.toString();
-                suggetsionSaisieLibelleArticle = new ArrayList<>();
-                suggestionRecupRefArticle = new ArrayList<>();
-
-                for(int i = 0; i < listeArticles.size(); i++) {
-                    if(listeArticles.get(i).toLowerCase()
-                            .startsWith(saisie.toLowerCase())) {
-                        suggestionRecupRefArticle.add(listeRef.get(i));
-                        suggetsionSaisieLibelleArticle.add(listeArticles.get(i));
-                    }
-                }
-
-
-                adapterSuggestionArticle = new ArrayAdapter<>(AjoutListeActivity.this,
-                        android.R.layout.simple_list_item_1, suggetsionSaisieLibelleArticle);
-                listView.setAdapter(adapterSuggestionArticle);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
-        });
-
-        // Afficher la pop-up
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        // Gérer le clic sur un élément de la liste
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String refAInserer;
-                if(suggestionRecupRefArticle.size() == 0) {
-                    refAInserer = listeRef.get(position);
-                } else {
-                    refAInserer = suggestionRecupRefArticle.get(position); // Récupère l'élément sélectionné
-
-                }
-                saisieCodeArticle.setText(refAInserer);
-                dialog.dismiss();
-                suggetsionSaisieLibelleArticle.clear();
-                suggestionRecupRefArticle.clear();
-            }
-        });
-
     }
 
     /**
@@ -666,44 +565,32 @@ public class AjoutListeActivity extends AppCompatActivity {
             // A chaque modification du texte
             String saisie = s.toString();
             Pair<String, String> idEtNomEntrepotActuel = new Pair<>("", "");
-            ArrayList<String> suggestions = new ArrayList<>();
-
             listeEntrepots = new ArrayList<>();
-
             for(Pair<String, String> pair : listeEntrepotIdEtNom)
             {
                 listeEntrepots.add(pair.second);
                 // On vérifie si le nom de l'entrepôt est celui saisi par l'utilisateur
                 if(pair.second.contains(saisie)) {
                     idEtNomEntrepotActuel = new Pair<>(pair.first, pair.second);
-                    suggestions.add(pair.second);
                 }
             }
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(AjoutListeActivity.this,
-                    android.R.layout.simple_dropdown_item_1line, suggestions);
-            saisieNomEntrepot.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-
 
             // Si l'entrepôt existe
             if (listeEntrepots.contains(saisie)) {
                 // On indique à l'utilisateur que l'entrepôt est correct
-                texteErreur.setText(getString(R.string.EntrepotOk)); // Pas d'erreur
+                texteErreur.setText(R.string.EntrepotOk); // Pas d'erreur
                 texteErreur.setTextColor(getResources().getColor(R.color.green, getTheme()));
                 entrepotOk = true;
                 // On appel verifArticle pour mettre à jour la liste des articles
                 // en fonction de l'entrepôt
-                listeArticles = new ArrayList<>();
                 VerifArticles(idEtNomEntrepotActuel.first);
             } else {
                 // On vide la liste des noms et codes articles et de leur stock
                 listeArticles.clear();
                 listeRef.clear();
                 listeStock.clear();
-                libelleStock.setText("");
                 // On indique à l'utilisateur que l'entrepôt est incorrect
-                texteErreur.setText(getString(R.string.EntrepotIncorrect));
+                texteErreur.setText(R.string.EntrepotIncorrect);
                 texteErreur.setTextColor(getResources().getColor(R.color.red, getTheme())); // Utilisez une couleur appropriée
                 entrepotOk = false;
             }
@@ -726,10 +613,10 @@ public class AjoutListeActivity extends AppCompatActivity {
     public void VerifArticles(String idEntrepot) {
         for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
             RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
-                    "AjoutListe", quartet.first(), idEntrepot,quartet,
-                    null);
+                    "AjoutListe", quartet.first(), idEntrepot,quartet);
         }
     }
+
 
     /**
      * Vérifie à chaque saisie de l'utilisateur sur le champ saisie article
@@ -769,7 +656,7 @@ public class AjoutListeActivity extends AppCompatActivity {
                     }
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(AjoutListeActivity.this,
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(ModifListeActivity.this,
                         android.R.layout.simple_dropdown_item_1line, suggestions);
                 saisieCodeArticle.setAdapter(adapter);
                 adapter.notifyDataSetChanged();

@@ -137,11 +137,10 @@ public class LoginActivity extends AppCompatActivity {
             // On construit l'URL de l'API entière
             String urlApiEntiere = String.
                     format("http://%s/htdocs/api/index.php/login?login=%s&password=%s",
-                    urlApi, user, password);
+                            urlApi, user, password);
 
             // On appelle la méthode getApiRetour pour appeler l'API
-            OutilAPI.getApiRetour(LoginActivity.this ,urlApiEntiere, new OutilAPI.ApiCallback() {
-
+            OutilAPI.GetApiJsonObject(LoginActivity.this ,urlApiEntiere, new OutilAPI.ApiCallback() {
                 /**
                  * Méthode appelée lorsque l'appel à l'API se passe correctement.
                  * @param result object JSON contenant la réponse de l'API.
@@ -192,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                  */
                 @Override
                 public void onError(VolleyError error) {
-                  
+
                     // On récupère l'état de la Wifi de l'appareil courant
                     ConnectivityManager connManager =
                             (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -220,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             });
-        }       
+        }
     }
 
     /**
