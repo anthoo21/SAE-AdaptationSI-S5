@@ -1,5 +1,6 @@
 package com.example.saedolistocks5.outilapi;
 
+import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.adapterSuggestionArticle;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeArticles;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeArticlesIdEtNom;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeEntrepotIdEtNom;
@@ -203,6 +204,7 @@ public class RequetesApi {
                     listeArticles.add(quartet.second());
                     listeRef.add(quartet.third());
                     listeStock.add(stock);
+                    adapterSuggestionArticle.notifyDataSetChanged();
                 }
             }
 
