@@ -25,6 +25,7 @@ import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
 import com.example.saedolistocks5.outilsdivers.Quartet;
 import com.example.saedolistocks5.pageconnexion.LoginActivity;
+import com.example.saedolistocks5.pagemodifliste.ModifListeActivity;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
@@ -256,7 +257,9 @@ public class ListeActivity extends AppCompatActivity {
             intention.putExtra("positionItem", positionItemListe);
             startActivity(intention);
         } else if (item.getItemId() == R.id.optionModification) { // modification d'une liste
-
+            Intent intention = new Intent(ListeActivity.this, ModifListeActivity.class);
+            intention.putExtra("positionItem", positionItemListe);
+            startActivity(intention);
         } else if (item.getItemId() == R.id.optionEnvoyer) {
             EnvoyerListe();
         } else {
