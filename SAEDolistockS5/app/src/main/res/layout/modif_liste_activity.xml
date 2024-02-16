@@ -92,6 +92,17 @@
 
     </LinearLayout>
 
+    <!-- Widget permettant d'afficher la ligne -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dip"
+        android:layout_marginTop="@dimen/marge_15"
+        android:layout_marginBottom="@dimen/marge_5"
+        android:layout_marginLeft="@dimen/marge_5"
+        android:layout_marginRight="@dimen/marge_5"
+        android:layout_gravity="center"
+        android:background="@drawable/base_ligne"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -128,7 +139,7 @@
         android:id="@+id/erreurSaisieEntrepot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/marge_5"
+        android:layout_marginLeft="@dimen/marge_15"
         android:layout_marginRight="@dimen/marge_5"
         android:textColor="@color/red"/>
 
@@ -152,6 +163,14 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
             android:layout_marginLeft="@dimen/marge_5"/>
+
+        <Button
+            android:id="@+id/btnValiderEntete"
+            style="@style/StyleMiniBouton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/libelle_valider"
+            android:onClick="clickValiderEntete"/>
 
     </LinearLayout>
 
@@ -183,10 +202,9 @@
 
         <AutoCompleteTextView
             android:id="@+id/saisieCodeArticle"
-            android:layout_width="250dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_8"
-            android:layout_weight="1"
             android:hint="@string/info_code_article"
             android:maxLines="1"/>
 
@@ -201,11 +219,14 @@
 
         <TextView
             android:id="@+id/libelleStock"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginLeft="@dimen/marge_5"
             android:layout_marginRight="@dimen/marge_5"
-            android:textSize="@dimen/taille_texte"/>
+            android:textSize="13sp"
+            android:textAlignment="center"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
     <!-- Edit Text avec bouton "Ajouter" -->
@@ -224,7 +245,7 @@
 
         <EditText
             android:id="@+id/saisieQuantite"
-            android:layout_width="0dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="number"
@@ -235,6 +256,7 @@
             android:id="@+id/libelleUnite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
             android:layout_marginRight="@dimen/marge_5"
             android:text="@string/label_unite"
             android:textSize="@dimen/taille_texte"/>
@@ -244,6 +266,7 @@
             style="@style/StyleMiniBouton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_15"
             android:text="@string/libelle_ajouter"
             android:onClick="clickAjouter"/>
 
