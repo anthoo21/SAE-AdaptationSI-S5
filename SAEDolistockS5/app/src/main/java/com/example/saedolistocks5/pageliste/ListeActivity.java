@@ -137,7 +137,7 @@ public class ListeActivity extends AppCompatActivity {
 
         // Permet d'alimenter la liste des entrepôts et des codes articles via l'API
         RequetesApi.getListeEntrepot(URLApi, token, getApplicationContext(), "Liste");
-        RequetesApi.getArticles(URLApi, token, getApplicationContext(), "Liste");
+        RequetesApi.getArticles(URLApi, token, getApplicationContext(), "Liste", null);
 
         /*
          * On crée un gestionnaire de layout linéaire, et on l'associe à la
@@ -369,6 +369,8 @@ public class ListeActivity extends AppCompatActivity {
                                         String.format("%s : %s", utilisateurCourant, finalElementListe[1]));
                                 ModifierMouvementStock(bodyJSONMvtStock);
                             }
+
+
                         }
                     });
 
@@ -506,6 +508,7 @@ public class ListeActivity extends AppCompatActivity {
         if(listeAccueil.size() != 0) {
             listeAccueil.remove(positionItemListe);
             adaptateur.notifyItemRemoved(positionItemListe);
+        } else {
             // Recrée la vue pour remettre à jour le positionItemListe
             this.recreate();
         }

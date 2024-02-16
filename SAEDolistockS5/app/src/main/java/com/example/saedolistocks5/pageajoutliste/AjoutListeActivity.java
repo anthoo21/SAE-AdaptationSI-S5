@@ -313,7 +313,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         getListeEntrepot(urlApi, token, getApplicationContext(), "AjoutListe");
 
         // Récupère la liste des articles
-        getArticles(urlApi, token, getApplicationContext(), "AjoutListe");
+        getArticles(urlApi, token, getApplicationContext(), "AjoutListe", null);
     }
 
     /**
@@ -623,7 +623,7 @@ public class AjoutListeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String refAInserer;
-                if(suggestionRecupRefArticle.size() == 0) {
+                if(suggestionRecupRefArticle.isEmpty()) {
                     refAInserer = listeRef.get(position);
                 } else {
                     refAInserer = suggestionRecupRefArticle.get(position); // Récupère l'élément sélectionné

@@ -25,9 +25,14 @@ public class ModifListeViewHolder extends RecyclerView.ViewHolder {
     private final TextView quantite;
 
     /**
-     * boutton pour l'image.
+     * bouton pour la suppression d'un article.
      */
     ImageButton btnDltArticle;
+
+    /**
+     * bouton pour la modification d'un article.
+     */
+    ImageButton btnModifArticle;
 
     /**
      * Constructeur
@@ -38,6 +43,7 @@ public class ModifListeViewHolder extends RecyclerView.ViewHolder {
         nomEtCodeArticle = itemView.findViewById(R.id.libelleArticle);
         quantite = itemView.findViewById(R.id.valeurQuantite);
         btnDltArticle = itemView.findViewById(R.id.btnDltArticle);
+        btnModifArticle = itemView.findViewById(R.id.btnModifArticle);
     }
 
     /**

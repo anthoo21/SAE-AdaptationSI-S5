@@ -9,6 +9,7 @@ import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.liste
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeStock;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeCodeArticleVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeEntrepotsVerif;
+import static com.example.saedolistocks5.pagemodifliste.ModifListeActivity.adapterSuggestionArticleModif;
 
 import android.content.Context;
 import android.util.Pair;
@@ -21,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 /**
  * Classe regroupant différentes requêtes vers l'API de dolibarr
@@ -33,6 +35,10 @@ public class RequetesApi {
 
     public interface QuantiteCallback {
         void onQuantiteRecuperee(int quantite) throws FileNotFoundException, JSONException;
+    }
+
+    public interface InfosArticlesCallback {
+        void onInfosArticlesRecup();
     }
 
 
@@ -73,7 +79,8 @@ public class RequetesApi {
                         String id = item.getString("id");
                         // Si la classe appelante est "AjoutListe", alors on récupère l'ID et
                         // le nom de l'entrepôt
-                        if(classeAppelante.equals("AjoutListe")) {
+                        if(classeAppelante.equals("AjoutListe") ||
+                                classeAppelante.equals("ModifListe")) {
                             listeEntrepotIdEtNom.add(new Pair<>(id, ref));
                             // Et si la classe appelante est "Liste",
                             // Alors on récupère le nom de l'entrepôt
@@ -106,7 +113,8 @@ public class RequetesApi {
      * @param classeAppelante la classe appelante
      */
     public static void getArticles(String URLApi, String token, Context context,
-                                   String classeAppelante) {
+                                   String classeAppelante,
+                                   InfosArticlesCallback callback) {
 
         String urlApi = String.format("http://%s/htdocs/api/index.php/products?api_key=%s", URLApi, token);
 
@@ -136,9 +144,14 @@ public class RequetesApi {
                         String stockReel = item.getString("stock_reel");
                         // Si la classe appelante est "AjoutListe", alors on récupère toutes les
                         // Infos de tous les articles
-                        if(classeAppelante.equals("AjoutListe")) {
-                            listeInfosArticle.add(new Quartet<>(idArticle, label, refArticle,
-                                    stockReel.equals("null") ? "0" : stockReel));
+                        if(classeAppelante.equals("AjoutListe") ||
+                        classeAppelante.equals("ModifListe")) {
+                            Quartet<String, String, String, String> infosArticles =
+                                    new Quartet<>(idArticle, label, refArticle,
+                                            stockReel.equals("null") ? "0" : stockReel);
+                            listeInfosArticle.add(infosArticles);
+
+
                             listeArticlesIdEtNom.add(new Pair<>(idArticle, label));
                             // Et si la classe appelante est "Liste", alors on récupère
                             // le code de tous les articles
@@ -146,6 +159,9 @@ public class RequetesApi {
                             listeCodeArticleVerif.add(refArticle);
                         }
 
+                    }
+                    if(callback != null) {
+                        callback.onInfosArticlesRecup();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -204,7 +220,12 @@ public class RequetesApi {
                     listeArticles.add(quartet.second());
                     listeRef.add(quartet.third());
                     listeStock.add(stock);
-                    adapterSuggestionArticle.notifyDataSetChanged();
+                    if(classeAppelante.equals("AjoutListe")) {
+                        adapterSuggestionArticle.notifyDataSetChanged();
+                    }
+                    if(classeAppelante.equals("ModifListe")) {
+                        adapterSuggestionArticleModif.notifyDataSetChanged();
+                    }
                 }
             }
 
