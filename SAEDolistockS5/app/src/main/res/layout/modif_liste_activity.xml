@@ -159,7 +159,7 @@
         <!-- Liste déroulante -->
         <Spinner
             android:id="@+id/ddlModeMaj"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
             android:layout_marginLeft="@dimen/marge_5"/>
@@ -169,7 +169,7 @@
             style="@style/StyleMiniBouton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/libelle_valider"
+            android:text="@string/libelle_debloquer"
             android:onClick="clickValiderEntete"/>
 
     </LinearLayout>

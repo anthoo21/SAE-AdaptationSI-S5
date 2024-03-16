@@ -27,7 +27,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -93,6 +95,27 @@ public class ModifListeActivity extends AppCompatActivity {
      * RecyclerView modif article.
      */
     private RecyclerView modifArticleRecyclerView;
+
+    /**
+     * LayoutManager du RecyclerView
+     */
+    private RecyclerView.LayoutManager layoutManager;
+
+
+    /**
+     * Bouton pour ajouter un article.
+     */
+    private Button ajouterArticle;
+
+    /**
+     * Bouton pour bloquer l'entête de la liste.
+     */
+    private Button bloquerEntete;
+
+    /**
+     * Bouton image pour rechercher un article par son libellé
+     */
+    private ImageButton rechercherArticle;
 
     /**
      * Liste du choix du mode.
@@ -242,6 +265,10 @@ public class ModifListeActivity extends AppCompatActivity {
         erreurSaisies = findViewById(R.id.erreurSaisies);
         choixMode = findViewById(R.id.ddlModeMaj);
         modifArticleRecyclerView = findViewById(R.id.ajout_article_recycler);
+        ajouterArticle = findViewById(R.id.btnAjouter);
+        bloquerEntete = findViewById(R.id.btnValiderEntete);
+        rechercherArticle = findViewById(R.id.rechercheArticle);
+        layoutManager = modifArticleRecyclerView.getLayoutManager();
 
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
@@ -413,30 +440,6 @@ public class ModifListeActivity extends AppCompatActivity {
                 }
             }
 
-            // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
-            saisieNomEntrepot.setEnabled(false);
-
-            // Si le choix du mode est "Ajout
-            if(choixMode.getSelectedItem().toString().equals(getString(R.string.Ajout))) {
-                // On verouille la possibilité de choisir un autre mode
-                // Car il n'y a qu'un mode par liste
-                if(listeChoixMode.size() > 1) {
-                    listeChoixMode.remove(1);
-                    adaptateurListeChoixMode.notifyDataSetChanged();
-                }
-                // Sinon le choix du mode est "Modification"
-            } else {
-                // On verouille la possibilité de choisir un autre mode
-                // Car il n'y a qu'un mode par liste
-                if(listeChoixMode.size() > 1) {
-                    listeChoixMode.remove(0);
-                    adaptateurListeChoixMode.notifyDataSetChanged();
-                }
-            }
-
-            // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
-            saisieNomEntrepot.setEnabled(false);
-
             // On récupère la quantité saisie pour la mettre dans une liste
             listeQuantiteSaisie.add(Integer.parseInt(quantiteSaisie));
             // On récupère l'ID de l'article pour le mettre dans une liste
@@ -514,14 +517,6 @@ public class ModifListeActivity extends AppCompatActivity {
             listeIdArticle.remove(position);
             adaptateurModifListe.notifyItemRemoved(position);
         }
-        // Cas où il n'y a plus d'article ajouter,
-        // On remet à jour le choix du mode
-        if(articlesAModifier.isEmpty()) {
-            listeChoixMode.clear();
-            listeChoixMode.add(getString(R.string.Ajout));
-            listeChoixMode.add(getString(R.string.Modification));
-            saisieNomEntrepot.setEnabled(true);
-        }
     }
 
     public void modifierArticle(View view) {
@@ -535,19 +530,42 @@ public class ModifListeActivity extends AppCompatActivity {
             articlesAModifier.remove(position);
             listeIdArticle.remove(position);
             adaptateurModifListe.notifyItemRemoved(position);
+            adaptateurModifListe.notifyItemRangeChanged(position, articlesAModifier.size());
+            // Mise à jour des tags pour chaque vue restante dans l'adaptateur
+           //for (int i = 0; i < articlesAModifier.size(); i++) {
+           //    View itemView = layoutManager.findViewByPosition(i);
+           //    if (itemView != null) {
+           //        itemView.setTag(i); // Mettre à jour le tag avec la nouvelle position
+           //    }
+           //}
+
         }
 
         if(modifOk) {
+            // On récupère le code article saisis
+            String valeurSaisieCodeArticle = saisieCodeArticle.getText().toString();
+            // On récupère la quantité saisie
+            String quantiteSaisie = saisieQuantite.getText().toString();
+
+            String idArticle = "";
+
+            // On boucle sur les infos de tous article
+            for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
+                if(valeurSaisieCodeArticle.equals(quartet.third())) {
+                    // On récupère l'ID de l'article
+                    idArticle = quartet.first();
+                }
+            }
             articlesAModifier.add(new ModifListe(articleEnModif,
                     saisieCodeArticle.getText().toString(), saisieQuantite.getText().toString()));
+            listeQuantiteSaisie.add(Integer.parseInt(quantiteSaisie));
+            listeIdArticle.add(idArticle);
         }
         saisieCodeArticle.setText(modif.getCodeArticle());
         saisieQuantite.setText(modif.getQuantite());
         articleEnModif = modif.getLibelleArticle();
 
-
         modifOk = true;
-
     }
 
     /**
@@ -562,12 +580,16 @@ public class ModifListeActivity extends AppCompatActivity {
         libelleStock.setText("");
         texteErreur.setText("");
         erreurSaisies.setText("");
-        listeChoixMode.clear();
-        listeChoixMode.add(getString(R.string.Ajout));
-        listeChoixMode.add(getString(R.string.Modification));
+        choixMode.setEnabled(true);
         saisieNomEntrepot.setEnabled(true);
+        saisieCodeArticle.setEnabled(false);
+        saisieQuantite.setEnabled(false);
+        ajouterArticle.setEnabled(false);
+        bloquerEntete.setText(getString(R.string.libelle_bloquer));
         adaptateurListeChoixMode.notifyDataSetChanged();
         articlesAModifier.clear();
+        listeQuantiteSaisie.clear();
+        listeIdArticle.clear();
         adaptateurModifListe.notifyDataSetChanged();
     }
 
@@ -630,6 +652,48 @@ public class ModifListeActivity extends AppCompatActivity {
             Intent intention = new Intent(ModifListeActivity.this, ListeActivity.class);
             startActivity(intention);
 
+        }
+    }
+
+    /**
+     * Méthode exécuté pour valider et bloquer l'entête
+     * @param view
+     */
+    public void clickValiderEntete(View view) {
+        if(entrepotOk) {
+            if(bloquerEntete.getText().toString().equals(getString(R.string.libelle_bloquer))) {
+                bloquerEntete.setText(getString(R.string.libelle_debloquer));
+                // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
+                saisieNomEntrepot.setEnabled(false);
+
+                // On désactive le choix du mode
+                choixMode.setEnabled(false);
+
+                // Maintenant, il faut activer la saisie d'un article
+                rechercherArticle.setEnabled(true);
+                saisieCodeArticle.setEnabled(true);
+                saisieQuantite.setEnabled(true);
+                ajouterArticle.setEnabled(true);
+            } else {
+                bloquerEntete.setText(getString(R.string.libelle_bloquer));
+                saisieNomEntrepot.setEnabled(true);
+                choixMode.setEnabled(true);
+
+                saisieCodeArticle.setEnabled(false);
+                saisieCodeArticle.setText("");
+                saisieQuantite.setEnabled(false);
+                saisieQuantite.setText("");
+                ajouterArticle.setEnabled(false);
+                libelleStock.setText("");
+                rechercherArticle.setEnabled(false);
+                articlesAModifier.clear();
+                adaptateurModifListe.notifyDataSetChanged();
+                listeQuantiteSaisie.clear();
+                listeIdArticle.clear();
+
+            }
+        } else {
+            texteErreur.setText(getString(R.string.entrepot_incorrect));
         }
     }
 

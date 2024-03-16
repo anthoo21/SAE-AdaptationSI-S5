@@ -148,7 +148,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/marge_5"
             android:layout_marginRight="@dimen/marge_8"
@@ -168,7 +168,7 @@
             style="@style/StyleMiniBouton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/libelle_valider"
+            android:text="@string/libelle_bloquer"
             android:onClick="clickValiderEntete"/>
 
     </LinearLayout>
@@ -244,7 +244,7 @@
 
         <EditText
             android:id="@+id/saisieQuantite"
-            android:layout_width="160dp"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="number"
