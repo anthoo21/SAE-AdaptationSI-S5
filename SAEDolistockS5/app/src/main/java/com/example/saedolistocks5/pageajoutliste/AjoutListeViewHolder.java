@@ -29,6 +29,7 @@ public class AjoutListeViewHolder extends RecyclerView.ViewHolder {
      */
     ImageButton btnDltArticle;
 
+
     /**
      * Constructeur
      * @param itemView la vue

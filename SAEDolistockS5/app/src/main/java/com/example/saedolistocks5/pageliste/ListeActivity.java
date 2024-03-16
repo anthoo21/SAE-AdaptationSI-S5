@@ -109,6 +109,16 @@ public class ListeActivity extends AppCompatActivity {
     static ArrayList<String> listeFichierUser;
 
     /**
+     * Nombre de lignes du fichier à envoyer sur Dolibarr.
+     */
+    private int nombreLignes;
+
+    /**
+     * Index de parcours de ligne
+     */
+    private int indexParcoursListe;
+
+    /**
      * Méthode onCreate.
      * @param savedInstanceState If the activity is being re-initialized after
      *     previously being shut down then this Bundle contains the data it most
@@ -316,9 +326,23 @@ public class ListeActivity extends AppCompatActivity {
         InputStreamReader liste = new InputStreamReader(openFileInput(nomFichier));
         BufferedReader listeText = new BufferedReader(liste);
 
+        indexParcoursListe = 0;
+        nombreLignes = 0;
+
+        // Compter le nombre de lignes
+        while (listeText.readLine() != null) {
+            nombreLignes++;
+        }
+
+        // Réinitialiser la position de lecture du flux
+        listeText.close();
+        liste = new InputStreamReader(openFileInput(nomFichier));
+        listeText = new BufferedReader(liste);
 
         String[] elementListe;
         String ligne;
+        // Index pour savoir si on est sur le dernier traitement du fichier ou nom
+
         while ((ligne = listeText.readLine()) != null) {
             elementListe = ligne.split(";");
             String[] finalElementListe = elementListe;
@@ -328,6 +352,7 @@ public class ListeActivity extends AppCompatActivity {
                         public void onQuantiteRecuperee(int quantiteAvantEnvoieListe)
                                 throws FileNotFoundException, JSONException {
                             JSONObject bodyJSON = new JSONObject();
+                            indexParcoursListe++;
                             int quantiteApres;
                             int quantiteSaisie;
                             int maj = 0;
@@ -357,7 +382,8 @@ public class ListeActivity extends AppCompatActivity {
                             bodyJSON.put("StockApres", quantiteApres);
                             bodyJSON.put("date", finalElementListe[7]);
                             bodyJSON.put("Utilisateur", utilisateurCourant);
-                            EnvoyerListeSurDolibarr(nomFichier, bodyJSON);
+
+                            EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe);
                             // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
                             if(maj == 0) {
                                 JSONObject bodyJSONMvtStock = new JSONObject();
@@ -369,11 +395,8 @@ public class ListeActivity extends AppCompatActivity {
                                         String.format("%s : %s", utilisateurCourant, finalElementListe[1]));
                                 ModifierMouvementStock(bodyJSONMvtStock);
                             }
-
-
                         }
                     });
-
 
         }
 
@@ -426,7 +449,9 @@ public class ListeActivity extends AppCompatActivity {
      * @throws JSONException         the json exception
      * @throws FileNotFoundException the file not found exception
      */
-    public void EnvoyerListeSurDolibarr(String nomFichier, JSONObject bodyJson) throws JSONException, FileNotFoundException {
+    public void EnvoyerListeSurDolibarr(String nomFichier, JSONObject bodyJson,
+                                        int index)
+            throws JSONException, FileNotFoundException {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/dolistockapi/listess?api_key=%s",
                 URLApi, token);
 
@@ -439,7 +464,9 @@ public class ListeActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(JSONArray result) {
-                traiterResultatOK(nomFichier);
+                if(nombreLignes == index) {
+                    traiterResultatOK(nomFichier);
+                }
             }
 
             @Override
@@ -447,14 +474,19 @@ public class ListeActivity extends AppCompatActivity {
                 if(error.networkResponse != null ) {
                     if(error.networkResponse.statusCode != 503) {
                         if(Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
-                            traiterResultatOK(nomFichier);
+                            // Si on traite la dernière ligne du fichier
+                            if(nombreLignes == index) {
+                                traiterResultatOK(nomFichier);
+                            }
                         } else {
                             Toast.makeText(ListeActivity.this, "Problème d'insertion",
                                     Toast.LENGTH_LONG).show();
                         }
                     }
                 } else {
-                    traiterResultatOK(nomFichier);
+                    if(nombreLignes == index) {
+                        traiterResultatOK(nomFichier);
+                    }
                 }
             }
         });

@@ -26,6 +26,8 @@
     <!-- libellés des boutons -->
     <string name="libelle_co">Se connecter</string>
     <string name="libelle_valider">Valider</string>
+    <string name="libelle_bloquer">Bloquer</string>
+    <string name="libelle_debloquer">Débloquer</string>
     <string name="libelle_Raz">Réinitialiser</string>
 
     <!-- label des champs de saisie -->

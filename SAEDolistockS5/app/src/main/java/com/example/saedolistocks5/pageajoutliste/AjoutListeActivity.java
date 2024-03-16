@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -91,6 +92,21 @@ public class AjoutListeActivity extends AppCompatActivity {
      * RecyclerView d'ajout article.
      */
     private RecyclerView ajoutArticleRecyclerView;
+
+    /**
+     * Bouton pour ajouter un article.
+     */
+    private Button ajouterArticle;
+
+    /**
+     * Bouton pour bloquer l'entête de la liste.
+     */
+    private Button bloquerEntete;
+
+    /**
+     * Bouton image pour rechercher un article par son libellé
+     */
+    private ImageButton rechercherArticle;
 
     /**
      * Liste des entrepots.
@@ -186,11 +202,6 @@ public class AjoutListeActivity extends AppCompatActivity {
     private boolean entrepotOk;
 
     /**
-     * Image Button permettant d'afficher la fenêtre pour chercher un libellé d'article
-     */
-    private ImageButton rechercheArticle;
-
-    /**
      * Méthode on create
      * @param savedInstanceState If the activity is being re-initialized after
      *     previously being shut down then this Bundle contains the data it most
@@ -220,6 +231,8 @@ public class AjoutListeActivity extends AppCompatActivity {
 
         // Charge les données initiales de la vue
         chargerDonneesInitiales();
+
+        bloquerSaisieArticle();
     }
 
     /**
@@ -235,8 +248,9 @@ public class AjoutListeActivity extends AppCompatActivity {
         erreurSaisies = findViewById(R.id.erreurSaisies);
         choixMode = findViewById(R.id.ddlModeMaj);
         ajoutArticleRecyclerView = findViewById(R.id.ajout_article_recycler);
-        rechercheArticle = findViewById(R.id.rechercheArticle);
-
+        ajouterArticle = findViewById(R.id.btnAjouter);
+        bloquerEntete = findViewById(R.id.btnValiderEntete);
+        rechercherArticle = findViewById(R.id.rechercheArticle);
 
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
@@ -316,6 +330,13 @@ public class AjoutListeActivity extends AppCompatActivity {
         getArticles(urlApi, token, getApplicationContext(), "AjoutListe", null);
     }
 
+    private void bloquerSaisieArticle() {
+        rechercherArticle.setEnabled(false);
+        saisieCodeArticle.setEnabled(false);
+        saisieQuantite.setEnabled(false);
+        ajouterArticle.setEnabled(false);
+    }
+
     /**
      * Lors d'un click pour ajouter un article à la liste
      * @param view la vue
@@ -347,30 +368,6 @@ public class AjoutListeActivity extends AppCompatActivity {
                     idArticle = quartet.first();
                 }
             }
-
-            // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
-            saisieNomEntrepot.setEnabled(false);
-
-            // Si le choix du mode est "Ajout
-            if(choixMode.getSelectedItem().toString().equals(getString(R.string.Ajout))) {
-                // On verouille la possibilité de choisir un autre mode
-                // Car il n'y a qu'un mode par liste
-                if(listeChoixMode.size() > 1) {
-                    listeChoixMode.remove(1);
-                    adaptateurListeChoixMode.notifyDataSetChanged();
-                }
-                // Sinon le choix du mode est "Modification"
-            } else {
-                // On verouille la possibilité de choisir un autre mode
-                // Car il n'y a qu'un mode par liste
-                if(listeChoixMode.size() > 1) {
-                    listeChoixMode.remove(0);
-                    adaptateurListeChoixMode.notifyDataSetChanged();
-                }
-            }
-
-            // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
-            saisieNomEntrepot.setEnabled(false);
 
             // On récupère la quantité saisie pour la mettre dans une liste
             listeQuantiteSaisie.add(Integer.parseInt(quantiteSaisie));
@@ -444,16 +441,9 @@ public class AjoutListeActivity extends AppCompatActivity {
         // Si ce n'est pas le dernier article de la liste
         if (position >= 0 && position < articlesAAjouter.size()) {
             listeQuantiteSaisie.remove(position);
+            listeIdArticle.remove(position);
             articlesAAjouter.remove(position);
             adaptateurAjoutListe.notifyItemRemoved(position);
-        }
-        // Cas où il n'y a plus d'article ajouter,
-        // On remet à jour le choix du mode
-        if(articlesAAjouter.isEmpty()) {
-            listeChoixMode.clear();
-            listeChoixMode.add(getString(R.string.Ajout));
-            listeChoixMode.add(getString(R.string.Modification));
-            saisieNomEntrepot.setEnabled(true);
         }
     }
 
@@ -469,12 +459,16 @@ public class AjoutListeActivity extends AppCompatActivity {
         libelleStock.setText("");
         texteErreur.setText("");
         erreurSaisies.setText("");
-        listeChoixMode.clear();
-        listeChoixMode.add(getString(R.string.Ajout));
-        listeChoixMode.add(getString(R.string.Modification));
         saisieNomEntrepot.setEnabled(true);
+        choixMode.setEnabled(true);
+        saisieCodeArticle.setEnabled(false);
+        saisieQuantite.setEnabled(false);
+        ajouterArticle.setEnabled(false);
+        bloquerEntete.setText(getString(R.string.libelle_bloquer));
         adaptateurListeChoixMode.notifyDataSetChanged();
         articlesAAjouter.clear();
+        listeQuantiteSaisie.clear();
+        listeIdArticle.clear();
         adaptateurAjoutListe.notifyDataSetChanged();
     }
 
@@ -546,6 +540,47 @@ public class AjoutListeActivity extends AppCompatActivity {
             Intent intention = new Intent(AjoutListeActivity.this, ListeActivity.class);
             startActivity(intention);
 
+        }
+    }
+
+    /**
+     * Méthode exécuté pour valider et bloquer l'entête
+     * @param view
+     */
+    public void clickValiderEntete(View view) {
+        if(entrepotOk) {
+            if(bloquerEntete.getText().toString().equals(getString(R.string.libelle_bloquer))) {
+                bloquerEntete.setText(getString(R.string.libelle_debloquer));
+                // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
+                saisieNomEntrepot.setEnabled(false);
+
+                // On désactive le choix du mode
+                choixMode.setEnabled(false);
+
+                // Maintenant, il faut activer la saisie d'un article
+                rechercherArticle.setEnabled(true);
+                saisieCodeArticle.setEnabled(true);
+                saisieQuantite.setEnabled(true);
+                ajouterArticle.setEnabled(true);
+            } else {
+                bloquerEntete.setText(getString(R.string.libelle_bloquer));
+                saisieNomEntrepot.setEnabled(true);
+                choixMode.setEnabled(true);
+
+                saisieCodeArticle.setEnabled(false);
+                saisieCodeArticle.setText("");
+                saisieQuantite.setEnabled(false);
+                saisieQuantite.setText("");
+                ajouterArticle.setEnabled(false);
+                libelleStock.setText("");
+                rechercherArticle.setEnabled(false);
+                articlesAAjouter.clear();
+                adaptateurAjoutListe.notifyDataSetChanged();
+                listeQuantiteSaisie.clear();
+                listeIdArticle.clear();
+            }
+        } else {
+            texteErreur.setText(getString(R.string.entrepot_incorrect));
         }
     }
 
