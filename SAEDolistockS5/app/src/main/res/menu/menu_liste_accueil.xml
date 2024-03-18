@@ -13,4 +13,7 @@
     <item
         android:id="@+id/optionEnvoyer"
         android:title="@string/libelle_envoyer"/>
+    <item
+        android:id="@+id/optionSupprimer"
+        android:title="@string/optionSupprimer"/>
 </menu>

@@ -46,6 +46,8 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.example.saedolistocks5.outilsdivers.Quartet;
+import com.example.saedolistocks5.popup.CustomPopupAjouter;
+import com.example.saedolistocks5.popup.CustomPopupModifier;
 
 /**
  * Classe AjoutListeActivity qui permet d'ajouter une liste sur l'application Dolistock
@@ -536,9 +538,8 @@ public class AjoutListeActivity extends AppCompatActivity {
                 fichier.write(ligneFichier.getBytes());
             }
 
-            // On retourne sur la page de visualisation de toutes les listes
-            Intent intention = new Intent(AjoutListeActivity.this, ListeActivity.class);
-            startActivity(intention);
+            CustomPopupAjouter dialog = CustomPopupAjouter.createDialog(this);
+            dialog.show();
 
         }
     }

@@ -30,6 +30,9 @@ import com.example.saedolistocks5.pagemodifliste.ModifListeActivity;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
+import com.example.saedolistocks5.popup.CustomPopupConfirmationSupp;
+import com.example.saedolistocks5.popup.CustomPopupEnvoyer;
+import com.example.saedolistocks5.popup.CustomPopupSuppression;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -277,8 +280,11 @@ public class ListeActivity extends AppCompatActivity {
             startActivity(intention);
         } else if (item.getItemId() == R.id.optionEnvoyer) {
             EnvoyerListe();
+            CustomPopupEnvoyer dialog = CustomPopupEnvoyer.createDialog(this);
+            dialog.show();
         } else {
-            // modification d'une liste
+            CustomPopupConfirmationSupp dialog = CustomPopupConfirmationSupp.createDialog(this);
+            dialog.show();
         }
         return (super.onContextItemSelected(item));
     }
