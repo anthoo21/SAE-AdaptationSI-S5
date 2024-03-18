@@ -49,6 +49,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.example.saedolistocks5.outilsdivers.Quartet;
+import com.example.saedolistocks5.popup.CustomPopupEnvoyer;
+import com.example.saedolistocks5.popup.CustomPopupModifier;
 
 /**
  * Classe ModifListeActivity qui permet de modifier une liste sur l'application Dolistock
@@ -648,9 +650,8 @@ public class ModifListeActivity extends AppCompatActivity {
                 fichier.write(ligneFichier.getBytes());
             }
 
-            // On retourne sur la page de visualisation de toutes les listes
-            Intent intention = new Intent(ModifListeActivity.this, ListeActivity.class);
-            startActivity(intention);
+            CustomPopupModifier dialog = CustomPopupModifier.createDialog(this);
+            dialog.show();
 
         }
     }

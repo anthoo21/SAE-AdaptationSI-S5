@@ -2,11 +2,11 @@
 
     <string name="app_name">DoliStock</string>
 
-    <string name="messageRedirection">
+    <string name="messageRedirection" translatable="false">
         Pour passer en mode déconnecté vous devez d\'abord vous connecter.
         Vous avez donc été redirigé vers la page de connexion.</string>
 
-    <string name="messageModeConnecte">
+    <string name="messageModeConnecte" translatable="false">
         Vous devez être connecté à internet pour utiliser le mode connecté.</string>
 
     <!-- texte de la ligne de titre -->
@@ -97,11 +97,23 @@
 
     <!--  Erreurs  -->
     <string name="ErreurSaisie">Erreur de saisie</string>
-    <string name="ErreurTousLesChamps">Erreur : tous les champs de sont pas renseignés</string>
-    <string name="ErreurJSON">Erreur : récupération du JSON incorrect</string>
+    <string name="ErreurTousLesChamps">Erreur : tous les champs ne sont pas renseignés.</string>
+    <string name="ErreurJSON">Erreur : récupération du JSON incorrecte.</string>
     <string name="Erreur">Erreur</string>
     <string name="ErreurConnexionInternet">Erreur : vous n\'avez pas de connexion à Internet.</string>
     <string name="ErreurLoginMdp">Erreur : login ou mot de passe incorrect.</string>
-    <string name="ErreurDolibarr">Erreur : accès impossible à Dolibarr</string>
+    <string name="ErreurDolibarr">Erreur : accès impossible à Dolibarr.</string>
+
+    <!-- PopUp -->
+    <string name="boutonValider">Valider</string>
+    <string name="boutonAnnuler">Annuler</string>
+    <string name="boutonAccueil">Accueil</string>
+    <string name="messageValidationSupp">Êtes-vous sûr de vouloir supprimer cette liste ?</string>
+    <string name="messageSuppression">La liste a bien été supprimée.</string>
+    <string name="messageModification">La liste a bien été modifiée.</string>
+    <string name="messageEnvoi">La liste a bien été envoyée.</string>
+    <string name="messageAjout">La liste a bien été ajoutée.</string>
+    <string name="optionSupprimer">Supprimer</string>
+    <string name="boutonConfirmer">Confirmer</string>
 
 </resources>
