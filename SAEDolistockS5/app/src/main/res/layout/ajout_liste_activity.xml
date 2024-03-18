@@ -84,11 +84,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
-            android:hint="@string/info_title_liste"/>
+            android:hint="@string/info_title_liste"
+            android:inputType="text"
+            android:maxLines="2"/>
 
 
 
     </LinearLayout>
+
+    <!-- Widget permettant d'afficher la ligne -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dip"
+        android:layout_marginTop="@dimen/marge_15"
+        android:layout_marginBottom="@dimen/marge_5"
+        android:layout_marginLeft="@dimen/marge_5"
+        android:layout_marginRight="@dimen/marge_5"
+        android:layout_gravity="center"
+        android:background="@drawable/base_ligne"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -106,14 +119,18 @@
         <!-- Deuxième Edit Text -->
         <AutoCompleteTextView
             android:id="@+id/saisieNomEntrepot"
-            android:layout_width="260dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
-            android:hint="@string/info_entrepot"/>
+            android:hint="@string/info_entrepot"
+            android:inputType="text"
+            android:maxLines="3"/>
 
         <!-- <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
             android:src="@drawable/louperesize"/> -->
 
     </LinearLayout>
@@ -122,8 +139,7 @@
         android:id="@+id/erreurSaisieEntrepot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/marge_5"
-        android:layout_marginRight="@dimen/marge_5"
+        android:layout_marginLeft="@dimen/marge_15"
         android:textColor="@color/red"/>
 
     <LinearLayout
@@ -132,7 +148,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/marge_5"
             android:layout_marginRight="@dimen/marge_8"
@@ -142,10 +158,18 @@
         <!-- Liste déroulante -->
         <Spinner
             android:id="@+id/ddlModeMaj"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_5"
             android:layout_marginLeft="@dimen/marge_5"/>
+
+        <Button
+            android:id="@+id/btnValiderEntete"
+            style="@style/StyleMiniBouton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/libelle_bloquer"
+            android:onClick="clickValiderEntete"/>
 
     </LinearLayout>
 
@@ -177,26 +201,31 @@
 
         <AutoCompleteTextView
             android:id="@+id/saisieCodeArticle"
-            android:layout_width="90dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/marge_8"
-            android:layout_weight="1"
-            android:hint="@string/info_code_article" />
+            android:hint="@string/info_code_article"
+            android:maxLines="1"/>
 
         <ImageButton
             android:id="@+id/rechercheArticle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
             android:src="@drawable/louperesize"
             android:onClick="afficherPopup"/>
 
         <TextView
             android:id="@+id/libelleStock"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginLeft="@dimen/marge_5"
             android:layout_marginRight="@dimen/marge_5"
-            android:textSize="@dimen/taille_texte"/>
+            android:textSize="13sp"
+            android:textAlignment="center"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
     <!-- Edit Text avec bouton "Ajouter" -->
@@ -215,17 +244,18 @@
 
         <EditText
             android:id="@+id/saisieQuantite"
-            android:layout_width="0dp"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="number"
-            android:maxLength="10"
+            android:maxLength="9"
             android:hint="@string/info_quantite"/>
 
         <TextView
             android:id="@+id/libelleUnite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_5"
             android:layout_marginRight="@dimen/marge_5"
             android:text="@string/label_unite"
             android:textSize="@dimen/taille_texte"/>
@@ -235,6 +265,7 @@
             style="@style/StyleMiniBouton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marge_15"
             android:text="@string/libelle_ajouter"
             android:onClick="clickAjouter"/>
 

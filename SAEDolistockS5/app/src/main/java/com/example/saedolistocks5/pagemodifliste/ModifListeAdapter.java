@@ -47,6 +47,7 @@ public class ModifListeAdapter extends RecyclerView.Adapter<ModifListeViewHolder
     public void onBindViewHolder(ModifListeViewHolder myViewHolder, int position) {
         ModifListe myObject = lesDonnees.get(position);
         myViewHolder.btnDltArticle.setTag(position);
+        myViewHolder.btnModifArticle.setTag(position);
         myViewHolder.bind(myObject);
     }
 
