@@ -94,59 +94,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode de connexion
-     * @return un boolean pour savoir si je suis connecté
-     */
-    public boolean connexion() {
-        boolean estConnecter = false;
-        ConnectivityManager connManager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
-        if (mWifi != null && mWifi.isConnectedOrConnecting()) {
-            estConnecter = true;
-        }
-        return estConnecter;
-    }
-
-    /**
      * Méthode pour cliquer et passer en mode connexion.
      * @param button le boutton.
      */
     public void onClickModeCo(View button){
-        if (connexion() && readFichier()) {
-            PhoneStateListener ecouterConnexion = new PhoneStateListener() {
-                @Override
-                @Deprecated
-                /**
-                 * Méthode qui agis en fonction de l'état de connexion.
-                 * @deprecated méthode déprécier.
-                 */
-                public void onDataConnectionStateChanged(int etat) {
-                    switch (etat) {
-                        case TelephonyManager.DATA_CONNECTED:
-                        case TelephonyManager.DATA_CONNECTING:
-                            Intent intention =
-                                    new Intent(MainActivity.this, ListeActivity.class);
-                            startActivity(intention);
-                            break;
-                        case TelephonyManager.DATA_DISCONNECTED:
-                        case TelephonyManager.DATA_DISCONNECTING:
-                        case TelephonyManager.DATA_SUSPENDED:
-                            Log.e(null,"Pas de connexion");
-                            break;
-                        default:
-                    }
-                    super.onDataConnectionStateChanged(etat);
+        if (readFichier()) {
+            if (estConnecteAInternet(this)) {
+                Intent intention =
+                        new Intent(MainActivity.this, ListeActivity.class);
+                startActivity(intention);
+            } else {
+                Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
 
-                }
-            };
-            TelephonyManager gestionnaire = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-            gestionnaire.listen(ecouterConnexion, PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
-        }
-        if (!connexion()){
-            Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
-        }
-        if(!readFichier()) {
+            }
+        } else {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intention);
         }
@@ -162,10 +123,22 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intention);
         } else {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
+            intention.putExtra("MODE", "deconnecte");
             // Toast d'information, pas de mode déconnecté si ReadFichier() renvoie faux
             Toast.makeText(this,R.string.messageRedirection,Toast.LENGTH_LONG).show();
             startActivity(intention);
         }
 
+    }
+
+    public boolean estConnecteAInternet(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (cm != null) {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        }
+
+        return false;
     }
 }
