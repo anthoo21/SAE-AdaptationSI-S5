@@ -5,35 +5,44 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.volley.VolleyError;
 import com.example.saedolistocks5.outilapi.OutilAPI;
+import com.example.saedolistocks5.pagemain.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(AndroidJUnit4.class)
 public class ApiTest {
-    private Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+    private Context appContext = InstrumentationRegistry.getInstrumentation().getContext();
+    private Context testContext = ApplicationProvider.getApplicationContext();
     private String urlApi = "dolistocktest.go.yo.fr";
     private String user = "u.test";
     private String password = "userDeTestAPI";
-
     private String apikey = "6yLt95c9HFa96dzeRj5Uwx399ISXDAUe";
-  
+
     @Test
     public void TestLogin(){
         // TODO url ok mais renvoie pas dans on success
+        // TODO voir les mocks pour le context à mettre dans le gradle
         String urlApiEntiere = String.
                 format("http://%s/dolibarr-17.0.3/htdocs/api/index.php/login?login=%s&password=%s",
                         urlApi, user, password);
-        final boolean[] ok = {false};
-        OutilAPI.getApiRetour(appContext, urlApiEntiere, new OutilAPI.ApiCallback() {
+        // object
+        OutilAPI.GetApiJsonObject(appContext, urlApiEntiere, new OutilAPI.ApiCallback() {
             @Test
             @Override
             public void onSuccess(JSONObject result) {
@@ -49,6 +58,7 @@ public class ApiTest {
 
             @Override
             public void onSuccess(JSONArray result) {
+
             }
 
             @Override
@@ -63,7 +73,7 @@ public class ApiTest {
         String urlApiEntiere = String.
                 format("http://%s/dolibarr-17.0.3/htdocs/api/index.php/warehouses?api_key=%s"
                         ,urlApi,apikey);
-        OutilAPI.getApiRetour(appContext, urlApiEntiere, new OutilAPI.ApiCallback() {
+        OutilAPI.GetApiJsonObject(testContext, urlApiEntiere, new OutilAPI.ApiCallback() {
 
             @Override
             public void onSuccess(JSONObject result) {
