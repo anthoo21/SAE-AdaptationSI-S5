@@ -1,8 +1,5 @@
 package com.example.saedolistocks5.popup;
 
-import static java.nio.file.Files.delete;
-import static java.nio.file.Files.deleteIfExists;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,19 +9,7 @@ import android.widget.Button;
 import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 
-import java.util.ArrayList;
-
 public class CustomPopupSuppression extends AlertDialog {
-
-    /**
-     * Liste des listes de l'utilisateur courant
-     */
-    static ArrayList<String> listeFichierUser;
-
-    /**
-     * Position de l'item liste
-     */
-    private int positionItemListe;
 
     protected CustomPopupSuppression(Context context) {
         super(context);
