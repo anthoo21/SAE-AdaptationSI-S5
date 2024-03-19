@@ -167,6 +167,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Puis on lance l'activité des listes
                         Intent intention = new Intent(LoginActivity.this,
                                 ListeActivity.class);
+                        intention.putExtra("MODE", "connecte");
                         startActivity(intention);
 
                     } catch (JSONException e) {

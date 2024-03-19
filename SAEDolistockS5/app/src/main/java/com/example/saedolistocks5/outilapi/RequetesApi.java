@@ -7,6 +7,9 @@ import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.liste
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeInfosArticle;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeRef;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeStock;
+import static com.example.saedolistocks5.pageliste.ListeActivity.idArticleVerif;
+import static com.example.saedolistocks5.pageliste.ListeActivity.idEntrepotVerif;
+import static com.example.saedolistocks5.pageliste.ListeActivity.libelleArticleVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeCodeArticleVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeEntrepotsVerif;
 import static com.example.saedolistocks5.pagemodifliste.ModifListeActivity.adapterSuggestionArticleModif;
@@ -82,10 +85,12 @@ public class RequetesApi {
                         if(classeAppelante.equals("AjoutListe") ||
                                 classeAppelante.equals("ModifListe")) {
                             listeEntrepotIdEtNom.add(new Pair<>(id, ref));
+
                             // Et si la classe appelante est "Liste",
                             // Alors on récupère le nom de l'entrepôt
                         } else if (classeAppelante.equals("Liste")) {
                             listeEntrepotsVerif.add(ref);
+                            idEntrepotVerif.add(id);
                         }
                     }
                 } catch (JSONException e) {
@@ -157,6 +162,8 @@ public class RequetesApi {
                             // le code de tous les articles
                         } else if (classeAppelante.equals("Liste")) {
                             listeCodeArticleVerif.add(refArticle);
+                            idArticleVerif.add(idArticle);
+                            libelleArticleVerif.add(label);
                         }
 
                     }
