@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
             if (estConnecteAInternet(this)) {
                 Intent intention =
                         new Intent(MainActivity.this, ListeActivity.class);
+                intention.putExtra("MODE", "connecte");
                 startActivity(intention);
             } else {
                 Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
@@ -120,10 +121,10 @@ public class MainActivity extends AppCompatActivity {
     public void onClickModeDeco(View button){
         if (readFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
+            intention.putExtra("MODE", "deconnecte");
             startActivity(intention);
         } else {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
-            intention.putExtra("MODE", "deconnecte");
             // Toast d'information, pas de mode déconnecté si ReadFichier() renvoie faux
             Toast.makeText(this,R.string.messageRedirection,Toast.LENGTH_LONG).show();
             startActivity(intention);

@@ -13,6 +13,7 @@ import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.liste
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeEntrepots;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeArticlesIdEtNom;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeEntrepotIdEtNom;
+import static com.example.saedolistocks5.pageliste.ListeActivity.mode;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -226,7 +227,11 @@ public class ModifListeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.modif_liste_activity);
 
+        // Initialse les composants de base
+        initialiserComposants();
 
+        // Initialise tous les adaptateurs
+        initialiserAdapteurs();
 
         try {
             // Permet d'initialiser les variables à utiliser pour contacter l'API
@@ -235,20 +240,20 @@ public class ModifListeActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        // Charge les données initiales de la vue
-        chargerDonneesInitiales();
+        if(mode.equals("connecte")) {
+            // Charge les données initiales de la vue
+            chargerDonneesInitiales();
+        } else {
+            recupListePourModif();
+        }
 
         Intent intent = getIntent();
         positionItem = intent.getIntExtra("positionItem", 0);
 
-        // Initialse les composants de base
-        initialiserComposants();
-
         // Configure les différents listener
-        configurerListeners();
-
-        // Initialise tous les adaptateurs
-        initialiserAdapteurs();
+        if(mode.equals("connecte")) {
+            configurerListeners();
+        }
 
     }
 
@@ -350,9 +355,10 @@ public class ModifListeActivity extends AppCompatActivity {
     private void initialiserVariableAPI() throws Exception {
         // On ouvre le fichier infouser pour récupérer les infos à propos de l'utilisateur
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
+        InputStreamReader modeTxt = new InputStreamReader(openFileInput("mode.txt"));
 
         // On appelle une méthode pour récupérer les infos de l'utilisateur
-        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser);
+        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser, modeTxt);
 
         // Récupère le token
         token = infos.first();
@@ -469,7 +475,7 @@ public class ModifListeActivity extends AppCompatActivity {
                 return new Pair<>(false, getString(R.string.veuillez_saisir_nom_liste));
             }
 
-            if (!entrepotOk) {
+            if (!entrepotOk && mode.equals("connecte")) {
                 return new Pair<>(false, getString(R.string.entrepot_incorrect));
             }
             return new Pair<>(true, "");
@@ -486,7 +492,7 @@ public class ModifListeActivity extends AppCompatActivity {
         }
 
         // Si l'article est incorrect
-        if (!listeRef.contains(valeurSaisieArticle)) {
+        if (!listeRef.contains(valeurSaisieArticle) && mode.equals("connecte")) {
             return new Pair<>(false, getString(R.string.code_article_incorrect));
         }
 

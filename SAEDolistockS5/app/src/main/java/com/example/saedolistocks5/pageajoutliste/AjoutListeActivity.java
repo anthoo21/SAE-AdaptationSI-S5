@@ -5,6 +5,7 @@ package com.example.saedolistocks5.pageajoutliste;
 
 import static com.example.saedolistocks5.outilapi.RequetesApi.getArticles;
 import static com.example.saedolistocks5.outilapi.RequetesApi.getListeEntrepot;
+import static com.example.saedolistocks5.pageliste.ListeActivity.mode;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -223,14 +224,16 @@ public class AjoutListeActivity extends AppCompatActivity {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        // Configure les différents listener
-        configurerListeners();
 
         // Initialise tous les adaptateurs
         initialiserAdapteurs();
 
-        // Charge les données initiales de la vue
-        chargerDonneesInitiales();
+        if(mode.equals("connecte")) {
+            // Configure les différents listener
+            configurerListeners();
+            // Charge les données initiales de la vue
+            chargerDonneesInitiales();
+        }
 
         bloquerSaisieArticle();
     }
@@ -280,9 +283,10 @@ public class AjoutListeActivity extends AppCompatActivity {
     private void initialiserVariableAPI() throws Exception {
         // On ouvre le fichier infouser pour récupérer les infos à propos de l'utilisateur
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
+        InputStreamReader modeTxt = new InputStreamReader(openFileInput("mode.txt"));
 
         // On appelle une méthode pour récupérer les infos de l'utilisateur
-        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser);
+        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser, modeTxt);
 
         // Récupère le token
         token = infos.first();
@@ -398,7 +402,7 @@ public class AjoutListeActivity extends AppCompatActivity {
                 return new Pair<>(false, getString(R.string.veuillez_saisir_nom_liste));
             }
 
-            if (!entrepotOk) {
+            if (!entrepotOk && mode.equals("connecte")) {
                 return new Pair<>(false, getString(R.string.entrepot_incorrect));
             }
             return new Pair<>(true, "");
@@ -415,7 +419,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         }
 
         // Si l'article est incorrect
-        if (!listeRef.contains(valeurSaisieArticle)) {
+        if (!listeRef.contains(valeurSaisieArticle) && mode.equals("connecte")) {
             return new Pair<>(false, getString(R.string.code_article_incorrect));
         }
 
@@ -529,6 +533,10 @@ public class AjoutListeActivity extends AppCompatActivity {
                 quantiteSaisie = listeQuantiteSaisie.get(i).toString();
                 idArticle = listeIdArticle.get(i);
                 // On constitue la ligne du fichier
+                if(mode.equals("deconnecte")) {
+                    idEntrepot = "0";
+                    idArticle = "0";
+                }
                 ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
                         user, nomListe, refArticle, libelleArticle, nomEntrepot, quantiteSaisie,
                         modeMaj, date, heure, idArticle, idEntrepot, "\n");
@@ -548,7 +556,7 @@ public class AjoutListeActivity extends AppCompatActivity {
      * @param view
      */
     public void clickValiderEntete(View view) {
-        if(entrepotOk) {
+        if(entrepotOk || mode.equals("deconnecte")) {
             if(bloquerEntete.getText().toString().equals(getString(R.string.libelle_bloquer))) {
                 bloquerEntete.setText(getString(R.string.libelle_debloquer));
                 // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste

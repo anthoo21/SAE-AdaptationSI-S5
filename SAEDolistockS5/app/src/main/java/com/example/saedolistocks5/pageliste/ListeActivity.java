@@ -5,6 +5,7 @@ package com.example.saedolistocks5.pageliste;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -38,6 +39,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.InvalidKeyException;
@@ -77,9 +79,25 @@ public class ListeActivity extends AppCompatActivity {
     public static ArrayList<String> listeCodeArticleVerif;
 
     /**
+     * Liste des ID des articles
+     */
+    public static ArrayList<String> idArticleVerif;
+
+    /**
+     * Liste des libellé des articles
+     */
+    public static ArrayList<String> libelleArticleVerif;
+
+
+    /**
      * Liste pour récupérer les entrepôts
      */
     public static ArrayList<String> listeEntrepotsVerif;
+
+    /**
+     * Liste des IDs des entrepôts
+     */
+    public static ArrayList<String> idEntrepotVerif;
 
     /**
      * Adatpateur de liste accueil
@@ -97,6 +115,27 @@ public class ListeActivity extends AppCompatActivity {
      * L'URL de l'API
      */
     URLApi;
+
+    /**
+     * Mode de connexion (connecté ou déconnecté)
+     */
+    public static String mode;
+
+
+    /**
+     * Id de l'article
+     */
+    private String idArticle;
+
+    /**
+     * Id de l'entrepôt
+     */
+    private String idEntrepot;
+
+    /**
+     * Libelle de l'article
+     */
+    private String libelleArticle;
 
     /**
      * Position de l'item liste
@@ -134,6 +173,12 @@ public class ListeActivity extends AppCompatActivity {
 
 
         try {
+            Intent intentionParent = getIntent();
+            String modeFirstIntention = intentionParent.getStringExtra("MODE");
+            // Permet d'écrire le choix du mode de l'uril
+            if(modeFirstIntention != null) {
+                ecritureModeFichier(modeFirstIntention);
+            }
             // Permet d'afficher les listes de l'utilisateur sur la vue
             initialiseListeAccueil();
         } catch (IOException e) {
@@ -142,8 +187,12 @@ public class ListeActivity extends AppCompatActivity {
             throw new IllegalArgumentException(e);
         }
 
+
+        idArticleVerif = new ArrayList<>();
+        idEntrepotVerif = new ArrayList<>();
         listeCodeArticleVerif = new ArrayList<>();
         listeEntrepotsVerif = new ArrayList<>();
+        libelleArticleVerif = new ArrayList<>();
 
         // Permet d'alimenter la liste des entrepôts et des codes articles via l'API
         RequetesApi.getListeEntrepot(URLApi, token, getApplicationContext(), "Liste");
@@ -169,6 +218,11 @@ public class ListeActivity extends AppCompatActivity {
 
     }
 
+    private void ecritureModeFichier(String mode) throws IOException {
+        FileOutputStream fichier = openFileOutput("mode.txt", Context.MODE_PRIVATE);
+        fichier.write(mode.getBytes());
+    }
+
     /**
      * Méthode pour initialiser la ou les listes de l'utilisateur courant
      * pour les aficher sur la vue
@@ -185,9 +239,10 @@ public class ListeActivity extends AppCompatActivity {
             InvalidKeyException {
         // On ouvre le fichier infouser pour récupérer les infos à propos de l'utilisateur
         InputStreamReader infosUser = new InputStreamReader(openFileInput("infouser.txt"));
+        InputStreamReader modeTxt = new InputStreamReader(openFileInput("mode.txt"));
 
         // On appelle une méthode pour récupérer les infos de l'utilisateur
-        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser);
+        Quartet<String, String, String, String> infos = OutilDivers.getInfosUserAndApi(infosUser, modeTxt);
 
         // On récupère le token
         token = infos.first();
@@ -197,6 +252,9 @@ public class ListeActivity extends AppCompatActivity {
 
         // On récupère l'utilisateur courant
         utilisateurCourant = infos.third();
+
+        // Choix du mode
+        mode = infos.fourth();
 
         listeAccueil = new ArrayList<>();
 
@@ -313,6 +371,7 @@ public class ListeActivity extends AppCompatActivity {
     public void onClickDeco(View view) {
             Intent intention = new Intent(ListeActivity.this, LoginActivity.class);
             deleteFile("infouser.txt");
+            deleteFile("mode.txt");
             startActivity(intention);
 
     }
@@ -346,58 +405,85 @@ public class ListeActivity extends AppCompatActivity {
         while ((ligne = listeText.readLine()) != null) {
             elementListe = ligne.split(";");
             String[] finalElementListe = elementListe;
-            RequetesApi.GetArticlesByEntrepot(URLApi, token, getApplicationContext(),
-                    "Liste", elementListe[9], elementListe[10], null, new RequetesApi.QuantiteCallback() {
-                        @Override
-                        public void onQuantiteRecuperee(int quantiteAvantEnvoieListe)
-                                throws FileNotFoundException, JSONException {
-                            JSONObject bodyJSON = new JSONObject();
-                            indexParcoursListe++;
-                            int quantiteApres;
-                            int quantiteSaisie;
-                            int maj = 0;
+            int maj;
+            maj = VerifArticlesEtEntrepots(finalElementListe[2], finalElementListe[4]);
+            int finalMaj = maj;
+            // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
+            if(maj == 0) {
+                RequetesApi.GetArticlesByEntrepot(URLApi, token, getApplicationContext(),
+                        "Liste", idArticle, idEntrepot, null, new RequetesApi.QuantiteCallback() {
+                            @Override
+                            public void onQuantiteRecuperee(int quantiteAvantEnvoieListe)
+                                    throws FileNotFoundException, JSONException {
+                                JSONObject bodyJSON = new JSONObject();
+                                indexParcoursListe++;
+                                int quantiteApres;
+                                int quantiteSaisie;
 
-                            quantiteSaisie = Integer.parseInt(finalElementListe[5]);
 
-                            if(finalElementListe[6].equals("Ajout")) {
-                                finalElementListe[6] = "0";
-                                quantiteApres = quantiteAvantEnvoieListe + quantiteSaisie;
-                            } else {
-                                finalElementListe[6] = "1";
-                                quantiteApres = Integer.parseInt(finalElementListe[5]);
-                                quantiteSaisie = quantiteApres - quantiteAvantEnvoieListe;
-                            }
-                            maj = VerifArticlesEtEntrepots(finalElementListe[2], finalElementListe[4]);
-                            bodyJSON.put("ref", "");
-                            bodyJSON.put("status", 1);
-                            bodyJSON.put("Libelle", finalElementListe[1]);
-                            bodyJSON.put("CodeArticle", finalElementListe[2]);
-                            bodyJSON.put("CodeBarre", "");
-                            bodyJSON.put("Designation", finalElementListe[3]);
-                            bodyJSON.put("Entrepot", finalElementListe[4]);
-                            bodyJSON.put("Quantite", quantiteSaisie);
-                            bodyJSON.put("Mode", Integer.parseInt(finalElementListe[6]));
-                            bodyJSON.put("Maj", maj);
-                            bodyJSON.put("StockAvant", quantiteAvantEnvoieListe);
-                            bodyJSON.put("StockApres", quantiteApres);
-                            bodyJSON.put("date", finalElementListe[7]);
-                            bodyJSON.put("Utilisateur", utilisateurCourant);
+                                quantiteSaisie = Integer.parseInt(finalElementListe[5]);
 
-                            EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe);
-                            // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
-                            if(maj == 0) {
+                                if(finalElementListe[6].equals("Ajout")) {
+                                    finalElementListe[6] = "0";
+                                    quantiteApres = quantiteAvantEnvoieListe + quantiteSaisie;
+                                } else {
+                                    finalElementListe[6] = "1";
+                                    quantiteApres = Integer.parseInt(finalElementListe[5]);
+                                    quantiteSaisie = quantiteApres - quantiteAvantEnvoieListe;
+                                }
+                                bodyJSON.put("ref", "");
+                                bodyJSON.put("status", 1);
+                                bodyJSON.put("Libelle", finalElementListe[1]);
+                                bodyJSON.put("CodeArticle", finalElementListe[2]);
+                                bodyJSON.put("CodeBarre", "");
+                                bodyJSON.put("Designation", libelleArticle);
+                                bodyJSON.put("Entrepot", finalElementListe[4]);
+                                bodyJSON.put("Quantite", quantiteSaisie);
+                                bodyJSON.put("Mode", Integer.parseInt(finalElementListe[6]));
+                                bodyJSON.put("Maj", finalMaj);
+                                bodyJSON.put("StockAvant", quantiteAvantEnvoieListe);
+                                bodyJSON.put("StockApres", quantiteApres);
+                                bodyJSON.put("date", finalElementListe[7]);
+                                bodyJSON.put("Utilisateur", utilisateurCourant);
+
+                                EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe);
+
                                 JSONObject bodyJSONMvtStock = new JSONObject();
-                                bodyJSONMvtStock.put("product_id", Integer.parseInt(finalElementListe[9]));
-                                bodyJSONMvtStock.put("warehouse_id", Integer.parseInt(finalElementListe[10]));
+                                bodyJSONMvtStock.put("product_id", idArticle);
+                                bodyJSONMvtStock.put("warehouse_id", idEntrepot);
                                 bodyJSONMvtStock.put("qty", quantiteSaisie);
                                 bodyJSONMvtStock.put("datem", finalElementListe[7]);
                                 bodyJSONMvtStock.put("movementlabel",
                                         String.format("%s : %s", utilisateurCourant, finalElementListe[1]));
                                 ModifierMouvementStock(bodyJSONMvtStock);
                             }
-                        }
-                    });
+                        });
+            } else {
+                JSONObject bodyJSON = new JSONObject();
+                indexParcoursListe++;
+                if(finalElementListe[6].equals("Ajout")) {
+                    finalElementListe[6] = "0";
+                } else {
+                    finalElementListe[6] = "1";
+                }
 
+                bodyJSON.put("ref", "");
+                bodyJSON.put("status", 1);
+                bodyJSON.put("Libelle", finalElementListe[1]);
+                bodyJSON.put("CodeArticle", finalElementListe[2]);
+                bodyJSON.put("CodeBarre", "");
+                bodyJSON.put("Designation", finalElementListe[3]);
+                bodyJSON.put("Entrepot", finalElementListe[4]);
+                bodyJSON.put("Quantite", finalElementListe[5]);
+                bodyJSON.put("Mode", Integer.parseInt(finalElementListe[6]));
+                bodyJSON.put("Maj", finalMaj);
+                bodyJSON.put("StockAvant", "");
+                bodyJSON.put("StockApres", "");
+                bodyJSON.put("date", finalElementListe[7]);
+                bodyJSON.put("Utilisateur", utilisateurCourant);
+
+                EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe);
+            }
         }
 
         listeText.close();
@@ -406,7 +492,9 @@ public class ListeActivity extends AppCompatActivity {
 
     } catch (IOException e) {
         e.printStackTrace();
-    }
+    } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -421,16 +509,24 @@ public class ListeActivity extends AppCompatActivity {
         boolean verifArticle = false;
         boolean verifEntrepot = false;
 
+
+        int index = 0;
         for(String codeArticleVerif : listeCodeArticleVerif) {
             if(codeArticle.equals(codeArticleVerif)) {
                 verifArticle = true;
+                idArticle = idArticleVerif.get(index);
+                libelleArticle = libelleArticleVerif.get(index);
             }
+            index++;
         }
 
+        index = 0;
         for(String nomEntrepotVerif : listeEntrepotsVerif) {
             if(nomEntrepot.equals(nomEntrepotVerif)) {
                 verifEntrepot = true;
+                idEntrepot = idEntrepotVerif.get(index);
             }
+            index++;
         }
 
         if(verifArticle && verifEntrepot) {
