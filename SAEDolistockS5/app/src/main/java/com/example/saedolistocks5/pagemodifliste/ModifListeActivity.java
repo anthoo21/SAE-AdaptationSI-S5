@@ -667,7 +667,7 @@ public class ModifListeActivity extends AppCompatActivity {
      * @param view
      */
     public void clickValiderEntete(View view) {
-        if(entrepotOk) {
+        if(entrepotOk || mode.equals("deconnecte")) {
             if(bloquerEntete.getText().toString().equals(getString(R.string.libelle_bloquer))) {
                 bloquerEntete.setText(getString(R.string.libelle_debloquer));
                 // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
