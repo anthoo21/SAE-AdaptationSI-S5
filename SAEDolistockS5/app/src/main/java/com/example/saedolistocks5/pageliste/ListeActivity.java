@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -342,9 +343,8 @@ public class ListeActivity extends AppCompatActivity {
             CustomPopupEnvoyer dialog = CustomPopupEnvoyer.createDialog(this);
             dialog.show();
         } else {
-            CustomPopupConfirmationSupp dialog = CustomPopupConfirmationSupp.createDialog(this);
+            CustomPopupConfirmationSupp dialog = CustomPopupConfirmationSupp.createDialog(this, this);
             dialog.show();
-            supprimerListe();
         }
         return (super.onContextItemSelected(item));
     }
@@ -663,7 +663,7 @@ public class ListeActivity extends AppCompatActivity {
      * Supprimer la liste.
      */
     public void supprimerListe() {
-
+        Log.i("info","SUPPRESSION");
         String nomFichier = listeFichierUser.get(positionItemListe);
 
         listeFichierUser.remove(positionItemListe);

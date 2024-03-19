@@ -11,8 +11,11 @@ import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupSuppression extends AlertDialog {
 
-    protected CustomPopupSuppression(Context context) {
+    private ListeActivity listeActivity;
+
+    protected CustomPopupSuppression(Context context, ListeActivity listeActivity) {
         super(context);
+        this.listeActivity = listeActivity;
     }
 
     @Override
@@ -29,12 +32,13 @@ public class CustomPopupSuppression extends AlertDialog {
             @Override
             public void onClick(View v) {
                 dismiss(); // Dismiss the dialog
-                //ListeActivity.supprimerListe();
+                listeActivity.supprimerListe(); // Call the method from ListeActivity
             }
         });
     }
-    public static CustomPopupSuppression createDialog(Context context) {
-        CustomPopupSuppression dialog = new CustomPopupSuppression(context);
+
+    public static CustomPopupSuppression createDialog(Context context, ListeActivity listeActivity) {
+        CustomPopupSuppression dialog = new CustomPopupSuppression(context, listeActivity);
         return dialog;
     }
 }
