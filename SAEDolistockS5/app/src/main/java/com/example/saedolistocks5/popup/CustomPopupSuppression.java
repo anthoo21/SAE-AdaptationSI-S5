@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupSuppression extends AlertDialog {
 
@@ -28,6 +29,7 @@ public class CustomPopupSuppression extends AlertDialog {
             @Override
             public void onClick(View v) {
                 dismiss(); // Dismiss the dialog
+                //ListeActivity.supprimerListe();
             }
         });
     }
