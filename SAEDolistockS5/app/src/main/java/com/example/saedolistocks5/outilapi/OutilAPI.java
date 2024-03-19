@@ -104,7 +104,7 @@ public class OutilAPI {
                     }
                 }
         );
-        //getFileRequete(context).add(requete);
+        getFileRequete(context).add(requete);
     }
 
     /**
@@ -142,7 +142,6 @@ public class OutilAPI {
                 }
         );
         getFileRequete(context).add(arrayRequete);
-
     }
 
     /**

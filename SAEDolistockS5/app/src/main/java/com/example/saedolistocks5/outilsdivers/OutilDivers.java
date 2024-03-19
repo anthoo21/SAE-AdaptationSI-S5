@@ -21,12 +21,14 @@ import javax.crypto.NoSuchPaddingException;
  */
 public class OutilDivers {
 
-    public static Quartet<String, String, String, String> getInfosUserAndApi(InputStreamReader infosUser) throws IOException,
+    public static Quartet<String, String, String, String> getInfosUserAndApi(InputStreamReader infosUser,
+                                                                             InputStreamReader modeTxt) throws IOException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeyException {
 
         String[] valeurInfoUser;
         BufferedReader infosUserTxt = new BufferedReader(infosUser);
+        BufferedReader bufferModeTxt = new BufferedReader(modeTxt);
         valeurInfoUser = infosUserTxt.readLine().split(";;;;");
 
         String tokenCrypte = valeurInfoUser[0];
@@ -54,7 +56,9 @@ public class OutilDivers {
         // On récupère l'utilisateur courant
         String utilisateurCourant = valeurInfoUser[1];
 
+        String mode = bufferModeTxt.readLine();
+
         // Il n'y a pas de quatrième élément
-        return new Quartet<>(token, URLApi, utilisateurCourant, null);
+        return new Quartet<>(token, URLApi, utilisateurCourant, mode);
     }
 }
