@@ -5,6 +5,7 @@ package com.example.saedolistocks5.pageliste;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -72,7 +73,7 @@ public class ListeActivity extends AppCompatActivity {
      * chaque élément contient une instance de PhotoParis (une photo
      * et son libellé)
      */
-    private ArrayList<ListeAccueil> listeAccueil;
+    private static ArrayList<ListeAccueil> listeAccueil;
 
     /**
      * Liste pour récupérer les codes articles
@@ -87,7 +88,7 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Adatpateur de liste accueil
      */
-    ListeAccueilAdapter adaptateur;
+    static ListeAccueilAdapter adaptateur;
 
     /**
      * Utilisateur courant sur l'application
@@ -104,7 +105,7 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Position de l'item liste
      */
-    private int positionItemListe;
+    private static int positionItemListe;
 
     /**
      * Liste des listes de l'utilisateur courant
@@ -285,6 +286,7 @@ public class ListeActivity extends AppCompatActivity {
         } else {
             CustomPopupConfirmationSupp dialog = CustomPopupConfirmationSupp.createDialog(this);
             dialog.show();
+            supprimerListe();
         }
         return (super.onContextItemSelected(item));
     }
@@ -559,5 +561,25 @@ public class ListeActivity extends AppCompatActivity {
      */
     public static List<String> getListeFichierUser() {
         return listeFichierUser;
+    }
+
+    /**
+     * Supprimer la liste.
+     */
+    public void supprimerListe() {
+
+        String nomFichier = listeFichierUser.get(positionItemListe);
+
+        listeFichierUser.remove(positionItemListe);
+
+        deleteFile(nomFichier);
+
+        if(!listeAccueil.isEmpty()) {
+            listeAccueil.remove(positionItemListe);
+            adaptateur.notifyItemRemoved(positionItemListe);
+        } else {
+            // Recrée la vue pour remettre à jour le positionItemListe
+            this.recreate();
+        }
     }
 }
