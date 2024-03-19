@@ -3,13 +3,9 @@
  */
 package com.example.saedolistocks5.pageliste;
 
-
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -663,7 +659,6 @@ public class ListeActivity extends AppCompatActivity {
      * Supprimer la liste.
      */
     public void supprimerListe() {
-        Log.i("info","SUPPRESSION");
         String nomFichier = listeFichierUser.get(positionItemListe);
 
         listeFichierUser.remove(positionItemListe);
