@@ -6,6 +6,7 @@ package com.example.saedolistocks5.pagemodifliste;
 import static com.example.saedolistocks5.outilapi.RequetesApi.getArticles;
 import static com.example.saedolistocks5.outilapi.RequetesApi.getListeEntrepot;
 // On importe toutes les listes de AjoutListe pour ne pas avoir à les recréer
+import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeCodeBarre;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeInfosArticle;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeArticles;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeRef;
@@ -43,6 +44,7 @@ import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
 import com.example.saedolistocks5.outilsdivers.Quintet;
+import com.example.saedolistocks5.pageajoutliste.AjoutListe;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 
 import java.io.BufferedReader;
@@ -167,6 +169,11 @@ public class ModifListeActivity extends AppCompatActivity {
      * Adaptateur pour les suggestions
      */
     public static ArrayAdapter<String> adapterSuggestionArticleModif;
+
+    /**
+     * Liste de code barre pour la modification
+     */
+    public static ArrayList<String> codeBarreModif;
 
     /**
      * Suggestion de l'utilisateur pour saisir le libellé d'un article
@@ -306,6 +313,8 @@ public class ModifListeActivity extends AppCompatActivity {
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
         listeStock = new ArrayList<>();
+        listeCodeBarre = new ArrayList<>();
+        codeBarreModif = new ArrayList<>();
         listeChoixMode = new ArrayList<>();
         listeRef = new ArrayList<>();
         articlesAModifier = new ArrayList<>();
@@ -360,13 +369,7 @@ public class ModifListeActivity extends AppCompatActivity {
             }
             saisieNomListe.setText(nomListe);
             saisieNomEntrepot.setText(entrepot);
-            if(modeMaj.equals("Ajout")) {
-                listeChoixMode.remove(1);
-                adaptateurListeChoixMode.notifyDataSetChanged();
-            } else {
-                listeChoixMode.remove(0);
-                adaptateurListeChoixMode.notifyDataSetChanged();
-            }
+            choixMode.setEnabled(false);
             saisieNomEntrepot.setEnabled(false);
 
         } catch (FileNotFoundException e) {
@@ -466,7 +469,8 @@ public class ModifListeActivity extends AppCompatActivity {
 
             // On boucle sur les infos de tous article
             for(Quintet<String, String, String, String, String> quintet : listeInfosArticle) {
-                if(valeurSaisieCodeArticle.equals(quintet.third())) {
+                if(valeurSaisieCodeArticle.equals(quintet.third())
+                        || valeurSaisieCodeArticle.equals(quintet.fifth())) {
                     // On récupère le libellé de l'article
                     libelleArticle = quintet.second();
                     // On récupère l'ID de l'article
@@ -495,6 +499,8 @@ public class ModifListeActivity extends AppCompatActivity {
         String valeurSaisieArticle = saisieCodeArticle.getText().toString();
         // On récupère la quantité saisie
         String valeurSaisieQuantite = saisieQuantite.getText().toString();
+        Pair<Boolean, String> pair = new Pair<>(true, "");
+
 
         // Si on fait la vérif au moment de valider la liste
         if (verifValiderFichier) {
@@ -520,9 +526,15 @@ public class ModifListeActivity extends AppCompatActivity {
         }
 
         // Si l'article est incorrect
-        if (!listeRef.contains(valeurSaisieArticle) && mode.equals("connecte")) {
-            return new Pair<>(false, getString(R.string.code_article_incorrect));
+        if (listeCodeBarre.contains(valeurSaisieArticle) && mode.equals("connecte")) {
+            return new Pair<>(true, "");
         }
+
+        // Si l'article est incorrect
+        if (!listeRef.contains(valeurSaisieArticle) && mode.equals("connecte")) {
+            pair =  new Pair<>(false, getString(R.string.code_article_incorrect));
+        }
+
 
         if(choixMode.getSelectedItem().toString().equals(getString(R.string.Modification))) {
             for (ModifListe modifListe : articlesAModifier) {
@@ -533,7 +545,7 @@ public class ModifListeActivity extends AppCompatActivity {
         }
 
         // Si il n'y a aucun problème, on renvoie true
-        return new Pair<>(true, "");
+        return pair;
     }
 
     /**
@@ -585,7 +597,8 @@ public class ModifListeActivity extends AppCompatActivity {
 
             // On boucle sur les infos de tous article
             for(Quintet<String, String, String, String, String> quintet : listeInfosArticle) {
-                if(valeurSaisieCodeArticle.equals(quintet.third())) {
+                if(valeurSaisieCodeArticle.equals(quintet.third())
+                        || valeurSaisieCodeArticle.equals(quintet.fifth())) {
                     // On récupère l'ID de l'article
                     idArticle = quintet.first();
                 }
@@ -711,7 +724,6 @@ public class ModifListeActivity extends AppCompatActivity {
                 bloquerEntete.setText(getString(R.string.libelle_bloquer));
                 saisieNomEntrepot.setEnabled(true);
                 choixMode.setEnabled(true);
-
                 saisieCodeArticle.setEnabled(false);
                 saisieCodeArticle.setText("");
                 saisieQuantite.setEnabled(false);
@@ -928,6 +940,12 @@ public class ModifListeActivity extends AppCompatActivity {
                     }
                 }
 
+                for (String codeBarre : listeCodeBarre) {
+                    if (codeBarre.toLowerCase().contains(saisie.toLowerCase())) {
+                        suggestions.add(codeBarre);
+                    }
+                }
+
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(ModifListeActivity.this,
                         android.R.layout.simple_dropdown_item_1line, suggestions);
                 saisieCodeArticle.setAdapter(adapter);
@@ -935,8 +953,12 @@ public class ModifListeActivity extends AppCompatActivity {
             }
 
             // Mettre à jour le stock disponible si l'article est dans la liste
+            int index = 0;
             if (listeRef.contains(saisie)) {
-                int index = listeRef.indexOf(saisie);
+                index = listeRef.indexOf(saisie);
+                libelleStock.setText(String.format("%s en stock", listeStock.get(index)));
+            } else if (listeCodeBarre.contains(saisie)) {
+                index = listeCodeBarre.indexOf(saisie);
                 libelleStock.setText(String.format("%s en stock", listeStock.get(index)));
             } else {
                 libelleStock.setText("");

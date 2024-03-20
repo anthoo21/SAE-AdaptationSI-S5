@@ -380,8 +380,6 @@ public class AjoutListeActivity extends AppCompatActivity {
      */
     public void clickAjouter(View view) {
 
-        //TODO : POUR LA MODIF, VOIR AVEC LE CODE BARRE
-
         // On vérifie si les champs saisies sont valides
         Pair<Boolean, String> verif = verificationChamp(false);
         // Si ce n'est pas valide, alors on affiche une ereur
@@ -457,7 +455,6 @@ public class AjoutListeActivity extends AppCompatActivity {
             return new Pair<>(false, getString(R.string.veuillez_saisir_quantite));
         }
 
-        // Si l'article est incorrect
         if (listeCodeBarre.contains(valeurSaisieArticle) && mode.equals("connecte")) {
             return new Pair<>(true, "");
         }
