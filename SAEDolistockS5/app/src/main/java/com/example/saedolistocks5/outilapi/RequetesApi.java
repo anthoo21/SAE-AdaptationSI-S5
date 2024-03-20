@@ -3,6 +3,7 @@ package com.example.saedolistocks5.outilapi;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.adapterSuggestionArticle;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeArticles;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeArticlesIdEtNom;
+import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeCodeBarre;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeEntrepotIdEtNom;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeInfosArticle;
 import static com.example.saedolistocks5.pageajoutliste.AjoutListeActivity.listeRef;
@@ -19,6 +20,7 @@ import android.util.Pair;
 
 import com.android.volley.VolleyError;
 import com.example.saedolistocks5.outilsdivers.Quartet;
+import com.example.saedolistocks5.outilsdivers.Quintet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -147,15 +149,15 @@ public class RequetesApi {
                         String label = item.getString("label");
                         String refArticle = item.getString("ref");
                         String stockReel = item.getString("stock_reel");
+                        String codeBarre = item.getString("barcode");
                         // Si la classe appelante est "AjoutListe", alors on récupère toutes les
                         // Infos de tous les articles
                         if(classeAppelante.equals("AjoutListe") ||
                         classeAppelante.equals("ModifListe")) {
-                            Quartet<String, String, String, String> infosArticles =
-                                    new Quartet<>(idArticle, label, refArticle,
-                                            stockReel.equals("null") ? "0" : stockReel);
+                            Quintet<String, String, String, String, String> infosArticles =
+                                    new Quintet<>(idArticle, label, refArticle,
+                                            stockReel.equals("null") ? "0" : stockReel, codeBarre);
                             listeInfosArticle.add(infosArticles);
-
 
                             listeArticlesIdEtNom.add(new Pair<>(idArticle, label));
                             // Et si la classe appelante est "Liste", alors on récupère
@@ -195,11 +197,11 @@ public class RequetesApi {
      * @param classeAppelante la classe appelante
      * @param idProduit       l'id du produit
      * @param idEntrepot      l'id de entrepot
-     * @param quartet         le quartet
+     * @param quintet         le quintet
      */
     public static void GetArticlesByEntrepot(String URLApi, String token, Context context,
                                              String classeAppelante, String idProduit, String idEntrepot,
-                                             Quartet<String, String, String, String> quartet,
+                                             Quintet<String, String, String, String, String> quintet,
                                              QuantiteCallback callback) {
         String urlApi = String.format("http://%s/htdocs/api/index.php/products/%s/stock?selected_warehouse_id=%s&api_key=%s",
                 URLApi, idProduit, idEntrepot, token);
@@ -224,8 +226,9 @@ public class RequetesApi {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    listeArticles.add(quartet.second());
-                    listeRef.add(quartet.third());
+                    listeArticles.add(quintet.second());
+                    listeRef.add(quintet.third());
+                    listeCodeBarre.add(quintet.fifth());
                     listeStock.add(stock);
                     if(classeAppelante.equals("AjoutListe")) {
                         adapterSuggestionArticle.notifyDataSetChanged();
