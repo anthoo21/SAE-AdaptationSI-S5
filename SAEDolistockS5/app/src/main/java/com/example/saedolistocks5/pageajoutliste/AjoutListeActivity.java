@@ -13,6 +13,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -35,6 +37,7 @@ import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
+import com.example.saedolistocks5.outilsdivers.Quintet;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -133,6 +136,11 @@ public class AjoutListeActivity extends AppCompatActivity {
     public static ArrayList<String> listeRef;
 
     /**
+     * Liste des codes barres.
+     */
+    public static ArrayList<String> listeCodeBarre;
+
+    /**
      * Liste pour la quantite saisie.
      */
     private ArrayList<Integer> listeQuantiteSaisie;
@@ -150,7 +158,7 @@ public class AjoutListeActivity extends AppCompatActivity {
     /**
      * Liste de quartet (quatres valeurs) contenant l'id, le libellé, sa référence et son stock
      */
-    public static ArrayList<Quartet<String, String, String, String>> listeInfosArticle;
+    public static ArrayList<Quintet<String, String, String, String, String>> listeInfosArticle;
 
     /**
      * Liste de paire contenant les entrepôts et leurs id associés
@@ -205,6 +213,11 @@ public class AjoutListeActivity extends AppCompatActivity {
     private boolean entrepotOk;
 
     /**
+     * Filtre pour empêcher la saisie du caractère ";".
+     */
+    InputFilter filter;
+
+    /**
      * Méthode on create
      * @param savedInstanceState If the activity is being re-initialized after
      *     previously being shut down then this Bundle contains the data it most
@@ -216,6 +229,18 @@ public class AjoutListeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ajout_liste_activity);
+
+        filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    if (source.charAt(i) == ';') {
+                        return ""; // Bloque le caractère ';'
+                    }
+                }
+                return null; // Laisse passer les autres caractères
+            }
+        };
 
         // Initialse les composants de base
         initialiserComposants();
@@ -257,11 +282,17 @@ public class AjoutListeActivity extends AppCompatActivity {
         bloquerEntete = findViewById(R.id.btnValiderEntete);
         rechercherArticle = findViewById(R.id.rechercheArticle);
 
+        saisieNomListe.setFilters(new InputFilter[]{filter});
+        saisieCodeArticle.setFilters(new InputFilter[]{filter});
+        saisieNomListe.setFilters(new InputFilter[]{filter});
+        saisieQuantite.setFilters(new InputFilter[]{filter});
+
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
         listeStock = new ArrayList<>();
         listeChoixMode = new ArrayList<>();
         listeRef = new ArrayList<>();
+        listeCodeBarre = new ArrayList<>();
         articlesAAjouter = new ArrayList<>();
         listeQuantiteSaisie = new ArrayList<>();
         listeArticlesIdEtNom = new ArrayList<>();
@@ -348,6 +379,9 @@ public class AjoutListeActivity extends AppCompatActivity {
      * @param view la vue
      */
     public void clickAjouter(View view) {
+
+        //TODO : POUR LA MODIF, VOIR AVEC LE CODE BARRE
+
         // On vérifie si les champs saisies sont valides
         Pair<Boolean, String> verif = verificationChamp(false);
         // Si ce n'est pas valide, alors on affiche une ereur
@@ -366,12 +400,13 @@ public class AjoutListeActivity extends AppCompatActivity {
             String quantiteSaisie = saisieQuantite.getText().toString();
 
             // On boucle sur les infos de tous article
-            for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
-                if(valeurSaisieCodeArticle.equals(quartet.third())) {
+            for(Quintet<String, String, String, String, String> quintet : listeInfosArticle) {
+                if(valeurSaisieCodeArticle.equals(quintet.third())
+                        || valeurSaisieCodeArticle.equals(quintet.fifth())) {
                     // On récupère le libellé de l'article
-                    libelleArticle = quartet.second();
+                    libelleArticle = quintet.second();
                     // On récupère l'ID de l'article
-                    idArticle = quartet.first();
+                    idArticle = quintet.first();
                 }
             }
 
@@ -396,6 +431,8 @@ public class AjoutListeActivity extends AppCompatActivity {
         String valeurSaisieArticle = saisieCodeArticle.getText().toString();
         // On récupère la quantité saisie
         String valeurSaisieQuantite = saisieQuantite.getText().toString();
+        Pair<Boolean, String> pair = new Pair<>(true, "");
+
 
         // Si on fait la vérif au moment de valider la liste
         if (verifValiderFichier) {
@@ -421,9 +458,15 @@ public class AjoutListeActivity extends AppCompatActivity {
         }
 
         // Si l'article est incorrect
-        if (!listeRef.contains(valeurSaisieArticle) && mode.equals("connecte")) {
-            return new Pair<>(false, getString(R.string.code_article_incorrect));
+        if (listeCodeBarre.contains(valeurSaisieArticle) && mode.equals("connecte")) {
+            return new Pair<>(true, "");
         }
+
+        // Si l'article est incorrect
+        if (!listeRef.contains(valeurSaisieArticle) && mode.equals("connecte")) {
+            pair =  new Pair<>(false, getString(R.string.code_article_incorrect));
+        }
+
 
         if(choixMode.getSelectedItem().toString().equals(getString(R.string.Modification))) {
             for (AjoutListe ajoutListe : articlesAAjouter) {
@@ -434,7 +477,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         }
 
         // Si il n'y a aucun problème, on renvoie true
-        return new Pair<>(true, "");
+        return pair;
     }
 
     /**
@@ -486,11 +529,12 @@ public class AjoutListeActivity extends AppCompatActivity {
     public void validerListe(View view) throws IOException {
         // On vérifie si les champs saisies sont valides
         Pair<Boolean, String> verif = verificationChamp(true);
+        boolean verifListeNonVide = articlesAAjouter.isEmpty();
 
         // Si ce n'est pas valide, alors on retourne une erreur
         if(Boolean.FALSE.equals(verif.first)) {
             erreurSaisies.setText(String.format("%s %s", getString(R.string.ErreurSaisie), verif.second));
-        } else {
+        } else if (!verifListeNonVide) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
@@ -549,6 +593,13 @@ public class AjoutListeActivity extends AppCompatActivity {
             CustomPopupAjouter dialog = CustomPopupAjouter.createDialog(this);
             dialog.show();
 
+        } else {
+            // création d'une intention pour informer l'activté parente
+            Intent intentionRetour = new Intent();
+
+            // retour à l'activité parente et destruction de l'activité fille
+            setResult(Activity.RESULT_OK, intentionRetour);
+            finish(); // destruction de l'activité courante
         }
     }
 
@@ -598,9 +649,9 @@ public class AjoutListeActivity extends AppCompatActivity {
      * @param idEntrepot id de l'entrepôt
      */
     public void VerifArticles(String idEntrepot) {
-        for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
+        for(Quintet<String, String, String, String, String> quintet : listeInfosArticle) {
             RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
-                    "AjoutListe", quartet.first(), idEntrepot,quartet,
+                    "AjoutListe", quintet.first(), idEntrepot,quintet,
                     null);
         }
     }
@@ -801,15 +852,26 @@ public class AjoutListeActivity extends AppCompatActivity {
                     }
                 }
 
+                //ArrayList<String> suggestionsCodeBarre = new ArrayList<>();
+                for (String codeBarre : listeCodeBarre) {
+                    if (codeBarre.toLowerCase().contains(saisie.toLowerCase())) {
+                        suggestions.add(codeBarre);
+                    }
+                }
+
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(AjoutListeActivity.this,
                         android.R.layout.simple_dropdown_item_1line, suggestions);
                 saisieCodeArticle.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
 
+            int index = 0;
             // Mettre à jour le stock disponible si l'article est dans la liste
             if (listeRef.contains(saisie)) {
-                int index = listeRef.indexOf(saisie);
+                index = listeRef.indexOf(saisie);
+                libelleStock.setText(String.format("%s en stock", listeStock.get(index)));
+            } else if (listeCodeBarre.contains(saisie)) {
+                index = listeCodeBarre.indexOf(saisie);
                 libelleStock.setText(String.format("%s en stock", listeStock.get(index)));
             } else {
                 libelleStock.setText("");

@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
+import com.example.saedolistocks5.outilsdivers.Quintet;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 
 import java.io.BufferedReader;
@@ -216,6 +219,12 @@ public class ModifListeActivity extends AppCompatActivity {
      * Libellé de l'article en modification
      */
     private String articleEnModif;
+
+    /**
+     * Permet d'empêcher la saisie du caractère ";".
+     */
+    InputFilter filter;
+
     /**
      * Méthode on create
      * @param savedInstanceState If the activity is being re-initialized after
@@ -228,6 +237,18 @@ public class ModifListeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.modif_liste_activity);
+
+        filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    if (source.charAt(i) == ';') {
+                        return ""; // Bloque le caractère ';'
+                    }
+                }
+                return null; // Laisse passer les autres caractères
+            }
+        };
 
         // Initialse les composants de base
         initialiserComposants();
@@ -276,6 +297,11 @@ public class ModifListeActivity extends AppCompatActivity {
         bloquerEntete = findViewById(R.id.btnValiderEntete);
         rechercherArticle = findViewById(R.id.rechercheArticle);
         layoutManager = modifArticleRecyclerView.getLayoutManager();
+
+        saisieNomListe.setFilters(new InputFilter[]{filter});
+        saisieCodeArticle.setFilters(new InputFilter[]{filter});
+        saisieNomListe.setFilters(new InputFilter[]{filter});
+        saisieQuantite.setFilters(new InputFilter[]{filter});
 
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
@@ -439,12 +465,12 @@ public class ModifListeActivity extends AppCompatActivity {
             String quantiteSaisie = saisieQuantite.getText().toString();
 
             // On boucle sur les infos de tous article
-            for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
-                if(valeurSaisieCodeArticle.equals(quartet.third())) {
+            for(Quintet<String, String, String, String, String> quintet : listeInfosArticle) {
+                if(valeurSaisieCodeArticle.equals(quintet.third())) {
                     // On récupère le libellé de l'article
-                    libelleArticle = quartet.second();
+                    libelleArticle = quintet.second();
                     // On récupère l'ID de l'article
-                    idArticle = quartet.first();
+                    idArticle = quintet.first();
                 }
             }
 
@@ -558,10 +584,10 @@ public class ModifListeActivity extends AppCompatActivity {
             String idArticle = "";
 
             // On boucle sur les infos de tous article
-            for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
-                if(valeurSaisieCodeArticle.equals(quartet.third())) {
+            for(Quintet<String, String, String, String, String> quintet : listeInfosArticle) {
+                if(valeurSaisieCodeArticle.equals(quintet.third())) {
                     // On récupère l'ID de l'article
-                    idArticle = quartet.first();
+                    idArticle = quintet.first();
                 }
             }
             articlesAModifier.add(new ModifListe(articleEnModif,
@@ -857,9 +883,9 @@ public class ModifListeActivity extends AppCompatActivity {
      */
     public void VerifArticles(String idEntrepot) {
 
-        for(Quartet<String, String, String, String> quartet : listeInfosArticle) {
+        for(Quintet<String, String, String, String, String> quintet : listeInfosArticle) {
             RequetesApi.GetArticlesByEntrepot(urlApi, token, getApplicationContext(),
-                    "ModifListe", quartet.first(), idEntrepot,quartet, null);
+                    "ModifListe", quintet.first(), idEntrepot,quintet, null);
         }
     }
 
