@@ -637,11 +637,9 @@ public class ListeActivity extends AppCompatActivity {
         Toast.makeText(ListeActivity.this, "Insertion OK",
                 Toast.LENGTH_LONG).show();
         deleteFile(nomFichier);
-        if(listeAccueil.size() != 0) {
+        if(!listeAccueil.isEmpty()) {
             listeAccueil.remove(positionItemListe);
             adaptateur.notifyItemRemoved(positionItemListe);
-        } else {
-            // Recrée la vue pour remettre à jour le positionItemListe
             this.recreate();
         }
     }
@@ -668,8 +666,6 @@ public class ListeActivity extends AppCompatActivity {
         if(!listeAccueil.isEmpty()) {
             listeAccueil.remove(positionItemListe);
             adaptateur.notifyItemRemoved(positionItemListe);
-        } else {
-            // Recrée la vue pour remettre à jour le positionItemListe
             this.recreate();
         }
     }
