@@ -31,8 +31,8 @@ public class CustomPopupSuppression extends AlertDialog {
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss(); // Dismiss the dialog
                 listeActivity.supprimerListe(); // Call the method from ListeActivity
+                dismiss(); // Dismiss the dialog
             }
         });
     }
