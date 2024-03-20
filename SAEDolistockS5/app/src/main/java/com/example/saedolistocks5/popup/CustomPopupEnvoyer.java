@@ -1,5 +1,11 @@
 package com.example.saedolistocks5.popup;
 
+import static com.example.saedolistocks5.pageliste.ListeActivity.adaptateur;
+import static com.example.saedolistocks5.pageliste.ListeActivity.listeAccueil;
+import static com.example.saedolistocks5.pageliste.ListeActivity.positionItemListe;
+import static com.example.saedolistocks5.popup.CustomPopupAfficherMenu.nomFichier;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -7,11 +13,15 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupEnvoyer extends AlertDialog {
 
-    protected CustomPopupEnvoyer(Context context) {
+    private Activity activity;
+
+    protected CustomPopupEnvoyer(Context context, Activity activity) {
         super(context);
+        this.activity = activity;
     }
 
     @Override
@@ -24,15 +34,21 @@ public class CustomPopupEnvoyer extends AlertDialog {
         // Get the buttons and set their click listeners
         Button menuButton = findViewById(R.id.homeButton);
 
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss(); // Dismiss the dialog
-            }
-        });
+        menuButton.setOnClickListener(this::OnClickEnvoyer);
+
     }
-    public static CustomPopupEnvoyer createDialog(Context context) {
-        CustomPopupEnvoyer dialog = new CustomPopupEnvoyer(context);
+    public static CustomPopupEnvoyer createDialog(Context context, Activity activity) {
+        CustomPopupEnvoyer dialog = new CustomPopupEnvoyer(context, activity);
         return dialog;
+    }
+
+    public void OnClickEnvoyer(View view) {
+        activity.deleteFile(nomFichier);
+        if(!listeAccueil.isEmpty()) {
+            listeAccueil.remove(positionItemListe);
+            adaptateur.notifyItemRemoved(positionItemListe);
+            activity.recreate();
+        }
+        dismiss(); // Dismiss the dialog
     }
 }
