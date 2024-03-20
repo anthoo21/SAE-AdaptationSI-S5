@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_marginTop="@dimen/hauteur_image_40">
+
+        <Button
+        android:layout_marginBottom="@dimen/marge_15"
+        android:id="@+id/btnVisualiser"
+        style="@style/StyleMiniBouton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/libelle_visualisation"
+        android:layout_marginEnd="@dimen/marge_8"
+            android:onClick="onClickVisualiser"/>
+
+    <Button
+        android:layout_marginBottom="@dimen/marge_15"
+        android:id="@+id/btnModifier"
+        style="@style/StyleMiniBouton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/libelle_modification"
+        android:layout_marginEnd="@dimen/marge_8"
+        android:onClick="onClickModifier"/>
+
+    <Button
+        android:layout_marginBottom="@dimen/marge_15"
+        android:id="@+id/btnEnvoyer"
+        style="@style/StyleMiniBouton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/libelle_envoyer"
+        android:layout_marginEnd="@dimen/marge_8"
+        android:onClick="onClickEnvoyer"/>
+
+    <Button
+        android:layout_marginBottom="@dimen/hauteur_image_40"
+        android:id="@+id/btnSupprimer"
+        style="@style/StyleMiniBouton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/optionSupprimer"
+        android:layout_marginEnd="@dimen/marge_8"
+        android:onClick="onClickSupprimer"/>
+
+
+</LinearLayout>

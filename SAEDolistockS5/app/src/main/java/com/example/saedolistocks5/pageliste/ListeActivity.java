@@ -29,6 +29,7 @@ import com.example.saedolistocks5.pagemodifliste.ModifListeActivity;
 import com.example.saedolistocks5.pagevisualisation.Visualisation;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pagemain.MainActivity;
+import com.example.saedolistocks5.popup.CustomPopupAfficherMenu;
 import com.example.saedolistocks5.popup.CustomPopupConfirmationSupp;
 import com.example.saedolistocks5.popup.CustomPopupEnvoyer;
 import com.example.saedolistocks5.popup.CustomPopupSuppression;
@@ -72,7 +73,7 @@ public class ListeActivity extends AppCompatActivity {
      * chaque élément contient une instance de PhotoParis (une photo
      * et son libellé)
      */
-    private static ArrayList<ListeAccueil> listeAccueil;
+    public static ArrayList<ListeAccueil> listeAccueil;
 
     /**
      * Liste pour récupérer les codes articles
@@ -108,12 +109,12 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Adatpateur de liste accueil
      */
-    static ListeAccueilAdapter adaptateur;
+    public static ListeAccueilAdapter adaptateur;
 
     /**
      * Utilisateur courant sur l'application
      */
-    private String utilisateurCourant,
+    public static String utilisateurCourant,
     /**
      * Le token pour utiliser l'API
      */
@@ -131,39 +132,40 @@ public class ListeActivity extends AppCompatActivity {
     /**
      * Id de l'article
      */
-    private String idArticle;
+    public static String idArticle;
 
     /**
      * Id de l'entrepôt
      */
-    private String idEntrepot;
+    public static String idEntrepot;
 
     /**
      * Libelle de l'article
      */
-    private String libelleArticle;
+    public static String libelleArticle;
 
 
 
     /**
      * Position de l'item liste
      */
-    private static int positionItemListe;
+    public static int positionItemListe;
 
     /**
      * Liste des listes de l'utilisateur courant
      */
-    static ArrayList<String> listeFichierUser;
+    public static ArrayList<String> listeFichierUser;
 
     /**
      * Nombre de lignes du fichier à envoyer sur Dolibarr.
      */
-    private int nombreLignes;
+    public static int nombreLignes;
 
     /**
      * Index de parcours de ligne
      */
-    private int indexParcoursListe;
+    public static int indexParcoursListe;
+
 
     /**
      * Méthode onCreate.
@@ -178,11 +180,10 @@ public class ListeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_activity);
         listeAccueilRecyclerView = findViewById(R.id.liste_listes_accueil);
-
-
+        String modeFirstIntention = "";
         try {
             Intent intentionParent = getIntent();
-            String modeFirstIntention = intentionParent.getStringExtra("MODE");
+            modeFirstIntention = intentionParent.getStringExtra("MODE");
             // Permet d'écrire le choix du mode de l'uril
             if(modeFirstIntention != null) {
                 ecritureModeFichier(modeFirstIntention);
@@ -195,6 +196,8 @@ public class ListeActivity extends AppCompatActivity {
             throw new IllegalArgumentException(e);
         }
 
+        //if(mode.equals("deconnecte")) {
+        //}
 
         idArticleVerif = new ArrayList<>();
         idEntrepotVerif = new ArrayList<>();
@@ -303,7 +306,8 @@ public class ListeActivity extends AppCompatActivity {
     public void onClickMenu(View view) {
         // Affiche le menu contextuel
         positionItemListe = (int) view.getTag();
-        view.showContextMenu();
+        CustomPopupAfficherMenu dialog = CustomPopupAfficherMenu.createDialog(this, this);
+        dialog.show();
     }
 
     /**
@@ -339,15 +343,14 @@ public class ListeActivity extends AppCompatActivity {
             intention.putExtra("positionItem", positionItemListe);
             startActivity(intention);
         } else if (item.getItemId() == R.id.optionModification) { // modification d'une liste
-            Intent intention = new Intent(ListeActivity.this, ModifListeActivity.class);
-            intention.putExtra("positionItem", positionItemListe);
-            startActivity(intention);
+
         } else if (item.getItemId() == R.id.optionEnvoyer) {
             EnvoyerListe();
-            CustomPopupEnvoyer dialog = CustomPopupEnvoyer.createDialog(this);
+            CustomPopupEnvoyer dialog = CustomPopupEnvoyer.createDialog(this, ListeActivity.this);
             dialog.show();
         } else {
-            CustomPopupConfirmationSupp dialog = CustomPopupConfirmationSupp.createDialog(this, this);
+            CustomPopupConfirmationSupp dialog = CustomPopupConfirmationSupp.createDialog(this,
+                    this);
             dialog.show();
         }
         return (super.onContextItemSelected(item));
@@ -381,10 +384,10 @@ public class ListeActivity extends AppCompatActivity {
      * @param view source du clic.
      */
     public void onClickDeco(View view) {
-            Intent intention = new Intent(ListeActivity.this, LoginActivity.class);
-            deleteFile("infouser.txt");
-            deleteFile("mode.txt");
-            startActivity(intention);
+        Intent intention = new Intent(ListeActivity.this, LoginActivity.class);
+        deleteFile("infouser.txt");
+        deleteFile("mode.txt");
+        startActivity(intention);
 
     }
 
@@ -393,7 +396,8 @@ public class ListeActivity extends AppCompatActivity {
      */
     public void EnvoyerListe() {
 
-        String nomFichier = listeFichierUser.get(positionItemListe);        try {
+        String nomFichier = listeFichierUser.get(positionItemListe);
+        try {
         InputStreamReader liste = new InputStreamReader(openFileInput(nomFichier));
         BufferedReader listeText = new BufferedReader(liste);
 
