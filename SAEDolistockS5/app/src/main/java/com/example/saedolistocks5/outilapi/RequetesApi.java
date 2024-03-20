@@ -12,8 +12,10 @@ import static com.example.saedolistocks5.pageliste.ListeActivity.idArticleVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.idEntrepotVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.libelleArticleVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeCodeArticleVerif;
+import static com.example.saedolistocks5.pageliste.ListeActivity.listeCodeBarreVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeEntrepotsVerif;
 import static com.example.saedolistocks5.pagemodifliste.ModifListeActivity.adapterSuggestionArticleModif;
+import static com.example.saedolistocks5.pagemodifliste.ModifListeActivity.codeBarreModif;
 
 import android.content.Context;
 import android.util.Pair;
@@ -164,6 +166,7 @@ public class RequetesApi {
                             // le code de tous les articles
                         } else if (classeAppelante.equals("Liste")) {
                             listeCodeArticleVerif.add(refArticle);
+                            listeCodeBarreVerif.add(codeBarre);
                             idArticleVerif.add(idArticle);
                             libelleArticleVerif.add(label);
                         }
@@ -228,8 +231,8 @@ public class RequetesApi {
                 } else {
                     listeArticles.add(quintet.second());
                     listeRef.add(quintet.third());
-                    listeCodeBarre.add(quintet.fifth());
                     listeStock.add(stock);
+                    listeCodeBarre.add(quintet.fifth());
                     if(classeAppelante.equals("AjoutListe")) {
                         adapterSuggestionArticle.notifyDataSetChanged();
                     }

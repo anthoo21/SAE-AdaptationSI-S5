@@ -82,6 +82,11 @@ public class ListeActivity extends AppCompatActivity {
     public static ArrayList<String> listeCodeArticleVerif;
 
     /**
+     * Liste de code barre
+     */
+    public static ArrayList<String> listeCodeBarreVerif;
+
+    /**
      * Liste des ID des articles
      */
     public static ArrayList<String> idArticleVerif;
@@ -140,6 +145,8 @@ public class ListeActivity extends AppCompatActivity {
      */
     private String libelleArticle;
 
+
+
     /**
      * Position de l'item liste
      */
@@ -194,6 +201,7 @@ public class ListeActivity extends AppCompatActivity {
         idArticleVerif = new ArrayList<>();
         idEntrepotVerif = new ArrayList<>();
         listeCodeArticleVerif = new ArrayList<>();
+        listeCodeBarreVerif = new ArrayList<>();
         listeEntrepotsVerif = new ArrayList<>();
         libelleArticleVerif = new ArrayList<>();
 
@@ -406,16 +414,31 @@ public class ListeActivity extends AppCompatActivity {
 
         String[] elementListe;
         String ligne;
+
+
+
         // Index pour savoir si on est sur le dernier traitement du fichier ou nom
 
         while ((ligne = listeText.readLine()) != null) {
             elementListe = ligne.split(";");
             String[] finalElementListe = elementListe;
             int maj;
-            maj = VerifArticlesEtEntrepots(finalElementListe[2], finalElementListe[4]);
+
+            String codeArticle = "";
+            String codeBarre = "";
+
+            if(listeCodeArticleVerif.contains(finalElementListe[2])) {
+                codeArticle = finalElementListe[2];
+            } else if (listeCodeBarreVerif.contains(finalElementListe[2])) {
+                codeBarre = finalElementListe[2];
+            }
+
+            maj = VerifArticlesEtEntrepots(codeArticle, codeBarre, finalElementListe[4]);
             int finalMaj = maj;
             // Si la mise à jour est "Oui", donc que tout s'est bien passé, on modifie le stock
             if(maj == 0) {
+                String finalCodeArticle = codeArticle;
+                String finalCodeBarre = codeBarre;
                 RequetesApi.GetArticlesByEntrepot(URLApi, token, getApplicationContext(),
                         "Liste", idArticle, idEntrepot, null, new RequetesApi.QuantiteCallback() {
                             @Override
@@ -429,7 +452,7 @@ public class ListeActivity extends AppCompatActivity {
 
                                 quantiteSaisie = Integer.parseInt(finalElementListe[5]);
 
-                                if(finalElementListe[6].equals("Ajout")) {
+                                if(finalElementListe[6].equals(getString(R.string.Ajout))) {
                                     finalElementListe[6] = "0";
                                     quantiteApres = quantiteAvantEnvoieListe + quantiteSaisie;
                                 } else {
@@ -437,11 +460,14 @@ public class ListeActivity extends AppCompatActivity {
                                     quantiteApres = Integer.parseInt(finalElementListe[5]);
                                     quantiteSaisie = quantiteApres - quantiteAvantEnvoieListe;
                                 }
+
+
+
                                 bodyJSON.put("ref", "");
                                 bodyJSON.put("status", 1);
                                 bodyJSON.put("Libelle", finalElementListe[1]);
-                                bodyJSON.put("CodeArticle", finalElementListe[2]);
-                                bodyJSON.put("CodeBarre", "");
+                                bodyJSON.put("CodeArticle", finalCodeArticle);
+                                bodyJSON.put("CodeBarre", finalCodeBarre);
                                 bodyJSON.put("Designation", libelleArticle);
                                 bodyJSON.put("Entrepot", finalElementListe[4]);
                                 bodyJSON.put("Quantite", quantiteSaisie);
@@ -476,8 +502,8 @@ public class ListeActivity extends AppCompatActivity {
                 bodyJSON.put("ref", "");
                 bodyJSON.put("status", 1);
                 bodyJSON.put("Libelle", finalElementListe[1]);
-                bodyJSON.put("CodeArticle", finalElementListe[2]);
-                bodyJSON.put("CodeBarre", "");
+                bodyJSON.put("CodeArticle", codeArticle);
+                bodyJSON.put("CodeBarre", codeBarre);
                 bodyJSON.put("Designation", finalElementListe[3]);
                 bodyJSON.put("Entrepot", finalElementListe[4]);
                 bodyJSON.put("Quantite", finalElementListe[5]);
@@ -511,20 +537,34 @@ public class ListeActivity extends AppCompatActivity {
      * @param nomEntrepot the nom entrepot
      * @return the int
      */
-    public int VerifArticlesEtEntrepots(String codeArticle, String nomEntrepot) {
+    public int VerifArticlesEtEntrepots(String codeArticle, String codeBarre, String nomEntrepot) {
         boolean verifArticle = false;
         boolean verifEntrepot = false;
 
 
         int index = 0;
-        for(String codeArticleVerif : listeCodeArticleVerif) {
-            if(codeArticle.equals(codeArticleVerif)) {
-                verifArticle = true;
-                idArticle = idArticleVerif.get(index);
-                libelleArticle = libelleArticleVerif.get(index);
+        // Si le code article n'est pas vide,
+        // cela veut dire qu'on peut faire la vérification dessus
+        if(!codeArticle.equals("")) {
+            for(String codeArticleVerif : listeCodeArticleVerif) {
+                if(codeArticle.equals(codeArticleVerif)) {
+                    verifArticle = true;
+                    idArticle = idArticleVerif.get(index);
+                    libelleArticle = libelleArticleVerif.get(index);
+                }
+                index++;
             }
-            index++;
+        } else {
+            for(String codeBarreVerif : listeCodeBarreVerif) {
+                if(codeBarre.equals(codeBarreVerif)) {
+                    verifArticle = true;
+                    idArticle = idArticleVerif.get(index);
+                    libelleArticle = libelleArticleVerif.get(index);
+                }
+                index++;
+            }
         }
+
 
         index = 0;
         for(String nomEntrepotVerif : listeEntrepotsVerif) {
