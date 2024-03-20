@@ -1,15 +1,14 @@
 package com.example.saedolistocks5.popup;
 
 import static com.example.saedolistocks5.pageliste.ListeActivity.URLApi;
-import static com.example.saedolistocks5.pageliste.ListeActivity.adaptateur;
 import static com.example.saedolistocks5.pageliste.ListeActivity.idArticleVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.idEntrepotVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.libelleArticleVerif;
-import static com.example.saedolistocks5.pageliste.ListeActivity.listeAccueil;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeCodeArticleVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeCodeBarreVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeEntrepotsVerif;
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeFichierUser;
+import static com.example.saedolistocks5.pageliste.ListeActivity.mode;
 import static com.example.saedolistocks5.pageliste.ListeActivity.positionItemListe;
 import static com.example.saedolistocks5.pageliste.ListeActivity.indexParcoursListe;
 import static com.example.saedolistocks5.pageliste.ListeActivity.nombreLignes;
@@ -20,7 +19,6 @@ import static com.example.saedolistocks5.pageliste.ListeActivity.token;
 import static com.example.saedolistocks5.pageliste.ListeActivity.utilisateurCourant;
 
 import android.app.AlertDialog;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -48,16 +46,16 @@ import java.util.Objects;
 
 public class CustomPopupAfficherMenu extends AlertDialog {
 
-    private Activity activity;
+    private ListeActivity listeActivity;
 
     /**
      * Nom du fichier
      */
     public static String nomFichier;
 
-    protected CustomPopupAfficherMenu(Context context, Activity activity) {
+    protected CustomPopupAfficherMenu(Context context, ListeActivity listeActivity) {
         super(context);
-        this.activity = activity;
+        this.listeActivity = listeActivity;
     }
 
     @Override
@@ -72,6 +70,11 @@ public class CustomPopupAfficherMenu extends AlertDialog {
         Button envoyer = findViewById(R.id.btnEnvoyer);
         Button supprimer = findViewById(R.id.btnSupprimer);
 
+        if(mode.equals("deconnecte")) {
+            envoyer.setEnabled(false);
+            envoyer.setBackground(listeActivity.getDrawable(R.drawable.base_bouton_disable));
+        }
+
         visualiser.setOnClickListener(this::onClickVisualiser);
         modifier.setOnClickListener(this::onClickModifier);
         envoyer.setOnClickListener(this::onClickEnvoyer);
@@ -84,16 +87,16 @@ public class CustomPopupAfficherMenu extends AlertDialog {
     }
 
     public void onClickVisualiser(View view) {
-        Intent intention = new Intent(activity, Visualisation.class);
+        Intent intention = new Intent(listeActivity, Visualisation.class);
         intention.putExtra("positionItem", positionItemListe);
-        activity.startActivity(intention);
+        listeActivity.startActivity(intention);
         dismiss(); // Fermer le dialogue après le lancement de l'activité
     }
 
     public void onClickModifier(View view) {
-        Intent intention = new Intent(activity, ModifListeActivity.class);
+        Intent intention = new Intent(listeActivity, ModifListeActivity.class);
         intention.putExtra("positionItem", positionItemListe);
-        activity.startActivity(intention);
+        listeActivity.startActivity(intention);
         dismiss(); // Fermer le dialogue après le lancement de l'activité
     }
 
@@ -102,7 +105,10 @@ public class CustomPopupAfficherMenu extends AlertDialog {
     }
 
     public void onClickSupprimer(View view) {
-
+        CustomPopupConfirmationSupp dialog = CustomPopupConfirmationSupp.createDialog(listeActivity,
+                listeActivity);
+        dismiss();
+        dialog.show();
     }
 
     /**
@@ -112,7 +118,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
 
         nomFichier = listeFichierUser.get(positionItemListe);
         try {
-            InputStreamReader liste = new InputStreamReader(activity.openFileInput(nomFichier));
+            InputStreamReader liste = new InputStreamReader(listeActivity.openFileInput(nomFichier));
             BufferedReader listeText = new BufferedReader(liste);
 
             indexParcoursListe = 0;
@@ -125,7 +131,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
 
             // Réinitialiser la position de lecture du flux
             listeText.close();
-            liste = new InputStreamReader(activity.openFileInput(nomFichier));
+            liste = new InputStreamReader(listeActivity.openFileInput(nomFichier));
             listeText = new BufferedReader(liste);
 
             String[] elementListe;
@@ -146,6 +152,8 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                     codeArticle = finalElementListe[2];
                 } else if (listeCodeBarreVerif.contains(finalElementListe[2])) {
                     codeBarre = finalElementListe[2];
+                } else {
+                    codeArticle = finalElementListe[2];
                 }
 
                 maj = VerifArticlesEtEntrepots(codeArticle, codeBarre, finalElementListe[4]);
@@ -154,7 +162,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                 if (maj == 0) {
                     String finalCodeArticle = codeArticle;
                     String finalCodeBarre = codeBarre;
-                    RequetesApi.GetArticlesByEntrepot(URLApi, token, activity.getApplicationContext(),
+                    RequetesApi.GetArticlesByEntrepot(URLApi, token, listeActivity.getApplicationContext(),
                             "Liste", idArticle, idEntrepot, null, new RequetesApi.QuantiteCallback() {
                                 @Override
                                 public void onQuantiteRecuperee(int quantiteAvantEnvoieListe)
@@ -167,7 +175,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
 
                                     quantiteSaisie = Integer.parseInt(finalElementListe[5]);
 
-                                    if (finalElementListe[6].equals(activity.getString(R.string.Ajout))) {
+                                    if (finalElementListe[6].equals(listeActivity.getString(R.string.Ajout))) {
                                         finalElementListe[6] = "0";
                                         quantiteApres = quantiteAvantEnvoieListe + quantiteSaisie;
                                     } else {
@@ -307,7 +315,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/dolistockapi/listess?api_key=%s",
                 URLApi, token);
 
-        OutilAPI.PostApiJson(activity.getApplicationContext(), urlAPI, bodyJson, new OutilAPI.ApiCallback() {
+        OutilAPI.PostApiJson(listeActivity.getApplicationContext(), urlAPI, bodyJson, new OutilAPI.ApiCallback() {
 
             @Override
             public void onSuccess(JSONObject result) {
@@ -331,7 +339,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                                 traiterResultatOK(nomFichier);
                             }
                         } else {
-                            Toast.makeText(activity, "Problème d'insertion",
+                            Toast.makeText(listeActivity, "Problème d'insertion",
                                     Toast.LENGTH_LONG).show();
                         }
                     }
@@ -354,17 +362,17 @@ public class CustomPopupAfficherMenu extends AlertDialog {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/stockmovements?api_key=%s",
                 URLApi, token);
 
-        OutilAPI.PostApiJson(activity.getApplicationContext(), urlAPI, bodyJson, new OutilAPI.ApiCallback() {
+        OutilAPI.PostApiJson(listeActivity.getApplicationContext(), urlAPI, bodyJson, new OutilAPI.ApiCallback() {
 
             @Override
             public void onSuccess(JSONObject result) {
-                Toast.makeText(activity.getApplicationContext(), "Insertion OK",
+                Toast.makeText(listeActivity.getApplicationContext(), "Insertion OK",
                         Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onSuccess(JSONArray result) {
-                Toast.makeText(activity.getApplicationContext(), "Insertion OK",
+                Toast.makeText(listeActivity.getApplicationContext(), "Insertion OK",
                         Toast.LENGTH_LONG).show();
             }
 
@@ -372,7 +380,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
             public void onError(VolleyError error) {
                 if(error.getMessage() != null) {
                     if(!error.getMessage().contains("JSONException")) {
-                        Toast.makeText(activity.getApplicationContext(), "Erreur : " + error.getMessage(),
+                        Toast.makeText(listeActivity.getApplicationContext(), "Erreur : " + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
                     }
                 }
@@ -386,7 +394,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
      * @param nomFichier the nom fichier
      */
     public void traiterResultatOK(String nomFichier) {
-        CustomPopupEnvoyer dialog = CustomPopupEnvoyer.createDialog(activity, activity);
+        CustomPopupEnvoyer dialog = CustomPopupEnvoyer.createDialog(listeActivity, listeActivity);
         dismiss();
         dialog.show();
     }

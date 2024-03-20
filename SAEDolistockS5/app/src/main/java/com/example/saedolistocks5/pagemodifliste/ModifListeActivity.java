@@ -706,39 +706,35 @@ public class ModifListeActivity extends AppCompatActivity {
      * @param view
      */
     public void clickValiderEntete(View view) {
-        if(entrepotOk || mode.equals("deconnecte")) {
-            if(bloquerEntete.getText().toString().equals(getString(R.string.libelle_bloquer))) {
-                bloquerEntete.setText(getString(R.string.libelle_debloquer));
-                // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
-                saisieNomEntrepot.setEnabled(false);
+        if(bloquerEntete.getText().toString().equals(getString(R.string.libelle_bloquer))) {
+            bloquerEntete.setText(getString(R.string.libelle_debloquer));
+            // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
+            saisieNomEntrepot.setEnabled(false);
 
-                // On désactive le choix du mode
-                choixMode.setEnabled(false);
+            // On désactive le choix du mode
+            choixMode.setEnabled(false);
 
-                // Maintenant, il faut activer la saisie d'un article
-                rechercherArticle.setEnabled(true);
-                saisieCodeArticle.setEnabled(true);
-                saisieQuantite.setEnabled(true);
-                ajouterArticle.setEnabled(true);
-            } else {
-                bloquerEntete.setText(getString(R.string.libelle_bloquer));
-                saisieNomEntrepot.setEnabled(true);
-                choixMode.setEnabled(true);
-                saisieCodeArticle.setEnabled(false);
-                saisieCodeArticle.setText("");
-                saisieQuantite.setEnabled(false);
-                saisieQuantite.setText("");
-                ajouterArticle.setEnabled(false);
-                libelleStock.setText("");
-                rechercherArticle.setEnabled(false);
-                articlesAModifier.clear();
-                adaptateurModifListe.notifyDataSetChanged();
-                listeQuantiteSaisie.clear();
-                listeIdArticle.clear();
-
-            }
+            // Maintenant, il faut activer la saisie d'un article
+            rechercherArticle.setEnabled(true);
+            saisieCodeArticle.setEnabled(true);
+            saisieQuantite.setEnabled(true);
+            ajouterArticle.setEnabled(true);
         } else {
-            texteErreur.setText(getString(R.string.entrepot_incorrect));
+            bloquerEntete.setText(getString(R.string.libelle_bloquer));
+            saisieNomEntrepot.setEnabled(true);
+            choixMode.setEnabled(true);
+            saisieCodeArticle.setEnabled(false);
+            saisieCodeArticle.setText("");
+            saisieQuantite.setEnabled(false);
+            saisieQuantite.setText("");
+            ajouterArticle.setEnabled(false);
+            libelleStock.setText("");
+            rechercherArticle.setEnabled(false);
+            articlesAModifier.clear();
+            adaptateurModifListe.notifyDataSetChanged();
+            listeQuantiteSaisie.clear();
+            listeIdArticle.clear();
+
         }
     }
 
