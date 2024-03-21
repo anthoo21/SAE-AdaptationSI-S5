@@ -216,6 +216,16 @@
             android:src="@drawable/louperesize"
             android:onClick="afficherPopup"/>
 
+        <ImageButton
+            android:id="@+id/scanCodeBarre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:src="@drawable/appareil_photo_resize"
+            android:onClick="ScanCodeBarre"
+            android:paddingLeft="@dimen/marge_10"/>
+
         <TextView
             android:id="@+id/libelleStock"
             android:layout_width="wrap_content"

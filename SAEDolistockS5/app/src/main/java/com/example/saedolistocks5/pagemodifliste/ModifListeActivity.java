@@ -45,6 +45,7 @@ import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
 import com.example.saedolistocks5.outilsdivers.Quintet;
 import com.example.saedolistocks5.pageajoutliste.AjoutListe;
+import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 
 import java.io.BufferedReader;
@@ -74,7 +75,7 @@ public class ModifListeActivity extends AppCompatActivity {
     /**
      * Editext pour la saisie du nom de l'entrepot.
      */
-    private EditText saisieNomEntrepot;
+    private AutoCompleteTextView saisieNomEntrepot;
     /**
      * Editext pour saisir la quantite.
      */
@@ -847,15 +848,23 @@ public class ModifListeActivity extends AppCompatActivity {
             // A chaque modification du texte
             String saisie = s.toString();
             Pair<String, String> idEtNomEntrepotActuel = new Pair<>("", "");
+            ArrayList<String> suggestions = new ArrayList<>();
+
             listeEntrepots = new ArrayList<>();
             for(Pair<String, String> pair : listeEntrepotIdEtNom)
             {
                 listeEntrepots.add(pair.second);
                 // On vérifie si le nom de l'entrepôt est celui saisi par l'utilisateur
-                if(pair.second.contains(saisie)) {
+                if(pair.second.toLowerCase().contains(saisie.toLowerCase())) {
                     idEtNomEntrepotActuel = new Pair<>(pair.first, pair.second);
+                    suggestions.add(pair.second);
                 }
             }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(ModifListeActivity.this,
+                    android.R.layout.simple_dropdown_item_1line, suggestions);
+            saisieNomEntrepot.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
 
             // Si l'entrepôt existe
             if (listeEntrepots.contains(saisie)) {
