@@ -41,6 +41,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.outilapi.BarcodeScannerActivity;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
 import com.example.saedolistocks5.outilsdivers.Quintet;
@@ -125,6 +126,11 @@ public class ModifListeActivity extends AppCompatActivity {
      * Bouton image pour rechercher un article par son libellé
      */
     private ImageButton rechercherArticle;
+
+    /**
+     * Bouton image pour scanner un code barre
+     */
+    private ImageButton scanCodeBarre;
 
     /**
      * Liste du choix du mode.
@@ -304,6 +310,7 @@ public class ModifListeActivity extends AppCompatActivity {
         ajouterArticle = findViewById(R.id.btnAjouter);
         bloquerEntete = findViewById(R.id.btnValiderEntete);
         rechercherArticle = findViewById(R.id.rechercheArticle);
+        scanCodeBarre = findViewById(R.id.scanCodeBarre);
         layoutManager = modifArticleRecyclerView.getLayoutManager();
 
         saisieNomListe.setFilters(new InputFilter[]{filter});
@@ -334,6 +341,21 @@ public class ModifListeActivity extends AppCompatActivity {
 
         entrepotOk = false;
         modifOk = false;
+    }
+
+    public void ScanCodeBarre(View view) {
+        // Lance l'activité de scan
+        startActivityForResult(new Intent(ModifListeActivity.this,
+                BarcodeScannerActivity.class), 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            String scanResult = data.getStringExtra("SCAN_RESULT");
+            saisieCodeArticle.setText(scanResult);
+        }
     }
 
     private void recupListePourModif() {
