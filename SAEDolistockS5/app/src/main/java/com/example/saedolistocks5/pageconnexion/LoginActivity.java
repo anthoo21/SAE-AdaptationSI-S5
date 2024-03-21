@@ -6,6 +6,7 @@ package com.example.saedolistocks5.pageconnexion;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -168,8 +169,9 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intention = new Intent(LoginActivity.this,
                                 ListeActivity.class);
                         intention.putExtra("MODE", "connecte");
+                        intention.putExtra("PAGE", "Login");
                         startActivity(intention);
-
+                        finish(); // destruction de l'activité courante
                     } catch (JSONException e) {
                         texteErreurView.setText(R.string.ErreurJSON);
                     } catch (Exception e) {
@@ -248,8 +250,23 @@ public class LoginActivity extends AppCompatActivity {
      * @param view  source du clic.
      */
     public void onClickRetour(View view) {
-        Intent intention = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intention);
+        // création d'une intention pour informer l'activté parente
+        Intent intentionRetour = new Intent();
+
+        // retour à l'activité parente et destruction de l'activité fille
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish(); // destruction de l'activité courante
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // création d'une intention pour informer l'activté parente
+        Intent intentionRetour = new Intent();
+
+        // retour à l'activité parente et destruction de l'activité fille
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish(); // destruction de l'activité courante
     }
 
 }

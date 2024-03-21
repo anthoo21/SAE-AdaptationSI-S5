@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intention =
                         new Intent(MainActivity.this, ListeActivity.class);
                 intention.putExtra("MODE", "connecte");
+                intention.putExtra("PAGE", "Main");
                 startActivity(intention);
             } else {
                 Toast.makeText(this, R.string.messageModeConnecte, Toast.LENGTH_LONG).show();
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         if (readFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
             intention.putExtra("MODE", "deconnecte");
+            intention.putExtra("PAGE", "Main");
             startActivity(intention);
         } else {
             Intent intention = new Intent(MainActivity.this, LoginActivity.class);
@@ -141,6 +143,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
 }

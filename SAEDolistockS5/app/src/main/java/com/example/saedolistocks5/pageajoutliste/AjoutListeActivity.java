@@ -51,6 +51,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.example.saedolistocks5.outilsdivers.Quartet;
+import com.example.saedolistocks5.pagemain.MainActivity;
 import com.example.saedolistocks5.popup.CustomPopupAjouter;
 import com.example.saedolistocks5.popup.CustomPopupModifier;
 
@@ -917,6 +918,17 @@ public class AjoutListeActivity extends AppCompatActivity {
      */
     public void onClickRetour(View view) {
 
+        // création d'une intention pour informer l'activté parente
+        Intent intentionRetour = new Intent();
+
+        // retour à l'activité parente et destruction de l'activité fille
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish(); // destruction de l'activité courante
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         // création d'une intention pour informer l'activté parente
         Intent intentionRetour = new Intent();
 
