@@ -3,6 +3,7 @@
  */
 package com.example.saedolistocks5.pageliste;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -166,6 +167,11 @@ public class ListeActivity extends AppCompatActivity {
      */
     public static int indexParcoursListe;
 
+    /**
+     * Permet de savoir si on vient de la page connexion ou non
+     */
+    private boolean venuConnexion;
+
 
     /**
      * Méthode onCreate.
@@ -181,14 +187,22 @@ public class ListeActivity extends AppCompatActivity {
         setContentView(R.layout.liste_activity);
         listeAccueilRecyclerView = findViewById(R.id.liste_listes_accueil);
         String modeFirstIntention = "";
+        String pageVenue = "";
         try {
             Intent intentionParent = getIntent();
             modeFirstIntention = intentionParent.getStringExtra("MODE");
+            pageVenue = intentionParent.getStringExtra("PAGE");
             // Permet d'écrire le choix du mode de l'uril
             if(modeFirstIntention != null) {
                 ecritureModeFichier(modeFirstIntention);
             } else {
                 ecritureModeFichier(mode);
+            }
+
+            if(pageVenue.equals("Login")) {
+                venuConnexion = true;
+            } else {
+                venuConnexion = false;
             }
 
             // Permet d'afficher les listes de l'utilisateur sur la vue
@@ -318,8 +332,33 @@ public class ListeActivity extends AppCompatActivity {
      * @param view source du clic.
      */
     public void onClickRetour(View view) {
-        Intent intention = new Intent(ListeActivity.this, MainActivity.class);
-        startActivity(intention);
+        if(venuConnexion) {
+            Intent intention = new Intent(ListeActivity.this, MainActivity.class);
+            startActivity(intention);
+        } else {
+            // création d'une intention pour informer l'activté parente
+            Intent intentionRetour = new Intent();
+            // retour à l'activité parente et destruction de l'activité fille
+            setResult(Activity.RESULT_OK, intentionRetour);
+            finish(); // destruction de l'activité courante
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(venuConnexion) {
+            Intent intention = new Intent(ListeActivity.this, MainActivity.class);
+            startActivity(intention);
+        } else {
+            // création d'une intention pour informer l'activté parente
+            Intent intentionRetour = new Intent();
+
+            // retour à l'activité parente et destruction de l'activité fille
+            setResult(Activity.RESULT_OK, intentionRetour);
+            finish(); // destruction de l'activité courante
+        }
+
     }
 
     /**
@@ -343,7 +382,7 @@ public class ListeActivity extends AppCompatActivity {
         deleteFile("infouser.txt");
         deleteFile("mode.txt");
         startActivity(intention);
-
+        finish();
     }
 
     /**

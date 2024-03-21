@@ -116,13 +116,23 @@ public class Visualisation extends AppCompatActivity {
         }
     }
 
-    // TODO manque la pop-up entre liste activity et visu pour l'intention
     /**
      * Méthode quand on clique sur le boton retour.
      * @param view la vue
      */
     public void onClickRetour(View view) {
 
+        // création d'une intention pour informer l'activté parente
+        Intent intentionRetour = new Intent();
+
+        // retour à l'activité parente et destruction de l'activité fille
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish(); // destruction de l'activité courante
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         // création d'une intention pour informer l'activté parente
         Intent intentionRetour = new Intent();
 

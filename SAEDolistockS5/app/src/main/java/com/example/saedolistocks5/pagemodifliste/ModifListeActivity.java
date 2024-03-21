@@ -47,6 +47,7 @@ import com.example.saedolistocks5.outilsdivers.OutilDivers;
 import com.example.saedolistocks5.outilsdivers.Quintet;
 import com.example.saedolistocks5.pageajoutliste.AjoutListe;
 import com.example.saedolistocks5.pageajoutliste.AjoutListeActivity;
+import com.example.saedolistocks5.pageconnexion.LoginActivity;
 import com.example.saedolistocks5.pageliste.ListeActivity;
 
 import java.io.BufferedReader;
@@ -57,6 +58,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.example.saedolistocks5.outilsdivers.Quartet;
+import com.example.saedolistocks5.pagemain.MainActivity;
 import com.example.saedolistocks5.popup.CustomPopupEnvoyer;
 import com.example.saedolistocks5.popup.CustomPopupModifier;
 
@@ -1012,6 +1014,17 @@ public class ModifListeActivity extends AppCompatActivity {
      */
     public void onClickRetour(View view) {
 
+        // création d'une intention pour informer l'activté parente
+        Intent intentionRetour = new Intent();
+
+        // retour à l'activité parente et destruction de l'activité fille
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish(); // destruction de l'activité courante
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         // création d'une intention pour informer l'activté parente
         Intent intentionRetour = new Intent();
 

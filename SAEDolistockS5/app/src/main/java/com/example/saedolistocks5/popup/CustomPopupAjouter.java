@@ -1,5 +1,6 @@
 package com.example.saedolistocks5.popup;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -41,5 +42,15 @@ public class CustomPopupAjouter extends AlertDialog {
     public static CustomPopupAjouter createDialog(Context context) {
         CustomPopupAjouter dialog = new CustomPopupAjouter(context);
         return dialog;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        dismiss(); // Dismiss the dialog
+
+        // On retourne sur la page de visualisation de toutes les listes
+        Intent intention = new Intent(getContext(), ListeActivity.class);
+        getContext().startActivity(intention);
     }
 }

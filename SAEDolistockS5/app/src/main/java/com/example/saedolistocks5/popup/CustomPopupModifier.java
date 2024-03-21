@@ -1,5 +1,10 @@
 package com.example.saedolistocks5.popup;
 
+import static com.example.saedolistocks5.pageliste.ListeActivity.adaptateur;
+import static com.example.saedolistocks5.pageliste.ListeActivity.listeAccueil;
+import static com.example.saedolistocks5.pageliste.ListeActivity.positionItemListe;
+import static com.example.saedolistocks5.popup.CustomPopupAfficherMenu.nomFichier;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -41,5 +46,15 @@ public class CustomPopupModifier extends AlertDialog {
     public static CustomPopupModifier createDialog(Context context) {
         CustomPopupModifier dialog = new CustomPopupModifier(context);
         return dialog;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        dismiss(); // Dismiss the dialog
+
+        // On retourne sur la page de visualisation de toutes les listes
+        Intent intention = new Intent(getContext(), ListeActivity.class);
+        getContext().startActivity(intention);
     }
 }

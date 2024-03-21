@@ -3,6 +3,9 @@ package com.example.saedolistocks5.outilapi;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.saedolistocks5.pageliste.ListeActivity;
+import com.example.saedolistocks5.pagemain.MainActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -32,4 +35,13 @@ public class BarcodeScannerActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intention = new Intent(BarcodeScannerActivity.this,
+                ListeActivity.class);
+        startActivity(intention);
+    }
+
 }
