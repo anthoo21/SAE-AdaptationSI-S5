@@ -766,7 +766,7 @@ public class AjoutListeActivity extends AppCompatActivity {
             {
                 listeEntrepots.add(pair.second);
                 // On vérifie si le nom de l'entrepôt est celui saisi par l'utilisateur
-                if(pair.second.contains(saisie)) {
+                if(pair.second.toLowerCase().contains(saisie.toLowerCase())) {
                     idEtNomEntrepotActuel = new Pair<>(pair.first, pair.second);
                     suggestions.add(pair.second);
                 }
