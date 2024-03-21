@@ -187,7 +187,10 @@ public class ListeActivity extends AppCompatActivity {
             // Permet d'écrire le choix du mode de l'uril
             if(modeFirstIntention != null) {
                 ecritureModeFichier(modeFirstIntention);
+            } else {
+                ecritureModeFichier(mode);
             }
+
             // Permet d'afficher les listes de l'utilisateur sur la vue
             initialiseListeAccueil();
         } catch (IOException e) {

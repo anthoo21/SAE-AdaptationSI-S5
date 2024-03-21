@@ -686,7 +686,10 @@ public class ModifListeActivity extends AppCompatActivity {
                 libelleArticle = articlesAModifier.get(i).getLibelleArticle();
                 quantiteSaisie = listeQuantiteSaisie.get(i).toString();
                 idArticle = listeIdArticle.get(i);
-
+                if(mode.equals("deconnecte")) {
+                    idEntrepot = "0";
+                    idArticle = "0";
+                }
                 // On constitue la ligne du fichier
                 ligneFichier = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%s",
                         user, nomListe, refArticle, libelleArticle, nomEntrepot, quantiteSaisie,
