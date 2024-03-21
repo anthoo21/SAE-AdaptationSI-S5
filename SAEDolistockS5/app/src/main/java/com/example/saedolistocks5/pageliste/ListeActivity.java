@@ -199,9 +199,6 @@ public class ListeActivity extends AppCompatActivity {
             throw new IllegalArgumentException(e);
         }
 
-        //if(mode.equals("deconnecte")) {
-        //}
-
         idArticleVerif = new ArrayList<>();
         idEntrepotVerif = new ArrayList<>();
         listeCodeArticleVerif = new ArrayList<>();

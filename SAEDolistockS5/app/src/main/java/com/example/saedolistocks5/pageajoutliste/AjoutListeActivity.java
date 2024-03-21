@@ -34,6 +34,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.saedolistocks5.R;
+import com.example.saedolistocks5.outilapi.BarcodeScannerActivity;
 import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
@@ -113,6 +114,11 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Bouton image pour rechercher un article par son libellé
      */
     private ImageButton rechercherArticle;
+
+    /**
+     * Bouton image pour scanner un code barre
+     */
+    private ImageButton scanCodeBarre;
 
     /**
      * Liste des entrepots.
@@ -281,6 +287,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         ajouterArticle = findViewById(R.id.btnAjouter);
         bloquerEntete = findViewById(R.id.btnValiderEntete);
         rechercherArticle = findViewById(R.id.rechercheArticle);
+        scanCodeBarre = findViewById(R.id.scanCodeBarre);
 
         saisieNomListe.setFilters(new InputFilter[]{filter});
         saisieCodeArticle.setFilters(new InputFilter[]{filter});
@@ -307,6 +314,21 @@ public class AjoutListeActivity extends AppCompatActivity {
                 listeArticles);
 
         entrepotOk = false;
+    }
+
+    public void ScanCodeBarre(View view) {
+        // Lance l'activité de scan
+        startActivityForResult(new Intent(AjoutListeActivity.this,
+                BarcodeScannerActivity.class), 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            String scanResult = data.getStringExtra("SCAN_RESULT");
+            saisieCodeArticle.setText(scanResult);
+        }
     }
 
     /**
@@ -369,6 +391,7 @@ public class AjoutListeActivity extends AppCompatActivity {
 
     private void bloquerSaisieArticle() {
         rechercherArticle.setEnabled(false);
+        scanCodeBarre.setEnabled(false);
         saisieCodeArticle.setEnabled(false);
         saisieQuantite.setEnabled(false);
         ajouterArticle.setEnabled(false);
@@ -616,6 +639,7 @@ public class AjoutListeActivity extends AppCompatActivity {
 
                 // Maintenant, il faut activer la saisie d'un article
                 rechercherArticle.setEnabled(true);
+                scanCodeBarre.setEnabled(true);
                 saisieCodeArticle.setEnabled(true);
                 saisieQuantite.setEnabled(true);
                 ajouterArticle.setEnabled(true);
@@ -631,6 +655,7 @@ public class AjoutListeActivity extends AppCompatActivity {
                 ajouterArticle.setEnabled(false);
                 libelleStock.setText("");
                 rechercherArticle.setEnabled(false);
+                scanCodeBarre.setEnabled(false);
                 articlesAAjouter.clear();
                 adaptateurAjoutListe.notifyDataSetChanged();
                 listeQuantiteSaisie.clear();
