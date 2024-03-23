@@ -198,11 +198,9 @@ public class ListeActivity extends AppCompatActivity {
             } else {
                 ecritureModeFichier(mode);
             }
-
-            if(pageVenue.equals("Login")) {
-                venuConnexion = true;
-            } else {
-                venuConnexion = false;
+            if(pageVenue != null) {
+                venuConnexion = pageVenue.equals("Login") || pageVenue.equals("Ajout")
+                        || pageVenue.equals("Modif");
             }
 
             // Permet d'afficher les listes de l'utilisateur sur la vue

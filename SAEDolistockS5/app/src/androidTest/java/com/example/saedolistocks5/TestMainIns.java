@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
 
 public class TestMainIns {
 
-    private Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    private final Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
     @Test
     public void readFichierTestFichierInconnu() throws FileNotFoundException {
@@ -75,6 +75,6 @@ public class TestMainIns {
                 (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(connManager.getActiveNetwork());
         // expected la connexion est presente
-        assertTrue(mWifi != null);
+        assertNotNull(mWifi);
     }
 }

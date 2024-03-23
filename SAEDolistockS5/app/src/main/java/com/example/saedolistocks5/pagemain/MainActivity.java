@@ -79,11 +79,7 @@ public class MainActivity extends AppCompatActivity {
             while(fichiertexte.readLine() != null) {
                 compteur += 1;
             }
-            if (compteur == 1) {
-                ok = true;
-            } else {
-                ok = false;
-            }
+            ok = compteur == 1;
             fichier.close();
         } catch (FileNotFoundException e) {
             ok = false;

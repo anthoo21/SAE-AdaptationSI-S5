@@ -12,7 +12,7 @@ import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupConfirmationSupp extends AlertDialog {
 
-    private ListeActivity listeActivity;
+    private final ListeActivity listeActivity;
 
     protected CustomPopupConfirmationSupp(Context context, ListeActivity listeActivity) {
         super(context);

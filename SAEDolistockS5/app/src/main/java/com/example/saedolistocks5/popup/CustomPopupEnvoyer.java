@@ -18,7 +18,7 @@ import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupEnvoyer extends AlertDialog {
 
-    private Activity activity;
+    private final Activity activity;
 
     protected CustomPopupEnvoyer(Context context, Activity activity) {
         super(context);

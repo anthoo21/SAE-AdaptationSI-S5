@@ -42,11 +42,16 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class CustomPopupAfficherMenu extends AlertDialog {
 
-    private ListeActivity listeActivity;
+    private final ListeActivity listeActivity;
+
+    public static ArrayList<String> listeLibelleArticles;
+
+    public static ArrayList<String> listeIdsArticles;
 
     /**
      * Nom du fichier
@@ -64,6 +69,9 @@ public class CustomPopupAfficherMenu extends AlertDialog {
 
         // Set the dialog content view
         setContentView(R.layout.popup_afficher_menu);
+
+        listeIdsArticles = new ArrayList<>();
+        listeLibelleArticles = new ArrayList<>();
 
         Button visualiser = findViewById(R.id.btnVisualiser);
         Button modifier = findViewById(R.id.btnModifier);
@@ -162,16 +170,18 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                 if (maj == 0) {
                     String finalCodeArticle = codeArticle;
                     String finalCodeBarre = codeBarre;
+                    String idArticle = listeIdsArticles.get(indexParcoursListe);
+                    String libelleArticle = listeLibelleArticles.get(indexParcoursListe);
                     RequetesApi.GetArticlesByEntrepot(URLApi, token, listeActivity.getApplicationContext(),
-                            "Liste", idArticle, idEntrepot, null, new RequetesApi.QuantiteCallback() {
+                            "Liste", idArticle,
+                            idEntrepot, null, new RequetesApi.QuantiteCallback() {
                                 @Override
                                 public void onQuantiteRecuperee(int quantiteAvantEnvoieListe)
                                         throws FileNotFoundException, JSONException {
                                     JSONObject bodyJSON = new JSONObject();
-                                    indexParcoursListe++;
+
                                     int quantiteApres;
                                     int quantiteSaisie;
-
 
                                     quantiteSaisie = Integer.parseInt(finalElementListe[5]);
 
@@ -214,7 +224,6 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                             });
                 } else {
                     JSONObject bodyJSON = new JSONObject();
-                    indexParcoursListe++;
                     if (finalElementListe[6].equals("Ajout")) {
                         finalElementListe[6] = "0";
                     } else {
@@ -238,6 +247,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
 
                     EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe);
                 }
+                indexParcoursListe++;
             }
 
         } catch (FileNotFoundException e) {
@@ -268,8 +278,9 @@ public class CustomPopupAfficherMenu extends AlertDialog {
             for(String codeArticleVerif : listeCodeArticleVerif) {
                 if(codeArticle.equals(codeArticleVerif)) {
                     verifArticle = true;
-                    idArticle = idArticleVerif.get(index);
-                    libelleArticle = libelleArticleVerif.get(index);
+                    listeIdsArticles.add(idArticleVerif.get(index));
+                    listeLibelleArticles.add(libelleArticleVerif.get(index));
+                    break;
                 }
                 index++;
             }
@@ -277,8 +288,9 @@ public class CustomPopupAfficherMenu extends AlertDialog {
             for(String codeBarreVerif : listeCodeBarreVerif) {
                 if(codeBarre.equals(codeBarreVerif)) {
                     verifArticle = true;
-                    idArticle = idArticleVerif.get(index);
-                    libelleArticle = libelleArticleVerif.get(index);
+                    listeIdsArticles.add(idArticleVerif.get(index));
+                    listeLibelleArticles.add(libelleArticleVerif.get(index));
+                    break;
                 }
                 index++;
             }
