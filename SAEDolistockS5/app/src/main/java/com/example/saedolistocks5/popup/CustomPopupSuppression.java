@@ -11,7 +11,7 @@ import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupSuppression extends AlertDialog {
 
-    private ListeActivity listeActivity;
+    private final ListeActivity listeActivity;
 
     protected CustomPopupSuppression(Context context, ListeActivity listeActivity) {
         super(context);

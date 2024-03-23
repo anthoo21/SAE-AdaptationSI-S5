@@ -13,7 +13,7 @@ import java.util.List;
 public class ItemVisualisationAdpater extends RecyclerView.Adapter<ItemVisualisationHolder> {
 
     /**  Source de données à afficher. */
-    private List<ItemVisualisation> donnes;
+    private final List<ItemVisualisation> donnes;
 
     /**
      * Constructeur.

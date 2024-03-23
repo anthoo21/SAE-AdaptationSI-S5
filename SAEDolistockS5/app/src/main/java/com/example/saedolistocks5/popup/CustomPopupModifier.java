@@ -39,6 +39,7 @@ public class CustomPopupModifier extends AlertDialog {
 
                 // On retourne sur la page de visualisation de toutes les listes
                 Intent intention = new Intent(getContext(), ListeActivity.class);
+                intention.putExtra("PAGE", "Modif");
                 getContext().startActivity(intention);
             }
         });
@@ -55,6 +56,7 @@ public class CustomPopupModifier extends AlertDialog {
 
         // On retourne sur la page de visualisation de toutes les listes
         Intent intention = new Intent(getContext(), ListeActivity.class);
+        intention.putExtra("PAGE", "Modif");
         getContext().startActivity(intention);
     }
 }

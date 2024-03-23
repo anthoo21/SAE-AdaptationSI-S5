@@ -27,12 +27,12 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class ApiTest {
 
-    private Context appContext = InstrumentationRegistry.getInstrumentation().getContext();
-    private Context testContext = ApplicationProvider.getApplicationContext();
-    private String urlApi = "dolistocktest.go.yo.fr";
-    private String user = "u.test";
-    private String password = "userDeTestAPI";
-    private String apikey = "6yLt95c9HFa96dzeRj5Uwx399ISXDAUe";
+    private final Context appContext = InstrumentationRegistry.getInstrumentation().getContext();
+    private final Context testContext = ApplicationProvider.getApplicationContext();
+    private final String urlApi = "dolistocktest.go.yo.fr";
+    private final String user = "u.test";
+    private final String password = "userDeTestAPI";
+    private final String apikey = "6yLt95c9HFa96dzeRj5Uwx399ISXDAUe";
 
     @Test
     public void TestLogin(){

@@ -14,6 +14,7 @@ import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupAjouter extends AlertDialog {
 
+
     protected CustomPopupAjouter(Context context) {
         super(context);
     }
@@ -35,6 +36,7 @@ public class CustomPopupAjouter extends AlertDialog {
 
                 // On retourne sur la page de visualisation de toutes les listes
                 Intent intention = new Intent(getContext(), ListeActivity.class);
+                intention.putExtra("PAGE", "Ajout");
                 getContext().startActivity(intention);
             }
         });
@@ -51,6 +53,7 @@ public class CustomPopupAjouter extends AlertDialog {
 
         // On retourne sur la page de visualisation de toutes les listes
         Intent intention = new Intent(getContext(), ListeActivity.class);
+        intention.putExtra("PAGE", "Ajout");
         getContext().startActivity(intention);
     }
 }

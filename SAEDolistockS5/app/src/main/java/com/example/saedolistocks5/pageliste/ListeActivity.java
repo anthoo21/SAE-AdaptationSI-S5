@@ -198,6 +198,10 @@ public class ListeActivity extends AppCompatActivity {
             } else {
                 ecritureModeFichier(mode);
             }
+            if(pageVenue != null) {
+                venuConnexion = pageVenue.equals("Login") || pageVenue.equals("Ajout")
+                        || pageVenue.equals("Modif");
+            }
 
             if(pageVenue.equals("Login")) {
                 venuConnexion = true;
