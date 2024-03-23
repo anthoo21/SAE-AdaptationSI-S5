@@ -203,6 +203,12 @@ public class ListeActivity extends AppCompatActivity {
                         || pageVenue.equals("Modif");
             }
 
+            if(pageVenue.equals("Login")) {
+                venuConnexion = true;
+            } else {
+                venuConnexion = false;
+            }
+
             // Permet d'afficher les listes de l'utilisateur sur la vue
             initialiseListeAccueil();
         } catch (IOException e) {
