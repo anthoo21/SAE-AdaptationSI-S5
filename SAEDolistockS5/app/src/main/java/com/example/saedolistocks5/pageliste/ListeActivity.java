@@ -163,11 +163,6 @@ public class ListeActivity extends AppCompatActivity {
     public static int nombreLignes;
 
     /**
-     * Index de parcours de ligne
-     */
-    public static int indexParcoursListe;
-
-    /**
      * Permet de savoir si on vient de la page connexion ou non
      */
     private boolean venuConnexion;
@@ -186,6 +181,15 @@ public class ListeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_activity);
         listeAccueilRecyclerView = findViewById(R.id.liste_listes_accueil);
+
+        // Permet d'afficher les listes de l'utilisateur sur la vue
+        try {
+            initialiseListeAccueil();
+        } catch (IOException | NoSuchAlgorithmException | BadPaddingException |
+                 NoSuchPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
+
         String modeFirstIntention = "";
         String pageVenue = "";
         try {
@@ -209,10 +213,7 @@ public class ListeActivity extends AppCompatActivity {
                 venuConnexion = false;
             }
 
-            // Permet d'afficher les listes de l'utilisateur sur la vue
-            initialiseListeAccueil();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
