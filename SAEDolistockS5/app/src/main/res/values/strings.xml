@@ -62,6 +62,7 @@
     <string name="Liste_numero"> Liste N°</string>
     <string name="date_création"> Créée le date à heure</string>
     <string name="entrepotNum">Entrepôt</string>
+    <string name="enStock">en stock</string>
 
     <!-- informations concernant l'ajout de listes -->
     <!-- Libellés -->
