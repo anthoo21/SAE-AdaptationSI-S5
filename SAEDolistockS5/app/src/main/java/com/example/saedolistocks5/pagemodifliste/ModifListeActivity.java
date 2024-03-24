@@ -125,6 +125,11 @@ public class ModifListeActivity extends AppCompatActivity {
     private Button bloquerEntete;
 
     /**
+     * Bouton permettant de valider la liste
+     */
+    private Button validerListe;
+
+    /**
      * Bouton image pour rechercher un article par son libellé
      */
     private ImageButton rechercherArticle;
@@ -313,6 +318,7 @@ public class ModifListeActivity extends AppCompatActivity {
         bloquerEntete = findViewById(R.id.btnValiderEntete);
         rechercherArticle = findViewById(R.id.rechercheArticle);
         scanCodeBarre = findViewById(R.id.scanCodeBarre);
+        validerListe = findViewById(R.id.btnValider);
         layoutManager = modifArticleRecyclerView.getLayoutManager();
 
         saisieNomListe.setFilters(new InputFilter[]{filter});
@@ -507,6 +513,16 @@ public class ModifListeActivity extends AppCompatActivity {
             listeQuantiteSaisie.add(Integer.parseInt(quantiteSaisie));
             // On récupère l'ID de l'article pour le mettre dans une liste
             listeIdArticle.add(idArticle);
+
+            //On réinitialise tous les textes pour ajouter un article
+            saisieCodeArticle.setText("");
+            saisieQuantite.setText("");
+            libelleStock.setText("");
+
+            // On réactive le bouton "Valider"
+            validerListe.setEnabled(true);
+            validerListe.setBackground(getDrawable(R.drawable.base_bouton));
+
             // On ajoute au recycler view l'article
             articlesAModifier.add(new ModifListe(libelleArticle,  valeurSaisieCodeArticle, quantiteSaisie));
             // On met à jour l'adaptateur pour qu'il mette à jour la vue
@@ -988,10 +1004,12 @@ public class ModifListeActivity extends AppCompatActivity {
             int index = 0;
             if (listeRef.contains(saisie)) {
                 index = listeRef.indexOf(saisie);
-                libelleStock.setText(String.format("%s en stock", listeStock.get(index)));
+                libelleStock.setText(String.format("%s " + getString(R.string.enStock),
+                        listeStock.get(index)));
             } else if (listeCodeBarre.contains(saisie)) {
                 index = listeCodeBarre.indexOf(saisie);
-                libelleStock.setText(String.format("%s en stock", listeStock.get(index)));
+                libelleStock.setText(String.format("%s " + getString(R.string.enStock),
+                        listeStock.get(index)));
             } else {
                 libelleStock.setText("");
             }
@@ -1003,7 +1021,16 @@ public class ModifListeActivity extends AppCompatActivity {
          */
         @Override
         public void afterTextChanged(Editable s) {
-            // Après la modification du texte, pas d'action nécessaire
+            // On vérifie si la saisie de l'article ou la quantité est en cours,
+            // pour bloquer le bouton "Valider"
+            if(!saisieCodeArticle.getText().toString().equals("") ||
+                    !saisieQuantite.getText().toString().equals("")) {
+                validerListe.setEnabled(false);
+                validerListe.setBackground(getDrawable(R.drawable.base_bouton_disable));
+            } else {
+                validerListe.setEnabled(true);
+                validerListe.setBackground(getDrawable(R.drawable.base_bouton));
+            }
         }
     }
 

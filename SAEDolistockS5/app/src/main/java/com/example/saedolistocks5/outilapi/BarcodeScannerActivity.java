@@ -30,18 +30,15 @@ public class BarcodeScannerActivity extends AppCompatActivity {
                 intent.putExtra("SCAN_RESULT", result.getContents());
                 setResult(RESULT_OK, intent);
                 finish();
+            } else {
+                // Renvoie à l'activité précédente sans résultat
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
+                finish();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intention = new Intent(BarcodeScannerActivity.this,
-                ListeActivity.class);
-        startActivity(intention);
     }
 
 }

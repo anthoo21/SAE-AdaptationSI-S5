@@ -258,7 +258,7 @@ public class RequetesApi {
             @Override
             public void onError(VolleyError error) {
                 // Si le code d'erreur n'est pas 404, cela veut dire que une véritable erreur s'est
-                // produite (car le code 404 est renvoyé si aucun article n'appartient à l'entrepôt
+                // produite (car le code 404 est renvoyé si aucun article n'appartient à l'entrepôt)
                 if(error.networkResponse.statusCode != 404) {
                     error.printStackTrace();
                 }
