@@ -75,4 +75,5 @@
     <string name="optionSupprimer">Delete</string>
     <string name="boutonConfirmer">Confirm</string>
     <string name="enStock">in stock</string>
+    <string name="liste_invalide">Warning: list inserted on Dolibarr but invalid.</string>
 </resources>

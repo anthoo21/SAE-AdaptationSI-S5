@@ -38,6 +38,7 @@ public class CustomPopupAjouter extends AlertDialog {
                 Intent intention = new Intent(getContext(), ListeActivity.class);
                 intention.putExtra("PAGE", "Ajout");
                 getContext().startActivity(intention);
+                getOwnerActivity().finish();
             }
         });
     }
@@ -55,5 +56,6 @@ public class CustomPopupAjouter extends AlertDialog {
         Intent intention = new Intent(getContext(), ListeActivity.class);
         intention.putExtra("PAGE", "Ajout");
         getContext().startActivity(intention);
+        getOwnerActivity().finish();
     }
 }

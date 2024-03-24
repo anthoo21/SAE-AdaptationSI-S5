@@ -10,11 +10,8 @@ import static com.example.saedolistocks5.pageliste.ListeActivity.listeEntrepotsV
 import static com.example.saedolistocks5.pageliste.ListeActivity.listeFichierUser;
 import static com.example.saedolistocks5.pageliste.ListeActivity.mode;
 import static com.example.saedolistocks5.pageliste.ListeActivity.positionItemListe;
-import static com.example.saedolistocks5.pageliste.ListeActivity.indexParcoursListe;
 import static com.example.saedolistocks5.pageliste.ListeActivity.nombreLignes;
-import static com.example.saedolistocks5.pageliste.ListeActivity.idArticle;
 import static com.example.saedolistocks5.pageliste.ListeActivity.idEntrepot;
-import static com.example.saedolistocks5.pageliste.ListeActivity.libelleArticle;
 import static com.example.saedolistocks5.pageliste.ListeActivity.token;
 import static com.example.saedolistocks5.pageliste.ListeActivity.utilisateurCourant;
 
@@ -52,6 +49,16 @@ public class CustomPopupAfficherMenu extends AlertDialog {
     public static ArrayList<String> listeLibelleArticles;
 
     public static ArrayList<String> listeIdsArticles;
+
+    /**
+     * Index de parcours de ligne (cas mode déconnecté)
+     */
+    public static int indexParcoursListe;
+
+    /**
+     * Index de parcours de ligne (cas mode connecté)
+     */
+    public static int indexParcoursListeConnecte;
 
     /**
      * Nom du fichier
@@ -130,6 +137,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
             BufferedReader listeText = new BufferedReader(liste);
 
             indexParcoursListe = 0;
+            indexParcoursListeConnecte = 1;
             nombreLignes = 0;
 
             // Compter le nombre de lignes
@@ -210,7 +218,8 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                                     bodyJSON.put("date", finalElementListe[7]);
                                     bodyJSON.put("Utilisateur", utilisateurCourant);
 
-                                    EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe);
+                                    EnvoyerListeSurDolibarr(nomFichier, bodyJSON,
+                                            indexParcoursListeConnecte, true);
 
                                     JSONObject bodyJSONMvtStock = new JSONObject();
                                     bodyJSONMvtStock.put("product_id", idArticle);
@@ -220,6 +229,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                                     bodyJSONMvtStock.put("movementlabel",
                                             String.format("%s : %s", utilisateurCourant, finalElementListe[1]));
                                     ModifierMouvementStock(bodyJSONMvtStock);
+                                    indexParcoursListeConnecte++;
                                 }
                             });
                 } else {
@@ -245,7 +255,8 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                     bodyJSON.put("date", finalElementListe[7]);
                     bodyJSON.put("Utilisateur", utilisateurCourant);
 
-                    EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe);
+                    EnvoyerListeSurDolibarr(nomFichier, bodyJSON, indexParcoursListe+1,
+                            false);
                 }
                 indexParcoursListe++;
             }
@@ -322,7 +333,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
      * @throws FileNotFoundException the file not found exception
      */
     public void EnvoyerListeSurDolibarr(String nomFichier, JSONObject bodyJson,
-                                        int index)
+                                        int index, boolean validation)
             throws JSONException, FileNotFoundException {
         String urlAPI = String.format("http://%s/htdocs/api/index.php/dolistockapi/listess?api_key=%s",
                 URLApi, token);
@@ -348,6 +359,12 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                         if(Objects.requireNonNull(error.getMessage()).contains("JSONException")) {
                             // Si on traite la dernière ligne du fichier
                             if(nombreLignes == index) {
+                                if(!validation) {
+                                    Toast.makeText(listeActivity.getApplicationContext(),
+                                                    listeActivity.getString(R.string.liste_invalide),
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+                                }
                                 traiterResultatOK(nomFichier);
                             }
                         } else {
@@ -356,7 +373,14 @@ public class CustomPopupAfficherMenu extends AlertDialog {
                         }
                     }
                 } else {
+                    // Si on traite la dernière ligne du fichier
                     if(nombreLignes == index) {
+                        if(!validation) {
+                            Toast.makeText(listeActivity.getApplicationContext(),
+                                            listeActivity.getString(R.string.liste_invalide),
+                                            Toast.LENGTH_LONG)
+                                    .show();
+                        }
                         traiterResultatOK(nomFichier);
                     }
                 }
