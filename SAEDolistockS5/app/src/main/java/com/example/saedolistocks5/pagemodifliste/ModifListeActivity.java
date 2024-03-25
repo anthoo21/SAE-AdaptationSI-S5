@@ -739,7 +739,8 @@ public class ModifListeActivity extends AppCompatActivity {
                 fichier.write(ligneFichier.getBytes());
             }
 
-            CustomPopupModifier dialog = CustomPopupModifier.createDialog(this);
+            CustomPopupModifier dialog = CustomPopupModifier.createDialog(this,
+                    this);
             dialog.show();
 
         }

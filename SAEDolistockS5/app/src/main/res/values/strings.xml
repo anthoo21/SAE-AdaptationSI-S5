@@ -116,6 +116,7 @@
     <string name="messageAjout">La liste a bien été ajoutée.</string>
     <string name="optionSupprimer">Supprimer</string>
     <string name="boutonConfirmer">Confirmer</string>
-    <string name="liste_invalide">Attention : liste insérée sur Dolibarr mais invalide.</string>
+    <string name="liste_invalide">Attention : liste insérée sur Dolibarr mais une ou plusieurs
+        ligne(s) sont invalide(s).</string>
 
 </resources>

@@ -14,9 +14,11 @@ import com.example.saedolistocks5.pageliste.ListeActivity;
 
 public class CustomPopupAjouter extends AlertDialog {
 
+    private final AjoutListeActivity activity;
 
-    protected CustomPopupAjouter(Context context) {
+    protected CustomPopupAjouter(Context context, AjoutListeActivity activity) {
         super(context);
+        this.activity = activity;
     }
 
     @Override
@@ -35,15 +37,16 @@ public class CustomPopupAjouter extends AlertDialog {
                 dismiss(); // Dismiss the dialog
 
                 // On retourne sur la page de visualisation de toutes les listes
-                Intent intention = new Intent(getContext(), ListeActivity.class);
+                Intent intention = new Intent();
                 intention.putExtra("PAGE", "Ajout");
-                getContext().startActivity(intention);
-                getOwnerActivity().finish();
+                // retour à l'activité parente et destruction de l'activité fille
+                activity.setResult(Activity.RESULT_OK, intention);
+                activity.finish();
             }
         });
     }
-    public static CustomPopupAjouter createDialog(Context context) {
-        CustomPopupAjouter dialog = new CustomPopupAjouter(context);
+    public static CustomPopupAjouter createDialog(Context context, AjoutListeActivity activity) {
+        CustomPopupAjouter dialog = new CustomPopupAjouter(context, activity);
         return dialog;
     }
 
@@ -53,9 +56,10 @@ public class CustomPopupAjouter extends AlertDialog {
         dismiss(); // Dismiss the dialog
 
         // On retourne sur la page de visualisation de toutes les listes
-        Intent intention = new Intent(getContext(), ListeActivity.class);
+        Intent intention = new Intent();
         intention.putExtra("PAGE", "Ajout");
-        getContext().startActivity(intention);
-        getOwnerActivity().finish();
+        // retour à l'activité parente et destruction de l'activité fille
+        activity.setResult(Activity.RESULT_OK, intention);
+        activity.finish();
     }
 }

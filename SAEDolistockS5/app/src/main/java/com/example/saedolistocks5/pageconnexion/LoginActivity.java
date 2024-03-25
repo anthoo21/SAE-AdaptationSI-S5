@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.Key;
 import java.util.Arrays;
 
@@ -80,11 +81,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+
+        // On initialise tous les widgets
         userView = findViewById(R.id.champsLogin);
         passwordView = findViewById(R.id.champsMdp);
         urlApiView = findViewById(R.id.champsURL);
         texteErreurView = findViewById(R.id.texteErreur);
         passwordEditText = findViewById(R.id.champsMdp);
+        // Permet d'afficher l'oeil permettant de voir et de cacher son mot de passe
         passwordEditText.setOnTouchListener(new View.OnTouchListener() {
             /**
              * On touch
@@ -126,8 +130,11 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void seConnecter(View view) {
         String password;
+        // On récupère le pseudo de l'utilisateur
         user = userView.getText().toString();
+        // On récupère le mot de passe de l'utilisateur
         password = passwordView.getText().toString();
+        // On récupère l'URL de dolibarr pour constituer l'URL de l'API
         urlApi = urlApiView.getText().toString();
 
         // Si jamais tous les champs ne sont pas renseigné, alors on affiche une erreur
@@ -168,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Puis on lance l'activité des listes
                         Intent intention = new Intent(LoginActivity.this,
                                 ListeActivity.class);
-                        intention.putExtra("MODE", "connecte");
+                        ecritureModeFichier("connecte");
                         intention.putExtra("PAGE", "Login");
                         startActivity(intention);
                         finish(); // destruction de l'activité courante
@@ -258,6 +265,9 @@ public class LoginActivity extends AppCompatActivity {
         finish(); // destruction de l'activité courante
     }
 
+    /**
+     * Appelée lors d'un appui sur la touche "retour" du téléphone
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -267,6 +277,11 @@ public class LoginActivity extends AppCompatActivity {
         // retour à l'activité parente et destruction de l'activité fille
         setResult(Activity.RESULT_OK, intentionRetour);
         finish(); // destruction de l'activité courante
+    }
+
+    private void ecritureModeFichier(String mode) throws IOException {
+        FileOutputStream fichier = openFileOutput("mode.txt", Context.MODE_PRIVATE);
+        fichier.write(mode.getBytes());
     }
 
 }

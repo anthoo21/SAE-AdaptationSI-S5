@@ -15,22 +15,37 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * Classe regroupant divers outil
- * @author BONNET, FROMENT et ENJALBERT
- * @version 1.0
+ * Classe regroupant divers outils
+ * @author BONNET, ENJALBERT et FROMENT
+ * @version 1.1
  */
 public class OutilDivers {
 
+    /**
+     * Permet de récupérer les infos de l'utilisateur, de l'API et du mode de connexion
+     * @param infosUser quartet regroupant quatre informations :
+     *                  - Le token de connexion à l'API
+     *                  - L'URL de l'API
+     *                  - Le pseudo de l'utilisateur courant
+     *                  - Le mode de connexion (connecté ou déconnecté)
+     * @param modeTxt Le fichier contenant le choix du mode
+     * @return un quartet avec les informations de l'utilisateur, de l'API et du mode de connexion
+     */
     public static Quartet<String, String, String, String> getInfosUserAndApi(InputStreamReader infosUser,
                                                                              InputStreamReader modeTxt) throws IOException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeyException {
 
         String[] valeurInfoUser;
+
+        // On récupère le fichier des informations de l'utilisateur et de l'API
         BufferedReader infosUserTxt = new BufferedReader(infosUser);
+        // On récupère le fichier du choix du mode
         BufferedReader bufferModeTxt = new BufferedReader(modeTxt);
+
         valeurInfoUser = infosUserTxt.readLine().split(";;;;");
 
+        // On récupère le token crypté
         String tokenCrypte = valeurInfoUser[0];
 
         // Supprimez les crochets et les espaces
@@ -51,14 +66,15 @@ public class OutilDivers {
         String token = EncryptAndDecrypteToken.decrypt(tableauDeBytes, key);
 
         // On récupère l'URL de l'API
-        String URLApi = valeurInfoUser[2];
+        String urlApi = valeurInfoUser[2];
 
         // On récupère l'utilisateur courant
         String utilisateurCourant = valeurInfoUser[1];
 
+        // On récupère le choix du mode
         String mode = bufferModeTxt.readLine();
 
         // Il n'y a pas de quatrième élément
-        return new Quartet<>(token, URLApi, utilisateurCourant, mode);
+        return new Quartet<>(token, urlApi, utilisateurCourant, mode);
     }
 }

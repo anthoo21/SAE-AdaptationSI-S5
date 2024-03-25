@@ -2,6 +2,7 @@
  * Package de la SAE
  */
 package com.example.saedolistocks5.outilapi;
+
 import android.content.Context;
 
 import com.android.volley.Request;
@@ -20,10 +21,6 @@ import org.json.JSONObject;
  */
 public class OutilAPI {
 
-    /**
-     * Temps de timeout.
-     */
-    public static final int TIMEOUT_MS = 5000;
     /**
      * La file d'attente pour les requetes.
      */
@@ -59,10 +56,10 @@ public class OutilAPI {
      * @return RequestQueue une file d'attente pour les requêtes Volley.
      */
     private static RequestQueue getFileRequete(Context context) {
+        // Si la file de requête est null
         if (fileRequete == null) {
             fileRequete = Volley.newRequestQueue(context);
         }
-        // sinon
         return fileRequete;
     }
 
@@ -104,6 +101,7 @@ public class OutilAPI {
                     }
                 }
         );
+        // On ajoute la requête à la file de requête
         getFileRequete(context).add(requete);
     }
 
@@ -141,6 +139,7 @@ public class OutilAPI {
                     }
                 }
         );
+        // On ajoute la requête à la file de requête
         getFileRequete(context).add(arrayRequete);
     }
 
@@ -184,6 +183,7 @@ public class OutilAPI {
                     }
                 }
         );
+        // On ajoute la requête à la file de requête
         getFileRequete(context).add(postRequest);
     }
 }
