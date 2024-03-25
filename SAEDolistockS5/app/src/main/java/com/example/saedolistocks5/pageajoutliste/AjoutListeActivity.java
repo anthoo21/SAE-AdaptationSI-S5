@@ -28,38 +28,31 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.saedolistocks5.R;
 import com.example.saedolistocks5.outilapi.BarcodeScannerActivity;
-import com.example.saedolistocks5.outilapi.EncryptAndDecrypteToken;
 import com.example.saedolistocks5.outilapi.RequetesApi;
 import com.example.saedolistocks5.outilsdivers.OutilDivers;
 import com.example.saedolistocks5.outilsdivers.Quintet;
-import com.example.saedolistocks5.pageliste.ListeActivity;
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.example.saedolistocks5.outilsdivers.Quartet;
-import com.example.saedolistocks5.pagemain.MainActivity;
 import com.example.saedolistocks5.popup.CustomPopupAjouter;
-import com.example.saedolistocks5.popup.CustomPopupModifier;
 
 /**
  * Classe AjoutListeActivity qui permet d'ajouter une liste sur l'application Dolistock
  * en fonction du nom de la liste, du nom de l'entrepôt et d'ajouter des lignes à la liste
  * en fonction du code de l'article et de la quantité à ajouter ou à modifier
- * @author BONNET, FROMENT et ENJALBERT
+ * @author BONNET, ENJALBERT et FROMENT
  * @version 2.0
  */
 public class AjoutListeActivity extends AppCompatActivity {
@@ -242,19 +235,17 @@ public class AjoutListeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ajout_liste_activity);
 
-        filter = new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                for (int i = start; i < end; i++) {
-                    if (source.charAt(i) == ';') {
-                        return ""; // Bloque le caractère ';'
-                    }
+        // Filtre permettant d'empêcher la saisie du caractère ";" dans le nom de la liste
+        filter = (source, start, end, dest, dstart, dend) -> {
+            for (int i = start; i < end; i++) {
+                if (source.charAt(i) == ';') {
+                    return ""; // Bloque le caractère ';'
                 }
-                return null; // Laisse passer les autres caractères
             }
+            return null; // Laisse passer les autres caractères
         };
 
-        // Initialse les composants de base
+        // Initialise les composants de base
         initialiserComposants();
 
         try {
@@ -274,6 +265,7 @@ public class AjoutListeActivity extends AppCompatActivity {
             chargerDonneesInitiales();
         }
 
+        // Permet de bloquer la saisie du code article et de la quantité
         bloquerSaisieArticle();
     }
 
@@ -281,6 +273,7 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Initialisation des composants de l'interface utilisateur.
      */
     private void initialiserComposants() {
+        // Initialisation de tous les widgets
         saisieNomListe = findViewById(R.id.saisieNomListe);
         saisieNomEntrepot = findViewById(R.id.saisieNomEntrepot);
         saisieCodeArticle = findViewById(R.id.saisieCodeArticle);
@@ -296,11 +289,13 @@ public class AjoutListeActivity extends AppCompatActivity {
         scanCodeBarre = findViewById(R.id.scanCodeBarre);
         validerListe = findViewById(R.id.btnValider);
 
+        // Initialisation des filtres pour la saisie utilisateur
         saisieNomListe.setFilters(new InputFilter[]{filter});
         saisieCodeArticle.setFilters(new InputFilter[]{filter});
         saisieNomListe.setFilters(new InputFilter[]{filter});
         saisieQuantite.setFilters(new InputFilter[]{filter});
 
+        // Initialisation de toutes les ArrayList
         listeEntrepots = new ArrayList<>();
         listeArticles = new ArrayList<>();
         listeStock = new ArrayList<>();
@@ -316,19 +311,36 @@ public class AjoutListeActivity extends AppCompatActivity {
         suggetsionSaisieLibelleArticle = new ArrayList<>();
         suggestionRecupRefArticle = new ArrayList<>();
 
+        // Initialisation de l'adapteur pour la suggestion des articles
         adapterSuggestionArticle = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
                 listeArticles);
 
+        // On considère que l'entrepôt est incorrect au début
+        // vu qu'il n'a pas encore été saisi
         entrepotOk = false;
     }
 
+    /**
+     * Permet de scanner un code barre
+     * @param view
+     */
     public void ScanCodeBarre(View view) {
         // Lance l'activité de scan
         startActivityForResult(new Intent(AjoutListeActivity.this,
                 BarcodeScannerActivity.class), 0);
     }
 
+    /**
+     * Appelée lors du retour de scan de code barre, permet de récupérer la valeur qui a été scannée
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -359,6 +371,7 @@ public class AjoutListeActivity extends AppCompatActivity {
         // Récupère le nom de l'utilisateur
         user = infos.third();
 
+        // Récupère le mode de connexion
         mode = infos.fourth();
     }
 
@@ -366,7 +379,9 @@ public class AjoutListeActivity extends AppCompatActivity {
      * Configuration des listeners pour les composants interactifs.
      */
     private void configurerListeners() {
+        // On ajoute la vérification de la saisie de l'entrepôt
         saisieNomEntrepot.addTextChangedListener(new VerificationEntrepotTextWatcher());
+        // On ajoute la vérification de la saisie du code article
         saisieCodeArticle.addTextChangedListener(new FiltreArticleTextWatcher());
     }
 
@@ -378,10 +393,12 @@ public class AjoutListeActivity extends AppCompatActivity {
         listeChoixMode.add(getString(R.string.Ajout));
         listeChoixMode.add(getString(R.string.Modification));
 
+        // Adaptateur pour le choix du mode
         adaptateurListeChoixMode = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, listeChoixMode);
         choixMode.setAdapter(adaptateurListeChoixMode);
 
+        // Adaptateur pour les lignes de la liste
         adaptateurAjoutListe = new AjoutListeAdapter(articlesAAjouter);
         ajoutArticleRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         ajoutArticleRecyclerView.setAdapter(adaptateurAjoutListe);
@@ -398,6 +415,9 @@ public class AjoutListeActivity extends AppCompatActivity {
         getArticles(urlApi, token, getApplicationContext(), "AjoutListe", null);
     }
 
+    /**
+     * Permet de bloquer la saisie d'un article et d'une quantité
+     */
     private void bloquerSaisieArticle() {
         rechercherArticle.setEnabled(false);
         scanCodeBarre.setEnabled(false);
@@ -424,6 +444,7 @@ public class AjoutListeActivity extends AppCompatActivity {
 
             String libelleArticle = "";
             String idArticle = "";
+
             // On récupère le code article saisis
             String valeurSaisieCodeArticle = saisieCodeArticle.getText().toString();
             // On récupère la quantité saisie
@@ -478,10 +499,12 @@ public class AjoutListeActivity extends AppCompatActivity {
         // Si on fait la vérif au moment de valider la liste
         if (verifValiderFichier) {
             String valeurSaisieNomListe = saisieNomListe.getText().toString().trim();
+            // Si le nom de la liste est vide
             if (valeurSaisieNomListe.isEmpty()) {
                 return new Pair<>(false, getString(R.string.veuillez_saisir_nom_liste));
             }
 
+            // Si l'entrepôt est incorrect et qu'on est en mode connecté
             if (!entrepotOk && mode.equals("connecte")) {
                 return new Pair<>(false, getString(R.string.entrepot_incorrect));
             }
@@ -498,22 +521,24 @@ public class AjoutListeActivity extends AppCompatActivity {
             return new Pair<>(false, getString(R.string.veuillez_saisir_quantite));
         }
 
-        if (listeCodeBarre.contains(valeurSaisieArticle) && mode.equals("connecte")) {
-            return new Pair<>(true, "");
-        }
-
-        // Si l'article est incorrect
+        // Si l'article est incorrect et qu'on est en mode connecté
         if (!listeRef.contains(valeurSaisieArticle) && mode.equals("connecte")) {
             pair =  new Pair<>(false, getString(R.string.code_article_incorrect));
         }
 
-
+        // Si le choix du mode est modification
         if(choixMode.getSelectedItem().toString().equals(getString(R.string.Modification))) {
             for (AjoutListe ajoutListe : articlesAAjouter) {
+                // Si l'article est déjà présent dans la liste, cela crée une erreur
                 if (ajoutListe.getCodeArticle().equals(valeurSaisieArticle)) {
                     return new Pair<>(false, getString(R.string.article_deja_present));
                 }
             }
+        }
+
+        // Si le code barre est valide et qu'on est en mode connecté
+        if (listeCodeBarre.contains(valeurSaisieArticle) && mode.equals("connecte")) {
+            return new Pair<>(true, "");
         }
 
         // Si il n'y a aucun problème, on renvoie true
@@ -630,7 +655,8 @@ public class AjoutListeActivity extends AppCompatActivity {
                 fichier.write(ligneFichier.getBytes());
             }
 
-            CustomPopupAjouter dialog = CustomPopupAjouter.createDialog(this);
+            CustomPopupAjouter dialog = CustomPopupAjouter.createDialog(this,
+                    this);
             dialog.show();
 
         } else {
@@ -648,26 +674,34 @@ public class AjoutListeActivity extends AppCompatActivity {
      * @param view
      */
     public void clickValiderEntete(View view) {
+        // Si l'entrepôt est valide ou qu'on est en mode déconnecté
         if(entrepotOk || mode.equals("deconnecte")) {
+            // Si l'entête est bloqué
             if(bloquerEntete.getText().toString().equals(getString(R.string.libelle_bloquer))) {
+                // On change le texte du bouton en "Débloquer"
                 bloquerEntete.setText(getString(R.string.libelle_debloquer));
                 // On désactive la saisie d'un entrepot car il peut y en avoir seulement un par liste
                 saisieNomEntrepot.setEnabled(false);
-
                 // On désactive le choix du mode
                 choixMode.setEnabled(false);
 
-                // Maintenant, il faut activer la saisie d'un article
+                // Maintenant, il faut activer toutes les saisies
                 rechercherArticle.setEnabled(true);
                 scanCodeBarre.setEnabled(true);
                 saisieCodeArticle.setEnabled(true);
                 saisieQuantite.setEnabled(true);
                 ajouterArticle.setEnabled(true);
+            // Si l'entête est débloqué
             } else {
+                // On change le texte du bouton en "Bloquer"
                 bloquerEntete.setText(getString(R.string.libelle_bloquer));
+                // On réactive la saisie d'un entrepot
                 saisieNomEntrepot.setEnabled(true);
+                // On réactive le choix du mode
                 choixMode.setEnabled(true);
 
+                // Il faut désactiver toutes les saisies possibles
+                // et vider tous les textes présents
                 saisieCodeArticle.setEnabled(false);
                 saisieCodeArticle.setText("");
                 saisieQuantite.setEnabled(false);
@@ -731,6 +765,7 @@ public class AjoutListeActivity extends AppCompatActivity {
                 suggestionRecupRefArticle = new ArrayList<>();
 
                 for(int i = 0; i < listeArticles.size(); i++) {
+                    // Si le début de la saisie correspond à un article
                     if(listeArticles.get(i).toLowerCase()
                             .startsWith(saisie.toLowerCase())) {
                         suggestionRecupRefArticle.add(listeRef.get(i));
@@ -738,7 +773,7 @@ public class AjoutListeActivity extends AppCompatActivity {
                     }
                 }
 
-
+                // Adaptateur permettant d'afficher les articles présents dans l'entrepôt sélectioné
                 adapterSuggestionArticle = new ArrayAdapter<>(AjoutListeActivity.this,
                         android.R.layout.simple_list_item_1, suggetsionSaisieLibelleArticle);
                 listView.setAdapter(adapterSuggestionArticle);
@@ -760,13 +795,16 @@ public class AjoutListeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String refAInserer;
+
                 if(suggestionRecupRefArticle.isEmpty()) {
                     refAInserer = listeRef.get(position);
                 } else {
-                    refAInserer = suggestionRecupRefArticle.get(position); // Récupère l'élément sélectionné
+                    refAInserer = suggestionRecupRefArticle.get(position);
 
                 }
+                // On inscrit dans la saisie de l'article l'item sélectionné par l'utilisateur
                 saisieCodeArticle.setText(refAInserer);
+                // On ferme la pop-up
                 dialog.dismiss();
                 suggetsionSaisieLibelleArticle.clear();
                 suggestionRecupRefArticle.clear();
@@ -809,6 +847,7 @@ public class AjoutListeActivity extends AppCompatActivity {
 
             for(Pair<String, String> pair : listeEntrepotIdEtNom)
             {
+                // On ajoute le nom de l'entrepôt à une liste
                 listeEntrepots.add(pair.second);
                 // On vérifie si le nom de l'entrepôt est celui saisi par l'utilisateur
                 if(pair.second.toLowerCase().contains(saisie.toLowerCase())) {

@@ -32,11 +32,11 @@ public class Quintet<A, B, C, D, E> {
 
     /**
      * Initialisation du constructeur avec en paramètre les 4 paramètres .
-     *
      * @param first  le premier
      * @param second le deuxième
      * @param third  le troisième
      * @param fourth le quatrième
+     * @param fifth le cinquième
      */
     public Quintet(A first, B second, C third, D fourth, E fifth) {
         this.first = first;
@@ -65,7 +65,7 @@ public class Quintet<A, B, C, D, E> {
     }
 
     /**
-     * troisième de type C.
+     * Troisième de type C.
      *
      * @return le troisième
      */
@@ -82,6 +82,10 @@ public class Quintet<A, B, C, D, E> {
         return fourth;
     }
 
+    /**
+     * Cinquième de type E.
+     * @return
+     */
     public E fifth() {
         return fifth;
     }

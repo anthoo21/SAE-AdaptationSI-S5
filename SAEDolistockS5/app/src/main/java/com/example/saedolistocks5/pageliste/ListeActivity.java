@@ -174,7 +174,7 @@ public class ListeActivity extends AppCompatActivity {
      *     previously being shut down then this Bundle contains the data it most
      *     recently supplied in {@link #onSaveInstanceState}.
      *                           <b><i>Note: Otherwise it is null.</i></b>
-       */
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         RecyclerView listeAccueilRecyclerView;
@@ -190,18 +190,10 @@ public class ListeActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        String modeFirstIntention = "";
         String pageVenue = "";
         try {
             Intent intentionParent = getIntent();
-            modeFirstIntention = intentionParent.getStringExtra("MODE");
             pageVenue = intentionParent.getStringExtra("PAGE");
-            // Permet d'écrire le choix du mode de l'uril
-            if(modeFirstIntention != null) {
-                ecritureModeFichier(modeFirstIntention);
-            } else {
-                ecritureModeFichier(mode);
-            }
             if(pageVenue != null) {
                 venuConnexion = pageVenue.equals("Login") || pageVenue.equals("Ajout")
                         || pageVenue.equals("Modif");
@@ -249,10 +241,6 @@ public class ListeActivity extends AppCompatActivity {
 
     }
 
-    private void ecritureModeFichier(String mode) throws IOException {
-        FileOutputStream fichier = openFileOutput("mode.txt", Context.MODE_PRIVATE);
-        fichier.write(mode.getBytes());
-    }
 
     /**
      * Méthode pour initialiser la ou les listes de l'utilisateur courant
@@ -308,7 +296,7 @@ public class ListeActivity extends AppCompatActivity {
                             String heureCreation = ligneListeSplit[8];
                             listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
                         }
-                        } catch (IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -373,7 +361,7 @@ public class ListeActivity extends AppCompatActivity {
      */
     public void onClickAjouter(View bouton) {
         Intent intention = new Intent(ListeActivity.this, AjoutListeActivity.class);
-        startActivity(intention);
+        startActivityForResult(intention, 0);
     }
 
     /**
@@ -414,5 +402,12 @@ public class ListeActivity extends AppCompatActivity {
             adaptateur.notifyItemRemoved(positionItemListe);
             this.recreate();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        this.recreate();
     }
 }

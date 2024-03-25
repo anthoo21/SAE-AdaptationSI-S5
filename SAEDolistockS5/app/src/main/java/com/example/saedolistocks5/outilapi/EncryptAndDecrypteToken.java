@@ -25,7 +25,7 @@ public class EncryptAndDecrypteToken {
     }
 
     /**
-    La clef a utilisé.
+     * La clé a utilisé pour décrypter le token pour se connecter à l'API
      */
     static Key keyToUse;
 
@@ -58,7 +58,7 @@ public class EncryptAndDecrypteToken {
     }
 
     /**
-     * Méthode pour décrypté.
+     * Méthode pour décrypter.
      * @param cipherText le texte cryté.
      * @param key la clef.
      * @return un String.

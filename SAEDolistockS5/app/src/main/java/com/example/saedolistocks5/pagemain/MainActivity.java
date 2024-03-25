@@ -23,6 +23,7 @@ import com.example.saedolistocks5.pageconnexion.LoginActivity;
 import com.example.saedolistocks5.R;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -93,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
      * Méthode pour cliquer et passer en mode connexion.
      * @param button le boutton.
      */
-    public void onClickModeCo(View button){
+    public void onClickModeCo(View button) throws IOException {
         if (readFichier()) {
             if (estConnecteAInternet(this)) {
                 Intent intention =
                         new Intent(MainActivity.this, ListeActivity.class);
-                intention.putExtra("MODE", "connecte");
+                ecritureModeFichier("connecte");
                 intention.putExtra("PAGE", "Main");
                 startActivity(intention);
             } else {
@@ -115,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
      * Méthode pour passer en mode deconnecte.
      * @param button le bouton.
      */
-    public void onClickModeDeco(View button){
+    public void onClickModeDeco(View button) throws IOException {
         if (readFichier()) {
             Intent intention = new Intent(MainActivity.this, ListeActivity.class);
-            intention.putExtra("MODE", "deconnecte");
+            ecritureModeFichier("deconnecte");
             intention.putExtra("PAGE", "Main");
             startActivity(intention);
         } else {
@@ -144,6 +145,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+
+    private void ecritureModeFichier(String mode) throws IOException {
+        FileOutputStream fichier = openFileOutput("mode.txt", Context.MODE_PRIVATE);
+        fichier.write(mode.getBytes());
     }
 
 }

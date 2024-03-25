@@ -111,7 +111,7 @@ public class CustomPopupAfficherMenu extends AlertDialog {
     public void onClickModifier(View view) {
         Intent intention = new Intent(listeActivity, ModifListeActivity.class);
         intention.putExtra("positionItem", positionItemListe);
-        listeActivity.startActivity(intention);
+        listeActivity.startActivityForResult(intention, 0);
         dismiss(); // Fermer le dialogue après le lancement de l'activité
     }
 

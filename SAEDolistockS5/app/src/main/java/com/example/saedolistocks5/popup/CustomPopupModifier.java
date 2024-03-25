@@ -5,6 +5,7 @@ import static com.example.saedolistocks5.pageliste.ListeActivity.listeAccueil;
 import static com.example.saedolistocks5.pageliste.ListeActivity.positionItemListe;
 import static com.example.saedolistocks5.popup.CustomPopupAfficherMenu.nomFichier;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +19,11 @@ import com.example.saedolistocks5.pagemodifliste.ModifListeActivity;
 
 public class CustomPopupModifier extends AlertDialog {
 
-    protected CustomPopupModifier(Context context) {
+    private final ModifListeActivity activity;
+
+    protected CustomPopupModifier(Context context, ModifListeActivity activity) {
         super(context);
+        this.activity = activity;
     }
 
     @Override
@@ -38,14 +42,15 @@ public class CustomPopupModifier extends AlertDialog {
                 dismiss(); // Dismiss the dialog
 
                 // On retourne sur la page de visualisation de toutes les listes
-                Intent intention = new Intent(getContext(), ListeActivity.class);
+                Intent intention = new Intent();
                 intention.putExtra("PAGE", "Modif");
-                getContext().startActivity(intention);
+                activity.setResult(Activity.RESULT_OK, intention);
+                activity.finish();
             }
         });
     }
-    public static CustomPopupModifier createDialog(Context context) {
-        CustomPopupModifier dialog = new CustomPopupModifier(context);
+    public static CustomPopupModifier createDialog(Context context, ModifListeActivity activity) {
+        CustomPopupModifier dialog = new CustomPopupModifier(context, activity);
         return dialog;
     }
 
@@ -55,8 +60,9 @@ public class CustomPopupModifier extends AlertDialog {
         dismiss(); // Dismiss the dialog
 
         // On retourne sur la page de visualisation de toutes les listes
-        Intent intention = new Intent(getContext(), ListeActivity.class);
+        Intent intention = new Intent();
         intention.putExtra("PAGE", "Modif");
-        getContext().startActivity(intention);
+        activity.setResult(Activity.RESULT_OK, intention);
+        activity.finish();
     }
 }
