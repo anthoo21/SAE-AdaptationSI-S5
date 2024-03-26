@@ -292,7 +292,7 @@ public class ListeActivity extends AppCompatActivity {
                             listeFichierUser.add(file.getName());
                             String[] ligneListeSplit = ligne.split(";");
                             String nomListe = ligneListeSplit[1];
-                            String dateCreation = "Date de création : " + ligneListeSplit[7];
+                            String dateCreation = getString(R.string.date_creation) + ligneListeSplit[7];
                             String heureCreation = ligneListeSplit[8];
                             listeAccueil.add(new ListeAccueil(nomListe, dateCreation, heureCreation));
                         }

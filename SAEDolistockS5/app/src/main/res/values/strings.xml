@@ -118,5 +118,6 @@
     <string name="boutonConfirmer">Confirmer</string>
     <string name="liste_invalide">Attention : liste insérée sur Dolibarr mais une ou plusieurs
         ligne(s) sont invalide(s).</string>
+    <string name="date_creation">Date de création : </string>
 
 </resources>
